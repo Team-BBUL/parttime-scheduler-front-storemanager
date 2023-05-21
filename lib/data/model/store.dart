@@ -1,8 +1,25 @@
 class Store{
-  int store_id = 1;
-  String name = "A매장";
-  String location = "경기도 안성시 석정동 111-111";
-  String phone = "032-123-1234";
-  String open = "10:00";
-  String close = "23:00";
+  String id;
+  String location;
+  String name;
+  String phone;
+  String open;
+  String close;
+  String costPolicy ;
+  String payday;
+  Store({ required this.id,required this.location, required this.name, required this.phone, required this.open, required this.close,
+    required this.costPolicy, required this.payday});
+
+  factory Store.fromJson(Map<String, dynamic> json) {
+    return Store(
+      id : json['id'],
+      location: json['location'],
+      name: json['name'],
+      phone: json['phone'],
+      open: json['open'],
+      close: json['close'],
+      costPolicy: json['costPolicy'],
+      payday: json['payday'],
+    );
+  }
 }
