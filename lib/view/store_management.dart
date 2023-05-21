@@ -50,12 +50,12 @@ class StoreManagementScreen extends StatelessWidget{
                   Container(
                     margin: marginSpace(),
                     decoration: boxDecoration(),
-                      child: boxText(viewModel.storeManagement.location)
+                      child: boxText(viewModel.store.location)
                   ),
                   Container(
                       margin: marginSpace(),
                       decoration: boxDecoration(),
-                      child: boxText(viewModel.storeManagement.phoneNum)
+                      child: boxText(viewModel.store.phone)
                   ),
                   Container(
                       padding: EdgeInsets.all(20),
@@ -65,14 +65,14 @@ class StoreManagementScreen extends StatelessWidget{
                         children: [
                           Expanded(
                               child: Center(
-                                child: Text('개점 ${viewModel.storeManagement
+                                child: Text('개점 ${viewModel.store
                                     .open}', style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold)),
                               )
                           ),
                           Expanded(
                               child: Center(
-                                child: Text('매점  ${viewModel.storeManagement
+                                child: Text('매점  ${viewModel.store
                                     .close}', style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold)),
                               )
@@ -92,7 +92,7 @@ class StoreManagementScreen extends StatelessWidget{
                                 Expanded(
                                     child: Center(
                                       child: Text(
-                                          viewModel.storeManagement.costPolicy,
+                                          viewModel.store.costPolicy,
                                           style: const TextStyle(fontSize: 16)),
                                     )
                                 ),
@@ -132,15 +132,15 @@ class StoreManagementScreen extends StatelessWidget{
                                 flex: 2,
                                   child: Column(
                                     children: viewModel.userRole
-                                      .map((e) => Row(
+                                      .map((user) => Row(
                                         children: [
                                           Expanded(
                                             child: Text(
-                                                e.role, style: const TextStyle(fontSize: 16)),
+                                                user.level, style: const TextStyle(fontSize: 16)),
                                           ),
                                           Expanded(
                                             child: Text(
-                                                e.name, style: const TextStyle(fontSize: 16)),
+                                                user.alias, style: const TextStyle(fontSize: 16)),
                                           ),
                                           Expanded(
                                             child: IconButton(
@@ -149,7 +149,7 @@ class StoreManagementScreen extends StatelessWidget{
                                                 Navigator.push(
                                                     context, MaterialPageRoute<void>(
                                                     builder: (
-                                                        BuildContext context) => EmployeeDetailScreen(userRole : e)
+                                                        BuildContext context) => EmployeeDetailScreen(userRole : user)
                                                 ));
                                               },
                                             ),
@@ -175,7 +175,7 @@ class StoreManagementScreen extends StatelessWidget{
                           Padding(
                             padding: EdgeInsets.all(8),
                             child: Text(
-                                '매월 ' + viewModel.storeManagement.payday,
+                                '매월 ' + viewModel.store.payday,
                                 style: TextStyle(fontSize: 16)),
                           ),
                         ],

@@ -1,6 +1,6 @@
 /*
 import 'package:sidam/data/model/store.dart';
-import 'package:sidam/data/model/store_management.dart';
+import 'package:sidam/data/model/store.dart';
 import 'package:sidam/data/model/user_role.dart';
 import '../datasource/remote_datasource.dart';
 
