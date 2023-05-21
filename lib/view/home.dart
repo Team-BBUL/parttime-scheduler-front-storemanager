@@ -1,6 +1,10 @@
+
+
+
+
 import 'package:flutter/material.dart';
-import 'package:sidam_storemanager/view/announcement.dart';
-import 'package:sidam_storemanager/view/announcement_page.dart';
+import 'package:sidam_storemanager/view/announcement_list.dart';
+import 'package:sidam_storemanager/view/announcement_list_page.dart';
 import 'package:sidam_storemanager/view/setting.dart';
 import 'package:sidam_storemanager/view/store_management_page.dart';
 
@@ -54,7 +58,7 @@ class HomeScreen extends StatelessWidget{
               icon: Icon(Icons.add),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) => const AnnouncementPage()
+                    builder: (BuildContext context) => const AnnouncementListPage()
                 ));
               },
             ),
