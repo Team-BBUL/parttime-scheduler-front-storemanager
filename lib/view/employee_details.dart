@@ -121,7 +121,7 @@ class _EmployeeDetailsState extends State<EmployeeDetailScreen>{
                   children: [
                     Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text(widget.userRole.role, style: TextStyle(fontSize: 16)),
+                      child: Text(widget.userRole.level, style: TextStyle(fontSize: 16)),
                     ),
                   ],
                 )
