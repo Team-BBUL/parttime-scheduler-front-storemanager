@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../view_model/announcement_view_model.dart';
+import '../view_model/announcement_list_view_model.dart';
+import 'announcement_detail.dart';
+import 'announcement_detail_page.dart';
 
-class AnnouncementScreen extends StatelessWidget{
-  const AnnouncementScreen({super.key});
+class AnnouncementListScreen extends StatelessWidget{
+  const AnnouncementListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Announcement Screen'),
+        title: const Text('Announcement List Screen'),
           actions: <Widget>[
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.add_box),
               tooltip: 'Go to the next page',
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute<void>(
@@ -22,12 +24,12 @@ class AnnouncementScreen extends StatelessWidget{
             ),
           ]
       ),
-      body: Consumer<AnnouncementViewModel>(
+      body: Consumer<AnnouncementListViewModel>(
         builder:(context, viewModel,child){
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: viewModel.announcement
-            .map((e) => Container(
+            children: viewModel.announcementList
+            .map((announcement) => Container(
                 margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                 decoration: const BoxDecoration(
                   border: Border(
@@ -36,10 +38,18 @@ class AnnouncementScreen extends StatelessWidget{
                 ),
                 child: Row(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text(e.title, style: TextStyle(fontSize: 16)),
+                    GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => AnnouncementDetailPage(),
+                      settings: RouteSettings(arguments: announcement['id'])));
+                      },
+                      child : Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text(announcement['subject'], style: TextStyle(fontSize: 16)),
+                      ),
                     ),
+
                   ],
                 )
             )).toList(),
