@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/app_input_theme.dart';
+
 class CostPolicyScreen extends StatefulWidget{
   const CostPolicyScreen({super.key});
 
@@ -11,7 +13,7 @@ class _StatePolicyState extends State<CostPolicyScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Store Management Screen'),
+          title: const Text('Cost Policy Screen'),
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.check_box),
@@ -26,52 +28,61 @@ class _StatePolicyState extends State<CostPolicyScreen>{
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-                margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.grey),
-                ),
-                child: Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text('기본시급', style: TextStyle(fontSize: 16)),
-                    ),
-                  ],
+                margin: AppInputTheme().marginSpace(),
+                child: TextField(
+                  decoration: AppInputTheme().buildDecoration(
+                      borderText: '기본 시급',
+                      writable: true
+                  ),
+                  enabled: false,
+                  // controller: TextEditingController(text: viewModel.store?.location ?? ''),
                 )
             ),
             Container(
-                margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.grey),
+              margin: AppInputTheme().marginSpace(),
+              child: InputDecorator(
+                decoration: AppInputTheme().buildDecoration(
+                    borderText: "규칙",
+                    writable: true
                 ),
-                child: Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text('규칙', style: TextStyle(fontSize: 16)),
+                child: Column(
+                  children: [
+                    Row(
+                      children: const [
+                        Expanded(
+                          child: Text(
+                              '규칙' ,
+                              style: TextStyle(fontSize: 16)),
+                        ),
+                        Expanded(
+                            child: Center(
+                                child: Text("버튼")
+                            )
+                        ),
+                      ],
                     ),
                   ],
-                )
+                ),
+              ),
             ),
             Container(
-                margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.grey),
+              margin: AppInputTheme().marginSpace(),
+              child: InputDecorator(
+                decoration: AppInputTheme().buildDecoration(
+                    borderText: "날짜",
+                    writable: true
                 ),
                 child: Row(
                   children: [
                     Expanded(
-                      child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20,horizontal: 30),
-                          child: Row(
-                            children: const [
-                              Text('매월', style: TextStyle(fontSize: 16)),
-                              Icon(Icons.arrow_drop_down)
-                            ] ,
-                          )
+                        child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 20,horizontal: 30),
+                            child: Row(
+                              children: const [
+                                Text('매월', style: TextStyle(fontSize: 16)),
+                                Icon(Icons.arrow_drop_down)
+                              ] ,
+                            )
                         )
                     ),
                     const Expanded(
@@ -92,6 +103,7 @@ class _StatePolicyState extends State<CostPolicyScreen>{
                     )
                   ],
                 ),
+              ),
             ),
           ],
         )
