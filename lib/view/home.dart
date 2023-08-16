@@ -1,28 +1,46 @@
-
-
-
-
 import 'package:flutter/material.dart';
+import 'package:sidam_storemanager/data/repository/store_repository.dart';
+import 'package:sidam_storemanager/utils/app_future_builder.dart';
 import 'package:sidam_storemanager/view/announcement_list.dart';
-import 'package:sidam_storemanager/view/announcement_list_page.dart';
-import 'package:sidam_storemanager/view/setting.dart';
-import 'package:sidam_storemanager/view/store_management_page.dart';
+import 'package:sidam_storemanager/view/setting_page.dart';
+import 'package:sidam_storemanager/view/store_list.dart';
+import 'package:sidam_storemanager/view/store_management.dart';
+
+import '../utils/sp_helper.dart';
 
 class HomeScreen extends StatelessWidget{
-  const HomeScreen({super.key});
+  final SPHelper helper = SPHelper();
 
   @override
   Widget build(BuildContext context) {
+    int? id = helper.getStoreId();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Screen'),
-        actions: <Widget>[
+        centerTitle: true,
+        leading:  TextButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) => SettingPage(),
+              ));
+            },
+            child: Text('${helper.getAlias()}', style: TextStyle(color: Colors.black, fontSize: 16)),
+        ),
+        title: TextButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) => StoreListPage(),
+              ));
+            },
+            child: Text("${helper.getStoreName()}", style: TextStyle(color: Colors.black, fontSize: 16))
+        ),
+
+        actions: [
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Go to the next page',
             onPressed: () {
               Navigator.push(context, MaterialPageRoute<void>(
-                builder: (BuildContext context) => SettingScreen(),
+                builder: (BuildContext context) => SettingPage(),
               ));
             },
           ),
@@ -48,35 +66,41 @@ class HomeScreen extends StatelessWidget{
             },
           ),
         ],
+
       ),
-      body: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute<void>(
-                    builder: (BuildContext context) => const AnnouncementListPage()
-                ));
-              },
-            ),
-          ),
-          Positioned(
-            top: 30,
-            right: 0,
-            child: TextButton(
-              child: const Text("매장정보설정"),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute<void>(
-                    builder: (BuildContext context) => const StoreManagementPage()
-                ));
-              },
-            ),
-          ),
-        ],
-      ),
+      body: AppFutureBuilder(
+        future: StoreRepositoryImpl().fetchStore(id),
+        builder: (context, builder){
+          return Stack(
+            children: [
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute<void>(
+                        builder: (BuildContext context) => const AnnouncementListScreen()
+                    ));
+                  },
+                ),
+              ),
+              Positioned(
+                top: 30,
+                right: 0,
+                child: TextButton(
+                  child: const Text("매장정보설정"),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute<void>(
+                        builder: (BuildContext context) => const StoreManagementScreen()
+                    ));
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      )
     );
   }
 }
