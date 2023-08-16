@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
+import '../model/account_role.dart';
 
-import '../data/model/user_role.dart';
+
 
 class ChattingViewModel extends ChangeNotifier{
   UserRepository userRepository;
-  List<UserRole> userRole =[];
+  List<AccountRole> accountRole =[];
 
   ChattingViewModel(this.userRepository){
     loadData();
@@ -13,8 +14,7 @@ class ChattingViewModel extends ChangeNotifier{
 
   Future<void> loadData() async {
     try {
-      final result = await userRepository.getUsers();
-      userRole = result.map((json) => UserRole.fromJson(json)).toList();
+      final UserRole = await userRepository.fetchUsers();
       notifyListeners();
     } catch (e) {
       // 에러 처리 로직
