@@ -1,10 +1,12 @@
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
+import 'package:sidam_storemanager/model/account.dart';
 
-import '../model/user_role.dart';
+import '../../model/account_role.dart';
+
 
 class MockUserRepository extends UserRepository{
   @override
-  Future<List<dynamic>> getUsers() async {
+  Future<List<AccountRole>> getUsers() async {
     List<dynamic> testData = [
       {
         "user_role_id" : "1",
@@ -38,15 +40,11 @@ class MockUserRepository extends UserRepository{
         'valid': false,
       }
     ];
-
-    return testData;
+    List<AccountRole> users = testData.map((json) => AccountRole.fromJson(json)).toList();
+    return users;
   }
 
-  @override
-  Future getUser(String id) {
-    // TODO: implement getUser
-    throw UnimplementedError();
-  }
+
 
   @override
   Future updateUser(Map<String, dynamic> user) {
@@ -57,6 +55,30 @@ class MockUserRepository extends UserRepository{
   @override
   Future deleteUser(String id) {
     // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future createUser(String kakaoId) {
+    // TODO: implement createUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Account> getUser() {
+    // TODO: implement getUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Account> fetchUser() {
+    // TODO: implement fetchUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<AccountRole>> fetchUsers() {
+    // TODO: implement fetchUsers
     throw UnimplementedError();
   }
 

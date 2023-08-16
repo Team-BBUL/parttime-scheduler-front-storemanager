@@ -1,10 +1,11 @@
 import 'package:sidam_storemanager/data/repository/store_repository.dart';
 
+import '../../model/store.dart';
+
 class MockStoreRepository implements StoreRepository{
   @override
-  Future createStore(Map<String, dynamic> store) {
-    // TODO: implement createStore
-    throw UnimplementedError();
+  Future<void> createStore(Store store) async{
+    print("createStore : ${store.toJson()}");
   }
 
   @override
@@ -23,7 +24,7 @@ class MockStoreRepository implements StoreRepository{
       'open':'10:00',
       'close':'23:00',
       'costPolicy':'costPolicy',
-      'payday':'매월 10일',
+      'payday':'10일',
     };
     return mockData;
   }
@@ -34,18 +35,52 @@ class MockStoreRepository implements StoreRepository{
     throw UnimplementedError();
   }
 
+
+
   @override
-  Future<List> getStores() {
+  Future<void> updateStore(Store store) async {
+  print("updateStore : ${store.toJson()}");
+  }
+
+  @override
+  Future<String> fetchSearchedStores(String search) {
+    // TODO: implement fetchSearchedStores
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> fetchStores() {
+    // TODO: implement fetchStores
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<StoreList> getAllStores() {
+    // TODO: implement getAllStores
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<StoreList> getStores(String search) {
     // TODO: implement getStores
     throw UnimplementedError();
   }
 
   @override
-  Future updateStore(Map<String, dynamic> store) {
-    // TODO: implement updateStore
+  Future<Store> fetchStore(int? storeId) {
+    // TODO: implement fetchStore
     throw UnimplementedError();
   }
 
+  @override
+  Future<List<Store>> fetchMyStoreList() {
+    // TODO: implement fetchMyStoreList
+    throw UnimplementedError();
+  }
 
-
+  @override
+  Future<Store> fetchStoreById(int storeId) {
+    // TODO: implement fetchStoreById
+    throw UnimplementedError();
+  }
 }
