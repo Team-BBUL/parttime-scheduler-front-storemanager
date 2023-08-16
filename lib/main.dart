@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sidam_storemanager/view/chatting.dart';
+import 'package:provider/provider.dart';
+import 'package:sidam_storemanager/data/repository/anniversary_repository.dart';
+import 'package:sidam_storemanager/data/repository/user_repository.dart';
 import 'package:sidam_storemanager/view/chatting_page.dart';
-import 'package:sidam_storemanager/view/cost.dart';
 import 'package:sidam_storemanager/view/cost_page.dart';
 import 'package:sidam_storemanager/view/home.dart';
 import 'package:sidam_storemanager/view/time_table.dart';
+import 'package:sidam_storemanager/view_model/announcement_view_model.dart';
+import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
 
-import 'data/model/appColor.dart';
+import 'data/repository/announcement_repository.dart';
+import 'data/repository/store_repository.dart';
+import 'utils/app_color.dart';
+import 'utils/sp_helper.dart';
+import 'view/check_login.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => AnnouncementViewModel(AnnouncementRepositoryImpl()),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => StoreManagementViewModel(StoreRepositoryImpl(),UserRepositoryImpl(),AnniversaryRepositoryImpl()),
+            ),
+
+      ],
+          child: MyApp()
+
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -21,30 +43,38 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sidam Worker App',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: ThemeData(
         colorSchemeSeed: const Color(0xFFFF89B3),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Sidam Worker App'),
+      home: CheckLoginScreen(),
     );
   }
 }
+
+
 
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
+  final SPHelper helper = SPHelper();
   final AppColor color = AppColor();
-
   int _currentIndex = 0;
+  init(){
+    helper.init();
+  }
   final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostPage(), ChattingPage()];
 
   void _onTap(int index) {
