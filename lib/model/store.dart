@@ -35,15 +35,15 @@ class Store {
   String? location;
   String? phone;
   int? open;
-  int? close;
+  int? closed;
   int? costPolicy;
   int? payday;
-  int? weekStartDay;
-  int? unworkableDaySelectDeadline;
+  int? startDayOfWeek;
+  int? deadlineOfSubmit;
   List<dynamic>? errors;
 
   Store({this.id, this.name, this.location, this.phone});
-  Store.all({this.id, this.name, this.location, this.phone, this.open, this.close, this.costPolicy, this.payday, this.weekStartDay});
+  Store.all({this.id, this.name, this.location, this.phone, this.open, this.closed, this.costPolicy, this.payday, this.startDayOfWeek, this.deadlineOfSubmit});
 
   Store.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -51,9 +51,11 @@ class Store {
     location = json['location'];
     phone = json['phone'];
     open = json['open'];
-    close = json['close'];
+    closed = json['closed'];
     payday = json['payday'];
-    weekStartDay = json['weekStartDay'];
+    startDayOfWeek =  json['startDayOfWeek'];
+    deadlineOfSubmit = json['deadlineOfSubmit'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -63,10 +65,28 @@ class Store {
     data['location'] = this.location;
     data['phone'] = this.phone;
     data['open'] = this.open;
-    data['close'] = this.close;
+    data['closed'] = this.closed;
     data['payday'] = this.payday;
-    data['weekStartDay'] = this.weekStartDay;
+    data['startDayOfWeek'] = this.startDayOfWeek;
+    data['deadlineOfSubmit'] = this.deadlineOfSubmit;
     return data;
   }
 
+  convertWeekdayToKorean(weekday) {
+    if (weekday == 1) {
+      return '월';
+    } else if (weekday == 2) {
+      return '화';
+    } else if (weekday == 3) {
+      return '수';
+    } else if (weekday == 4) {
+      return '목';
+    } else if (weekday == 5) {
+      return '금';
+    } else if (weekday == 6) {
+      return '토';
+    } else if (weekday == 7) {
+      return '일';
+    }
+  }
 }
