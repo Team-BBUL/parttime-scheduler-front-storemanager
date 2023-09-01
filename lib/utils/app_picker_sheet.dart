@@ -5,7 +5,7 @@ import 'app_color.dart';
 import 'custom_cupertino_picker.dart';
 
 class AppPickerSheet{
-  customCupertinoPicker(String indicator, setTime, selected, times){
+  customCupertinoPicker({indicator, setTime, selected, times}){
     return Container(
       alignment: Alignment.bottomCenter,
       height: 300,
@@ -25,6 +25,7 @@ class AppPickerSheet{
         ),
         // This is called when selected item is changed.
         onSelectedItemChanged: (int selectedItem) {
+
           setTime(selectedItem);
         },
         children:
@@ -36,35 +37,46 @@ class AppPickerSheet{
     );
   }
 
-  weekdayPicker(context, selectDay, setDay){
+  weekdayPicker(context, title, selectDay, setDay, ){
 
     return Container(
       // color: Colors.white,
         height: 200,
-        child : Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List<Widget>.generate(7, (int index) {
-            index+=1;
-            return Expanded(
-              child: Container(
-                color: selectDay == index ? AppColor().mainColor : Colors.white,
-                child: TextButton(
-                    onPressed: () {
-                      setDay(index);
-                      Navigator.pop(context);
-                    },
-                    child : Text('${_convertWeekdayToKorean(index)}',
-                        style: const TextStyle(fontSize: 20, color: Colors.black))
-                ),
-              ),
-            );
-          }),
+        child : Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              child: Center(
+                child: Text('$title',style: TextStyle(fontSize: 16),),
+              )
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List<Widget>.generate(7, (int index) {
+                index+=1;
+                return Expanded(
+                  child: Container(
+                    color: selectDay == index ? AppColor().mainColor : Colors.white,
+                    child: TextButton(
+                        onPressed: () {
+                          setDay(index);
+                          Navigator.pop(context);
+                        },
+                        child : Text('${_convertWeekdayToKorean(index)}',
+                            style: const TextStyle(fontSize: 20, color: Colors.black))
+                    ),
+                  ),
+                );
+              }),
+            ),
+            Container()
+          ],
         )
     );
   }
 
   _convertWeekdayToKorean(weekday) {
-    // int? weekday = this.?.weekday;
     if(weekday == 1) {
       return '월';
     }else if(weekday == 2) {

@@ -32,5 +32,13 @@ class AppInputTheme{
   EdgeInsets marginSpace(){
     return const EdgeInsets.symmetric(vertical: 10,horizontal: 20);
   }
+
+  InputDecoration registerDecoration({required String hint}) => InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey),
+        border: const UnderlineInputBorder(
+          borderSide: BorderSide(width: 1, color: Colors.grey),
+        ),
+      );
 }
 
