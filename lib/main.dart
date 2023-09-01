@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:sidam_storemanager/data/mock_repository/mock_schedule_api_repository.dart';
 import 'package:sidam_storemanager/data/repository/anniversary_repository.dart';
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
 import 'package:sidam_storemanager/view/chatting_page.dart';
-import 'package:sidam_storemanager/view/cost_page.dart';
+import 'package:sidam_storemanager/view/cost.dart';
 import 'package:sidam_storemanager/view/home.dart';
 import 'package:sidam_storemanager/view/time_table.dart';
 import 'package:sidam_storemanager/view_model/announcement_view_model.dart';
+import 'package:sidam_storemanager/view_model/cost_view_model.dart';
+import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
 
 import 'data/repository/announcement_repository.dart';
+import 'data/repository/incentive_repository.dart';
 import 'data/repository/store_repository.dart';
 import 'utils/app_color.dart';
 import 'utils/sp_helper.dart';
@@ -25,9 +29,14 @@ void main() {
               create: (_) => AnnouncementViewModel(AnnouncementRepositoryImpl()),
             ),
             ChangeNotifierProvider(
-              create: (_) => StoreManagementViewModel(StoreRepositoryImpl(),UserRepositoryImpl(),AnniversaryRepositoryImpl()),
+              create: (_) => StoreManagementViewModel(StoreRepositoryImpl(),
+                  UserRepositoryImpl(),AnniversaryRepositoryImpl(), IncentiveRepositoryImpl()),
             ),
-
+            ChangeNotifierProvider(
+              create: (_) => StoreListViewModel(StoreRepositoryImpl(),UserRepositoryImpl()),
+            ),
+            ChangeNotifierProvider(
+                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub()),)
       ],
           child: MyApp()
 
@@ -75,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   init(){
     helper.init();
   }
-  final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostPage(), ChattingPage()];
+  final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostScreen(), ChattingPage()];
 
   void _onTap(int index) {
     setState(() {
