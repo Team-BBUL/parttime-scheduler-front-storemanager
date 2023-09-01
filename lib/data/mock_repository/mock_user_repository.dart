@@ -1,10 +1,12 @@
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
 import 'package:sidam_storemanager/model/account.dart';
+import 'package:sidam_storemanager/model/store.dart';
 
 import '../../model/account_role.dart';
 
 
-class MockUserRepository extends UserRepository{
+class FixedUserRepositoryStub extends UserRepository{
+
   @override
   Future<List<AccountRole>> getUsers() async {
     List<dynamic> testData = [
@@ -44,14 +46,6 @@ class MockUserRepository extends UserRepository{
     return users;
   }
 
-
-
-  @override
-  Future updateUser(Map<String, dynamic> user) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
-  }
-
   @override
   Future deleteUser(String id) {
     // TODO: implement deleteUser
@@ -81,5 +75,31 @@ class MockUserRepository extends UserRepository{
     // TODO: implement fetchUsers
     throw UnimplementedError();
   }
+
+  @override
+  Future<AccountRole> fetchAccountRole(int storeId) {
+    // TODO: implement fetchAccountRole
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<AccountRole>> fetchAccountRoles() {
+    // TODO: implement fetchAccountRoles
+    throw UnimplementedError();
+  }
+
+
+  @override
+  Future updateAccountRole(AccountRole accountRole) {
+    // TODO: implement updateAccountRole
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<AccountRole, Store>> enter(int? storeId) {
+    // TODO: implement enter
+    throw UnimplementedError();
+  }
+
 
 }

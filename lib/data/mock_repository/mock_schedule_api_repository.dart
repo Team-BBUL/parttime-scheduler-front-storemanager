@@ -1,17 +1,18 @@
 import '../../model/schedule.dart';
 import '../repository/schedule_api_respository.dart';
+import '../repository/schedule_local_repository.dart';
 
 class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
 
   @override
-  Future<MonthSchedule> getData(String timeStamp) async {
+  Future<MonthSchedule> fetchSchedule(String timeStamp, int year, int month, int day) async {
 
     Map<String,dynamic> testData =
     {
       "date": [
         {
           "id": 1,
-          "day": "2023-07-03",
+          "day": "2023-08-03",
           "schedule": [
             {
               "id": 1,
@@ -95,7 +96,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id": 2,
-          "day": "2023-07-04",
+          "day": "2023-08-04",
           "schedule": [
             {
               "id": 1,
@@ -176,7 +177,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         null,
         null,
       ],
-      "time_stamp": "2023-07-08T21:23:52"
+      "time_stamp": "2023-08-20T21:23:52"
     };
     print(testData['time_stamp']);
     print(timeStamp);
@@ -184,6 +185,8 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
     if(testData['time_stamp'] == timeStamp){
       print('스케줄 버전이 최신입니다..');
       return MonthSchedule();
+    }else{
+      ScheduleLocalRepository().saveSchedule(testData, testData['time_stamp']);
     }
     return MonthSchedule.fromJson(testData);
   }
