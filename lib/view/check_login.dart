@@ -68,7 +68,7 @@ class _CheckLoginScreenState extends State<CheckLoginScreen> {
         context,
         MaterialPageRoute(
           builder: (context){
-            return StoreListPage();
+            return StoreListScreen();
           },
         ),
       );

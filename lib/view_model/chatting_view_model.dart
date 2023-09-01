@@ -14,7 +14,7 @@ class ChattingViewModel extends ChangeNotifier{
 
   Future<void> loadData() async {
     try {
-      final UserRole = await userRepository.fetchUsers();
+      final UserRole = await userRepository.fetchAccountRoles();
       notifyListeners();
     } catch (e) {
       // 에러 처리 로직

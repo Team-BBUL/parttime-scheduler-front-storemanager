@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 
+import '../../model/jwt_exception.dart';
 import '../../model/store.dart';
 import '../../utils/sp_helper.dart';
 import 'package:http/http.dart' as http;
@@ -15,23 +16,23 @@ abstract class StoreRepository{
   Future<String> fetchSearchedStores(String search);
   Future<String> fetchStores();
   Future<List<Store>> fetchMyStoreList();
-
 }
 
 class StoreRepositoryImpl implements StoreRepository{
   static String storeApi = 'http://10.0.2.2:8088/store';
-  static SPHelper helper = SPHelper();
-  final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
-    'Content-Type': 'application/json'};
+
 
   @override
   Future<Store> fetchStore(int? storeId) async{
-    log("fetchAnnouncementHelperHash: ${helper.hashCode}");
+    SPHelper helper = SPHelper();
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
+      'Content-Type': 'application/json'};
+    log("fetStoreSpHash: ${helper.hashCode}");
 
-    if(_isSameStore(storeId)) {
+    if(_isSameStore(storeId, helper.getStoreId())) {
       return Store();
     }
-    if(_isIdsNull(storeId)){
+    if(_isIdsNull(storeId, helper.getStoreId())){
       return Store();
     }else{
       storeId = helper.getStoreId();
@@ -48,8 +49,8 @@ class StoreRepositoryImpl implements StoreRepository{
       Uri.parse(apiUrl),
       headers: headers,
     );
+    Map<String, dynamic> decodedData = json.decode(response.body);
     if (response.statusCode == 200) {
-      Map<String, dynamic> decodedData = json.decode(response.body);
       Map<String, dynamic> storeData = decodedData['data'];
       Store store = Store.fromJson(storeData);
       helper.writeStoreId(store.id!);
@@ -61,14 +62,19 @@ class StoreRepositoryImpl implements StoreRepository{
     } else if(response.statusCode == 400) {
       log('failed : ${response.body}');
       throw Exception();
-    } else{
-      log('failed : ${response.body}');
+    } else if(decodedData['code'] == 1003){
+      log('custom exception : ${decodedData['code']}');
+      throw JWTException(decodedData['message']);
+    }else{
       throw Exception('서버 오류가 발생했습니다. 나중에 다시 시도해주세요');
     }
   }
 
   @override
   Future<dynamic> createStore(Store store) async{
+    SPHelper helper = SPHelper();
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
+      'Content-Type': 'application/json'};
     helper.init();
     final String apiUrl = '$storeApi/regist';
     log("createStore ${headers}");
@@ -86,6 +92,33 @@ class StoreRepositoryImpl implements StoreRepository{
       log('store_repository.helper.getCurrentStoreId" = ${helper.getStoreId()}');
       log('Post created successfully.');
       return decodedData['status_code'];
+    } else if(response.statusCode == 400) {
+      log('failed : ${response.body}');
+    } else{
+      throw Exception('서버 오류가 발생했습니다. 나중에 다시 시도해주세요');
+    }
+  }
+
+  @override
+  Future<void> updateStore(Store store) async {
+    final String apiUrl = '$storeApi/${store.id}';
+    SPHelper helper = SPHelper();
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
+      'Content-Type': 'application/json'};
+    log("updateStore.header = ${headers}");
+    log("updateStore.deadlineOfSubmit ${store.deadlineOfSubmit}");
+
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: jsonEncode(store.toJson()),
+    );
+    if (response.statusCode == 200) {
+      log(response.body);
+      Map<String, dynamic> decodedData = json.decode(response.body);
+      helper.writeStoreName(store.name!);
+      log("update Store successfully");
+
     } else if(response.statusCode == 400) {
       log('failed : ${response.body}');
     } else{
@@ -118,14 +151,12 @@ class StoreRepositoryImpl implements StoreRepository{
   }
 
 
-  @override
-  Future<void> updateStore(Store store) {
-    // TODO: implement updateStore
-    throw UnimplementedError();
-  }
 
   @override
   Future<List<Store>> fetchMyStoreList() async{
+    SPHelper helper = SPHelper();
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
+      'Content-Type': 'application/json'};
     helper.init();
     final String apiUrl = '$storeApi/my-list?role=MANAGER';
 
@@ -153,17 +184,16 @@ class StoreRepositoryImpl implements StoreRepository{
     }
   }
 
-  bool _isSameStore(int? storeId) {
-    int? currentStoreId = helper.getStoreId();
+  bool _isSameStore(int? storeId, int? currentStoreId) {;
     if(currentStoreId != null && currentStoreId == storeId){
       return true;
     }
     return false;
   }
 
-  bool _isIdsNull(int? storeId) {
+  bool _isIdsNull(int? storeId, int? currentStoreId) {
     if(storeId == null){
-      storeId = helper.getStoreId();
+      storeId = currentStoreId;
       if(storeId == null){
         return true;
       }

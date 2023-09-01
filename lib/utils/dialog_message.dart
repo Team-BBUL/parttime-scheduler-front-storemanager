@@ -39,7 +39,7 @@ class Message{
     );
   }
 
-  void showAlertDialog({required BuildContext context,
+  Future<void> showAlertDialog({required BuildContext context,
     required String title, required String message,}) async{
     await Future.delayed(Duration(microseconds: 1));
     await showDialog(
@@ -59,7 +59,6 @@ class Message{
           );
         }
     );
-    Navigator.pop(context);
   }
 
 

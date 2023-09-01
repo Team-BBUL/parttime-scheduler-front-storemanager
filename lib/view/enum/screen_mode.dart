@@ -1,1 +1,0 @@
-enum ScreenMode { IDLE, BUSY, ERROR}

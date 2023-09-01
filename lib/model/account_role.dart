@@ -1,14 +1,16 @@
+import 'account.dart';
+
 class AccountRole{
   int? id;
   String? alias;
   int? level;
   int? cost;
   String? color;
-  bool? isSalary;
+  bool? salary;
   bool? vaild;
   String? role;
-
-  AccountRole({this.id, this.alias, this.level, this.cost, this.color, this.isSalary, this.vaild});
+  Account? account;
+  AccountRole({this.id, this.alias, this.level, this.cost, this.color, this.salary, this.vaild, this.account});
 
   AccountRole.fromJson(Map<String, dynamic> json){
     id = json['id'];
@@ -16,7 +18,7 @@ class AccountRole{
     level = json['level'];
     cost = json['cost'];
     color = json['color'];
-    isSalary = json['isSalary'];
+    salary = json['salary'];
     vaild = json['vaild'];
     role = json['role'];
   }
@@ -28,7 +30,7 @@ class AccountRole{
     data['level'] = this.level;
     data['cost'] = this.cost;
     data['color'] = this.color;
-    data['isSalary'] = this.isSalary;
+    data['salary'] = this.salary;
     data['vaild'] = this.vaild;
     data['role'] = this.role;
     return data;

@@ -1,194 +1,55 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:sidam_storemanager/data/repository/schedule_local_repository.dart';
+
 import '../../model/schedule.dart';
+import '../../utils/sp_helper.dart';
+
+import 'package:http/http.dart' as http;
+
 
 abstract class ScheduleRemoteRepository {
-  Future<MonthSchedule> getData(String timeStamp);
+  Future<MonthSchedule> fetchSchedule(String timeStamp, int year, int month, int day);
 }
 
 class ScheduleApiRepository implements ScheduleRemoteRepository{
 
-  @override
-  Future<MonthSchedule> getData(String timeStamp) async {
+  String scheduleApi = 'http://10.0.2.2:8088/api/schedule';
 
-    Map<String,dynamic> testData =
-    {
-      "date": [
-        {
-          "id": 1,
-          "day": "2023-07-03",
-          "schedule": [
-            {
-              "id": 1,
-              "time": [true, true, true, true, true, false, false, false, false, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "홍길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 2,
-              "time": [false, false, false, true, true, true, true, true, true, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "최판서",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                },
-                {
-                  "id": 2,
-                  "alias": "홍길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 3,
-              "time": [false, false, false, false, true, true, true, true, false, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "김길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 4,
-              "time": [false, false, false, false, false, true, true, true, true, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "성춘향",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 5,
-              "time": [false, false, false, false, false, false, true, true, true, true, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "아무개",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 6,
-              "time": [false, false, false, false, false, false, false, true, true, true, true, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "박아무",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "day": "2023-07-04",
-          "schedule": [
-            {
-              "id": 1,
-              "time": [true, true, true, true, false, false, false, false, false, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "홍길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 2,
-              "time": [false, false, false, true, true, true, true, false, false, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "최판서",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 3,
-              "time": [false, false, false, false, true, true, true, true, false, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "김길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 4,
-              "time": [false, false, false, false, false, true, true, true, true, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "성춘향",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 5,
-              "time": [false, false, false, false, false, false, true, true, true, true, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "아무개",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 6,
-              "time": [false, false, false, false, false, false, false, true, true, true, true, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "박아무",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            }
-          ]
-        },
-        null,
-        null,
-        null,
-        null,
-      ],
-      "time_stamp": "2023-07-08T21:23:52"
-    };
-    print(testData['time_stamp']);
-    print(timeStamp);
-    //TODO: response status에 따라 분기처리
-    if(testData['time_stamp'] == timeStamp){
-      print('스케줄 버전이 최신입니다..');
-      return MonthSchedule();
+  @override
+  Future<MonthSchedule> fetchSchedule(String timeStamp, int year, int month, int day) async {
+    SPHelper helper = SPHelper();
+
+    final String apiUrl = '$scheduleApi/${helper.getStoreId()}?id=${helper.getRoleId()}&version=$timeStamp&year=2021&month=8&day=1';
+
+    log("fetchSchedule $apiUrl");
+
+    var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
+      'Content-Type': 'application/json'};
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      log("response.body${response.body}");
+      Map<String, dynamic> decodedData = json.decode(response.body);
+      if(decodedData['time_stamp'] == timeStamp){
+        print('스케줄 버전이 최신입니다..');
+        return MonthSchedule();
+      }else{
+        ScheduleLocalRepository().saveSchedule(decodedData, timeStamp);
+      }
+      return MonthSchedule.fromJson(decodedData);
+    } else if(response.statusCode == 400) {
+      log('failed : ${response.body}');
+      throw response.body;
+    } else{
+      throw Exception('서버 오류가 발생했습니다. 나중에 다시 시도해주세요');
     }
-    return MonthSchedule.fromJson(testData);
   }
+
+
 }
 

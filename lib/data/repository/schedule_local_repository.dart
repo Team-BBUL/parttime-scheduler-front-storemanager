@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:sidam_storemanager/data/local_data_source.dart';
 
 import '../../model/schedule.dart';
 
@@ -17,7 +19,7 @@ class ScheduleLocalRepository{
       dynamic decodedData = await loadJson(yearMonth);
       return MonthSchedule.fromJson(decodedData);
     } catch (e) {
-      print('Error loading cells from JSON: $e');
+      print('fetchSchedule : Error loading cells from JSON: $e');
     }
     return MonthSchedule();
   }
@@ -25,6 +27,7 @@ class ScheduleLocalRepository{
   Future<MonthSchedule> fetchScheduleByPaycheck(String date, int costDay) async {
     initData(date, costDay);
     Map<String,dynamic> data = await getScheduleBasedOnCostDay();
+    print("fetchScheduleByPaycheck = $data");
     return MonthSchedule.fromJson(data);
   }
 
@@ -115,13 +118,12 @@ class ScheduleLocalRepository{
   }
 
   Future<dynamic> loadJson(String date) async {
+    LocalDataSource localDataSource = LocalDataSource();
     List<dynamic> data = [];
     try {
-      String jsonData = await rootBundle.loadString('asset/json/$date.json');
-      final decodedData = json.decode(jsonData);
-      return decodedData;
+      localDataSource.loadJson(date);
     } catch (e) {
-      log('Error loading cells from JSON: $e');
+      log('loadJson : Error loading cells from JSON: $e');
     }
     return data;
   }
@@ -176,10 +178,18 @@ class ScheduleLocalRepository{
     return dateList;
   }
 
+   getFileNames() async{
+    LocalDataSource localDataSource = LocalDataSource();
+    try {
+      return await localDataSource.getScheduleFileNames();
+    } catch (e) {
+      log('getFileNames : Error get schedule file name: $e');
+    }
+  }
+
   List<String> fileToDate(List<String> fileList) {
     List<String> dateList = [];
-    for (String input in fileList) {
-      String yearMonth = input.substring(11, 17);
+    for (String yearMonth in fileList) {
       int year = int.parse(yearMonth.substring(0, 4));
       int month = int.parse(yearMonth.substring(4, 6));
       String parsedString = '$year년 ${month.toString().padLeft(2, '0')}월';
@@ -188,24 +198,38 @@ class ScheduleLocalRepository{
     return dateList;
   }
 
-  Future<List<String>> getFileNames() async {
-    String directory = 'asset/json/';
-
-    List<String> assetList = await rootBundle.loadString('AssetManifest.json')
-        .then((jsonStr) => json.decode(jsonStr) as Map<String, dynamic>)
-        .then((map) => map.keys.toList());
-
-    List<String> jsonFiles = assetList
-        .where((file) => file.startsWith(directory) && file.endsWith('.json'))
-        .toList();
-
-    return jsonFiles;
-  }
+  // Future<List<String>> getFileNames() async {
+  //   String directory = 'asset/json/';
+  //
+  //   List<String> assetList = await rootBundle.loadString('AssetManifest.json')
+  //       .then((jsonStr) => json.decode(jsonStr) as Map<String, dynamic>)
+  //       .then((map) => map.keys.toList());
+  //
+  //   List<String> jsonFiles = assetList
+  //       .where((file) => file.startsWith(directory) && file.endsWith('.json'))
+  //       .toList();
+  //
+  //   return jsonFiles;
+  // }
 
   String convertCostScreenDateToYearMonth(String date) {
     String year = date.substring(0, 4);
     String month = date.substring(6, 8);
     return year + month;
+  }
+
+  String convertTimeStampToYearMonth(String date){
+    String year = date.substring(0, 4);
+    String month = date.substring(5, 7);
+    return year + month;
+  }
+
+  void saveSchedule(Map<String, dynamic> decodedData, String timeStamp) async {
+    LocalDataSource localDataSource = LocalDataSource();
+
+    String yearMonth = convertTimeStampToYearMonth(timeStamp);
+    localDataSource.saveModels(decodedData, yearMonth);
+    log("schedule saved");
   }
 
 }

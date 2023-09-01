@@ -97,8 +97,11 @@ class NotifyScreen extends StatelessWidget {
                               flex: 4,
                                     child: ElevatedButton(
                                       onPressed: () => showDialog(
-                                        AppPickerSheet().customCupertinoPicker('분',viewModel.setTime, viewModel.selectedNotifyWorkTime,
-                                            viewModel.times,
+                                        AppPickerSheet().customCupertinoPicker(
+                                          indicator: '분',
+                                          setTime : viewModel.setTime,
+                                          selected : viewModel.selectedNotifyWorkTime,
+                                          times : viewModel.times,
                                           ),
                                           context,
                                           viewModel
