@@ -5,6 +5,7 @@ import 'package:sidam_storemanager/view/home.dart';
 
 import '../main.dart';
 import '../utils/app_color.dart';
+import '../utils/app_input_theme.dart';
 import '../utils/app_picker_sheet.dart';
 import '../utils/app_toast.dart';
 import '../utils/dialog_message.dart';
@@ -15,166 +16,203 @@ class StoreRegisterScreen extends StatelessWidget{
   final nameController = TextEditingController();
   final locationController = TextEditingController();
   final phoneController = TextEditingController();
-  final openController = TextEditingController();
-  final paydayController = TextEditingController();
-  final weekStartDayController = TextEditingController();
-  final timeController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Consumer<StoreRegisterViewModel>(
         builder:(context, viewModel,child) {
           return Scaffold(
-            body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 20.0, 0, 0),
-                    child: Row(
+            resizeToAvoidBottomInset: false,
+            body: SingleChildScrollView(
+              child: SafeArea(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Flexible(flex: 8, child: Container()),
-                        Flexible(flex: 3,
-                            child: Container(
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder:
-                                        (context) => MyHomePage(title: '')
-                                    ),
-                                  );
-                                },
-                                child: Text('넘어가기'),),
-                            ))
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 10.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Flexible(flex: 8, child: Container()),
+                                    Flexible(flex: 3,
+                                        child: Container(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(builder:
+                                                    (context) => MyHomePage(title: '')
+                                                ),
+                                              );
+                                            },
+                                            child: Text('넘어가기'),),
+                                        ))
+                                  ],
+                                ),
+                                TextFormField(
+                                  validator: viewModel.storeValidator.validateName,
+                                  onChanged: (_) => (viewModel.setTextFieldChanged()),
+                                  controller: nameController,
+                                  decoration: AppInputTheme().registerDecoration(hint: '매장명'),
+                                  keyboardType: TextInputType.text,
+                                ),
+                                if(viewModel.errorMessage.containsKey('name')
+                                    && !viewModel.isTextFieldChanged)
+                                  Text(
+                                    viewModel.errorMessage['name']!,
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                TextFormField(
+                                  validator: viewModel.storeValidator.validateLocation,
+                                  onChanged: (_) => (viewModel.setTextFieldChanged()),
+                                  controller: locationController,
+                                  decoration: AppInputTheme().registerDecoration(hint: '매장 위치'),
+                                  keyboardType: TextInputType.text,
+                                ),
+                                TextFormField(
+                                  validator: viewModel.storeValidator.validatePhone,
+                                  onChanged: (_) => (viewModel.setTextFieldChanged()),
+                                  controller: phoneController,
+                                  decoration: AppInputTheme().registerDecoration(hint: '매장 전화번호'),
+                                  keyboardType:       TextInputType.text,
+                                ),
+
+                                GestureDetector(
+                                  onTap: () => showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Expanded(
+                                                child: AppPickerSheet().customCupertinoPicker(
+                                                  indicator: "시",
+                                                  setTime : viewModel.setOpenTime,
+                                                  selected: viewModel.store?.open ?? 0,
+                                                  times : viewModel.time,
+                                                )
+                                            ),
+                                            Expanded(
+                                                child: AppPickerSheet().customCupertinoPicker(
+                                                  indicator: "시",
+                                                  setTime: viewModel.setClosedTime,
+                                                  selected: viewModel.store?.closed ?? 0,
+                                                  times: viewModel.time,
+                                                )
+                                            )
+                                          ],
+                                        );
+                                      }
+                                  ),
+                                  child: TextFormField(
+                                    validator: viewModel.storeValidator.validateTime,
+                                    enabled: false,
+                                    controller: viewModel.timeController,
+                                    decoration: AppInputTheme().registerDecoration(hint: '매장 운영 시간'),
+                                    keyboardType: TextInputType.emailAddress,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AppPickerSheet().customCupertinoPicker(
+                                            indicator: '일',
+                                            setTime : viewModel.setPayday,
+                                            selected: (viewModel.store?.payday) == null
+                                                ? 0
+                                                : viewModel.store!.payday! - 1,
+                                            times : viewModel.day);
+                                      }),
+                                  child: TextFormField(
+                                    validator: viewModel.storeValidator.validatePayday,
+                                    enabled: false,
+                                    controller: viewModel.paydayController,
+                                    decoration: AppInputTheme().registerDecoration(hint: '급여 지급일'),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AppPickerSheet()
+                                            .weekdayPicker(
+                                            context,
+                                            "근무표 시작 날짜",
+                                            viewModel
+                                                .store?.startDayOfWeek,
+                                            viewModel
+                                                .setStartDayOfWeek);
+                                      }),
+                                  child: TextFormField(
+                                    validator: viewModel.storeValidator.validateStartDayOfWeek,
+                                    enabled: false,
+                                    controller: viewModel.startDayOfWeekController,
+                                    decoration: AppInputTheme().registerDecoration(hint: '근무표 시작 날짜'),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AppPickerSheet()
+                                            .weekdayPicker(
+                                            context,
+                                            "근무 불가능 시간 선택 마감일",
+                                            viewModel
+                                                .store?.deadlineOfSubmit,
+                                            viewModel
+                                                .setDeadlineOfSubmit);
+                                      }),
+                                  child: TextFormField(
+                                    validator: viewModel.storeValidator.validateDeadlineOfSubmit,
+                                    enabled: false,
+                                    controller: viewModel.deadlineOfSubmitController,
+                                    decoration: AppInputTheme().registerDecoration(hint: '근무 불가능 시간 선택 마감일'),
+                                  ),
+                                ),
+                                // StoreTextForm(viewModel, '근무자 초대', TextInputType.text),
+                              ],
+                            )
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.fromLTRB(40.0, 80.0, 40.0, 10),
+                          child: FilledButton(
+                            onPressed: () => ({
+                              if (_formKey.currentState!.validate()) {
+                                viewModel.setStoreInfo(
+                                  name : nameController.text,
+                                  location : locationController.text,
+                                  phone : phoneController.text,
+                                ),
+                                viewModel.sendStoreInfo(context)
+                              },
+                            }),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColor().mainColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            child: Text("진행",
+                              style: TextStyle(fontSize: 17,color: Colors.black),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 10.0),
-                      child: Column(
-                        children: [
-                          StoreTextForm(viewModel, nameController, '매장명', TextInputType.text),
-                          if(viewModel.errorMessage.containsKey('name')
-                              && !viewModel.isTextFieldChanged)
-                            Text(
-                              viewModel.errorMessage['name']!,
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          StoreTextForm(viewModel, locationController, '매장위치', TextInputType.text),
-                          StoreTextForm(viewModel, phoneController, '매장 전화번호', TextInputType.text),
-                          GestureDetector(
-                            onTap: () => showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Expanded(
-                                          child: AppPickerSheet().customCupertinoPicker(
-                                            "시",
-                                            viewModel.setOpenTime,
-                                            viewModel.store?.open ?? 0,
-                                            viewModel.time,
-                                          )
-                                      ),
-                                      Expanded(
-                                          child: AppPickerSheet().customCupertinoPicker(
-                                            "시",
-                                            viewModel.setCloseTime,
-                                            viewModel.store?.close ?? 0,
-                                            viewModel.time,
-                                          )
-                                      )
-                                    ],
-                                  );
-                                }
-                            ),
-                            child: TextField(
-                              enabled: false,
-                              controller: viewModel.timeController,
-                              decoration: const InputDecoration(
-                                hintText: '매장 운영 시간',
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: UnderlineInputBorder(
-                                  borderSide:
-                                  BorderSide(width: 1, color: Colors.grey),
-                                ),
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                          ),
-                          StoreTextForm(viewModel, paydayController, '급여 지급일', TextInputType.text),
-                          StoreTextForm(viewModel, weekStartDayController, '주차 시작일', TextInputType.text),
-
-                          // StoreTextForm(viewModel, '근무자 초대', TextInputType.text),
-
-                        ],
-                      )
-                  ),
-                  Flexible(
-                      flex: 4,
-                      child: Column(
-                        children: [
-                          Flexible(child: Container()),
-                          Flexible(child: Container()),
-                          Flexible(
-                            child: Container(
-                              width: double.infinity,
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0.0),
-                                child: FilledButton(
-                                  onPressed: () => ({
-                                    viewModel.setStoreInfo(
-                                        nameController.text,
-                                        locationController.text,
-                                        phoneController.text,
-                                        int.tryParse(paydayController.text) ??
-                                            -1,
-                                        int.tryParse(
-                                            weekStartDayController.text) ?? -1
-                                    ),
-                                    viewModel.sendStoreInfo(context)
-                                  }),
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: AppColor().mainColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                  child: Text("진행",
-                                    style: TextStyle(fontSize: 17,color: Colors.black),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
                   )
-                ],
               ),
-            ),
+
+            )
           );
         }
-    );
-
-  }
-
-  Widget StoreTextForm(StoreRegisterViewModel viewModel,
-      TextEditingController namedController, String hint, TextInputType type){
-    return TextField(
-      onChanged: (_) => (viewModel.setTextFieldChanged()),
-      controller: namedController,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey),
-        border: const UnderlineInputBorder(
-          borderSide: BorderSide(width: 1, color: Colors.grey),
-        ),
-      ),
-      keyboardType: TextInputType.emailAddress,
     );
   }
 }
