@@ -1,5 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:sidam_storemanager/utils/dialog_message.dart';
+
+import '../model/jwt_exception.dart';
+import '../view/login.dart';
 
 class AppFutureBuilder<T> extends StatelessWidget {
   final Future<T> future;
@@ -19,6 +24,10 @@ class AppFutureBuilder<T> extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasError) {
+          if(snapshot.error.runtimeType == JWTException){
+            log("Future builder ${snapshot.error}");
+            processTokenError(context);
+          }
            Message().showAlertDialog(
               context: context,
               title: "에러",
@@ -28,6 +37,17 @@ class AppFutureBuilder<T> extends StatelessWidget {
           return builder(context, snapshot);
         }
       },
+    );
+  }
+
+  void processTokenError(context) async{
+    await Message().showAlertDialog(
+        context: context,
+        title: "에러",
+        message: "로그인을 다시해주세요.");
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(
+        builder: (context) => LoginScreen())
     );
   }
 }
