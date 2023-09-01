@@ -10,7 +10,7 @@ class AnnouncementListScreen extends StatelessWidget{
   const AnnouncementListScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final bcontext = context;
+    final mainContext = context;
     final viewModel = Provider.of<AnnouncementViewModel>(context,listen: false );
     return AppFutureBuilder(
         future: viewModel.getAnnouncementList(10),
@@ -24,7 +24,7 @@ class AnnouncementListScreen extends StatelessWidget{
                       tooltip: 'Go to the next page',
                       onPressed: () {
                         viewModel.createNewForm();
-                        Navigator.push(bcontext , MaterialPageRoute(
+                        Navigator.push(mainContext , MaterialPageRoute(
                             builder: (bcontext) {
                               return AnnouncementFrameScreen();
                               // const AnnouncementFramePage(

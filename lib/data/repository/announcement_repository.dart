@@ -20,10 +20,12 @@ abstract class AnnouncementRepository {
 class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   String noticeApi = 'http://10.0.2.2:8088/api/notice/';
-  SPHelper helper = SPHelper();
 
   @override
   Future<Announcement> fetchAnnouncement(int announcementId) async {
+
+    SPHelper helper = SPHelper();
+
     final String apiUrl = '$noticeApi${helper.getStoreId()}'
         '/view/detail?id=$announcementId';
     log("fetchAnnouncement $apiUrl");
@@ -49,11 +51,11 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   @override
   Future<List<Announcement>> fetchAnnouncementList(int page) async {
-    SPHelper helper2 = SPHelper();
-    final String apiUrl = '$noticeApi${helper.getStoreId()}/view/list?last=0&cnt=10000';
+    SPHelper helper = SPHelper();
+
+    final String apiUrl = '$noticeApi${helper.getStoreId()}/view/list?last=0&cnt=10000&role=${helper.getRoleId()}';
     log("fetchAnnouncementList $apiUrl");
     log("fetchAnnouncementHelperHash: ${helper.hashCode}");
-    log("fetchAnnouncementHelperJwt: ${helper2.getJWT()}");
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
 
@@ -81,6 +83,8 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   @override
   Future postAnnouncement(Announcement announcement, List<dynamic> images) async {
+    SPHelper helper = SPHelper();
+
     final String apiUrl = '$noticeApi${helper.getStoreId()}';
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
@@ -125,6 +129,8 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   @override
   Future updateAnnouncement(Announcement announcement) async {
+    SPHelper helper = SPHelper();
+
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
     final String apiUrl = '$noticeApi${helper.getStoreId()}'
@@ -149,6 +155,8 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   @override
   Future deleteAnnouncement(int announcementId) async{
+    SPHelper helper = SPHelper();
+
     final String apiUrl = '$noticeApi${helper.getStoreId()}'
         '/view/detail?id=$announcementId';
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
@@ -170,6 +178,8 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   @override
   Future getImage(String url, String fileName) async {
+    SPHelper helper = SPHelper();
+
     final String apiUrl = "http://10.0.2.2:8088$url?filename=$fileName";
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
@@ -190,6 +200,5 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
       throw Exception('서버 오류가 발생했습니다. 나중에 다시 시도해주세요');
     }
   }
-
 
 }
