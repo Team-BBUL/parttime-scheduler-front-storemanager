@@ -1,25 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_storemanager/data/repository/store_repository.dart';
 import 'package:sidam_storemanager/main.dart';
 import 'package:sidam_storemanager/utils/sp_helper.dart';
-import 'package:sidam_storemanager/view/home.dart';
-import 'package:sidam_storemanager/view/store_register.dart';
 import 'package:sidam_storemanager/view/store_register_page.dart';
 import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
-
 import '../utils/app_future_builder.dart';
 
-class StoreListPage extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => StoreListViewModel(StoreRepositoryImpl()),
-      child: StoreListScreen(),
-    );
-  }
-}
 
 class StoreListScreen extends StatelessWidget{
   SPHelper helper = SPHelper();
@@ -58,13 +45,22 @@ class StoreListScreen extends StatelessWidget{
                 itemBuilder: (context, index){
                   return GestureDetector(
                     onTap: () {
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                          builder: (context){
-                            helper.writeStoreId(viewModel.storeList?[index].id);
-                            helper.writeStoreName(viewModel.storeList?[index].name);
-                            return const MyHomePage(title: '',);
-                          }
-                      ), (route) => false);
+                      viewModel.enterStore(viewModel.storeList![index].id!).catchError((e){
+                        print(e);
+                      }).then( (value){
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                              builder: (context){
+                                return const MyHomePage(title: '',);
+                              }
+                          ), (route) => false);
+                      });
+                      // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                      //     builder: (context){
+                      //       helper.writeStoreId(viewModel.storeList?[index].id);
+                      //       helper.writeStoreName(viewModel.storeList?[index].name);
+                      //       return const MyHomePage(title: '',);
+                      //     }
+                      // ), (route) => false);
                     },
                     child : Container(
                       height: 50,
