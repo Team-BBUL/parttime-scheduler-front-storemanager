@@ -67,7 +67,45 @@ class AnniversaryRepositoryImpl implements AnniversaryRepository{
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
 
-    final response = await http.get(
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: jsonEncode(anniversary.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+
+      log("response.body${response.body}");
+      Map<String, dynamic> decodedData = json.decode(response.body);
+      log('postAnniversary done successfully.');
+      return decodedData['id'];
+    } else if(response.statusCode == 400) {
+      log('failed : ${response.body}');
+      throw response.body;
+    } else{
+      throw Exception('서버 오류가 발생했습니다. 나중에 다시 시도해주세요');
+    }
+  }
+
+  @override
+  Future putAnniversary(Anniversary anniversary) {
+    // TODO: implement putAnniversary
+    throw UnimplementedError();
+  }
+
+  @override
+  Future deleteAnniversary(int id) async {
+    final String apiUrl = '$anniversaryApi/${helper.getStoreId()}'
+        '/employees/0/anniversary/$id';
+
+    log("postAnniversary $apiUrl");
+
+    var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
+      'Content-Type': 'application/json'};
+
+
+    final response = await http.delete(
       Uri.parse(apiUrl),
       headers: headers,
     );
@@ -84,18 +122,6 @@ class AnniversaryRepositoryImpl implements AnniversaryRepository{
     } else{
       throw Exception('서버 오류가 발생했습니다. 나중에 다시 시도해주세요');
     }
-  }
-
-  @override
-  Future putAnniversary(Anniversary anniversary) {
-    // TODO: implement putAnniversary
-    throw UnimplementedError();
-  }
-
-  @override
-  Future deleteAnniversary(int id) {
-    // TODO: implement deleteAnniversary
-    throw UnimplementedError();
   }
 
 }

@@ -3,7 +3,7 @@ class Anniversary{
   String? name;
   DateTime? date;
 
-  Anniversary({this.id,this.name, this.date});
+  Anniversary({this.id, this.name, this.date});
 
   Anniversary.fromJson(Map<String, dynamic> json){
     id = json['id'];
@@ -15,7 +15,7 @@ class Anniversary{
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['date'] = this.date.toString();
+    data['date'] = this.date?.toIso8601String();
     return data;
   }
 }
