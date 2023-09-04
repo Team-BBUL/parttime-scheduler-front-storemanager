@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:sidam_storemanager/data/repository/anniversary_repository.dart';
@@ -8,7 +9,9 @@ import 'package:sidam_storemanager/data/repository/user_repository.dart';
 import 'package:sidam_storemanager/model/Incentive.dart';
 import 'package:sidam_storemanager/model/anniversary.dart';
 
+import '../data/repository/cost_policy_repository.dart';
 import '../model/account_role.dart';
+import '../model/cost_policy.dart';
 import '../model/store.dart';
 import '../utils/sp_helper.dart';
 
@@ -17,12 +20,16 @@ class StoreManagementViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
   final AnniversaryRepository _anniversaryRepository;
   final IncentiveRepository _incentiveRepository;
+  final CostPolicyRepository _costPolicyRepository;
   List<int> time = List<int>.generate(24, (index) => index);
   List<int> dayIndexes = List<int>.generate(7, (index) => (index + 1) % 7 + 1);
   List<String> _day =
       List<String>.generate(28, (index) => (index + 1).toString()) + ["말"];
+  List<double> _multiplies =
+  List<double>.generate(20, (index) =>   double.parse(((index + 11) * 0.1).toStringAsFixed(1)));
   String? anniversaryName;
   DateTime? date;
+  double? multiplyValue;
   Incentive? _incentive;
   Incentive? _newIncentive;
   List<Incentive>? _incentiveList;
@@ -32,31 +39,35 @@ class StoreManagementViewModel extends ChangeNotifier {
   List<AccountRole>? _storeUsers;
   List<AccountRole>? _employees;
   List<Anniversary>? _anniversaries;
+  List<CostPolicy>? _policyList;
   MonthIncentive? _monthIncentive;
   Store? _store;
   AccountRole? _selectedEmployee;
   int? _monthIncentiveCost;
+  CostPolicy? _newCostPolicy;
 
   get updatedAt => _updatedAt;
   List<String>? get day => _day;
+  List<double>? get multiplies => _multiplies;
   Store? get store => _store;
   List<AccountRole>? get employees => _employees;
   AccountRole? get selectedEmployee => _selectedEmployee;
   List<Anniversary>? get anniversaries => _anniversaries;
   MonthIncentive? get monthIncentive => _monthIncentive;
+  CostPolicy? get newCostPolicy => _newCostPolicy;
   int? get monthIncentiveCost => _monthIncentiveCost;
   Incentive? get incentive => _incentive;
   Incentive? get newIncentive => _newIncentive;
   List<Incentive>? get incentiveList => _incentiveList;
+  List<CostPolicy>? get policyList => _policyList;
   Map<String, List<Incentive>>? get monthIncentiveList => _monthIncentiveList;
 
   StoreManagementViewModel(
-      this._storeRepository, this._userRepository, this._anniversaryRepository, this._incentiveRepository){
+      this._storeRepository, this._userRepository, this._anniversaryRepository,
+      this._incentiveRepository, this._costPolicyRepository){
     _renderStoreName();
 
   }
-
-
   Future<void> sendStoreManagementScreenData() async {
     try{
       await _storeRepository.updateStore(_store!);
@@ -72,6 +83,7 @@ class StoreManagementViewModel extends ChangeNotifier {
     try {
       await _getStore();
       await _getEmployees();
+      await _getPolicies();
     }catch(e){
       rethrow;
     }
@@ -101,6 +113,14 @@ class StoreManagementViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> _getPolicies() async {
+    _newCostPolicy = CostPolicy();
+    try{
+      _policyList = await _costPolicyRepository.fetchAllPolicy();
+    }catch(e){
+      log("_getPolicies error : $e");
+    }
+  }
   Future<void> sendEmployeeScreenData() async {
     try {
       await _userRepository.updateAccountRole(_selectedEmployee!);
@@ -228,6 +248,11 @@ class StoreManagementViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setMultiplyValue(int i) {
+    _newCostPolicy!.multiplyCost = _multiplies[i];
+    print(multiplyValue);
+    notifyListeners();
+  }
   setStoreName(String text) {
     _store?.name = text;
   }
@@ -329,8 +354,6 @@ class StoreManagementViewModel extends ChangeNotifier {
 
   void setIncentiveDate(DateTime selectedDate) {
     _newIncentive?.date = selectedDate;
-    if(newIncentive == null) print("nullzz");
-    print(_newIncentive?.date);
     notifyListeners();
   }
 
@@ -340,6 +363,15 @@ class StoreManagementViewModel extends ChangeNotifier {
 
   setDescription(String text) {
     _newIncentive?.description = text;
+  }
+
+  setPolicyDescription(String text) {
+    _newCostPolicy?.description = text;
+  }
+
+  void setCostPolicyDate(DateTime selectedDate) {
+    _newCostPolicy?.date = selectedDate;
+    notifyListeners();
   }
 }
 

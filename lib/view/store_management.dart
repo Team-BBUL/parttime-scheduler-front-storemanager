@@ -270,7 +270,8 @@ class StoreManagementScreen extends StatelessWidget {
                                       ],
                                     ))
                                         .toList(),
-                                  )),
+                                  )
+                              ),
                             ),
                           ),
                           Expanded(
@@ -280,37 +281,126 @@ class StoreManagementScreen extends StatelessWidget {
                                 child: InputDecorator(
                                   decoration: AppInputTheme().buildDecoration(
                                       borderText: "급여 정책 관리", writable: true),
-                                  child: Column(
+                                  child:
+                                  Column(
                                     children: [
                                       Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
-                                              child: Center(
-                                                child: Text('${viewModel.store?.costPolicy}',
-                                                    style: const TextStyle(fontSize: 16)),
+                                              child: TextField(
+                                                enabled: true,
+                                                onChanged: (text) =>
+                                                    viewModel.setPolicyDescription(text),
                                               )),
-                                          Expanded(
-                                              child: Center(
-                                                  child: toggleButton(
-                                                      viewModel, 'policyOne'))),
+                                          GestureDetector(
+                                            onTap: () => showModalBottomSheet(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AppPickerSheet().customCupertinoPicker(
+                                                      indicator: '배',
+                                                      setTime : viewModel.setMultiplyValue,
+                                                      selected : (viewModel.newCostPolicy?.multiplyCost)?? 0,
+                                                      times : viewModel.multiplies);
+                                                }),
+                                            child: Text('${viewModel.newCostPolicy!.multiplyCost}',
+
+                                                style: const TextStyle(
+                                                  fontSize: 16,)),
+                                          ),
+                                          Text("배"),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              final selectedDate = await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime.now(),
+                                                locale: const Locale('ko', 'KO'),
+                                              );
+                                              if (selectedDate != null) {
+                                                viewModel.setCostPolicyDate(selectedDate);
+                                              }
+                                            },
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                    viewModel.date == null
+                                                        ? "날짜"
+                                                        : "${viewModel.date?.month}월 ${viewModel.date?.day}일",
+                                                    style: const TextStyle(
+                                                        fontSize: 16, color: Colors.black)),
+                                                const SizedBox(width: 8),
+                                                const Icon(
+                                                  Icons.calendar_today,
+                                                  color: Colors.black,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {
+                                              Message().showConfirmDialog(
+                                                  context: context,
+                                                  title: "기념일을 추가하시겠습니까?",
+                                                  message: "",
+                                                  apiCall: () => viewModel.createAnniversary(),
+                                                  popCount: 1);
+                                            },
+                                            icon: Icon(Icons.add),
+                                          ),
                                         ],
                                       ),
                                       Column(
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.add),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute<void>(
-                                                      builder: (BuildContext context) =>
-                                                          CostPolicyScreen()));
-                                            },
-                                          ),
-                                        ],
+                                        children: viewModel.policyList == null
+                                            ? []
+                                            : viewModel.policyList!
+                                            .map((policy) => Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text("${policy.description}",
+                                                  style: const TextStyle(
+                                                      fontSize: 16)),
+                                            ),
+                                            Expanded(
+                                              child: Text("${policy.multiplyCost}",
+                                                  style: const TextStyle(
+                                                      fontSize: 16)),
+                                            ),
+                                            Expanded(
+                                              child: GestureDetector(
+                                                onTap: () => showModalBottomSheet(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AppPickerSheet().customCupertinoPicker(
+                                                          indicator: '일',
+                                                          setTime : viewModel.setMultiplyValue,
+                                                          selected :
+                                                          ((viewModel.newCostPolicy?.multiplyCost)! - 1) * 10?? 1.1,
+                                                          times : viewModel.multiplies);
+                                                    }),
+                                                child: Text(
+                                                    viewModel.store?.payday == null ?
+                                                    '선택안됨'
+                                                        :
+                                                    '매월  ${
+                                                        viewModel.store?.payday == 31
+                                                            ? '말'
+                                                            :
+                                                        viewModel.store?.payday} 일',
+                                                    style: const TextStyle(
+                                                      fontSize: 16,)),
+                                              ),
+                                            )
+                                          ],
+                                        ))
+                                            .toList(),
                                       )
                                     ],
-                                  ),
+                                  )
+
+
                                 ),
                               )),
                         ],
