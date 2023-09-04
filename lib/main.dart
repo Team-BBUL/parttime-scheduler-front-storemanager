@@ -39,7 +39,7 @@ void main() {
             ChangeNotifierProvider(
                 create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),)
       ],
-          child: MyApp()
+          child: const MyApp()
 
       )
   );
@@ -66,9 +66,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
