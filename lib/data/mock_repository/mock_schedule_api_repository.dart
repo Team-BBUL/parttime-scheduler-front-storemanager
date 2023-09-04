@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../model/schedule.dart';
 import '../repository/schedule_api_respository.dart';
 import '../repository/schedule_local_repository.dart';
@@ -12,7 +14,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
       "date": [
         {
           "id": 1,
-          "day": "2023-08-03",
+          "day": "2023-09-01",
           "schedule": [
             {
               "id": 1,
@@ -76,7 +78,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
                   "id": 1,
                   "alias": "아무개",
                   "color": "0xFF000000",
-                  "cost": 10000
+                  "cost": 20000
                 }
               ]
             },
@@ -88,7 +90,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
                   "id": 1,
                   "alias": "박아무",
                   "color": "0xFF000000",
-                  "cost": 10000
+                  "cost": 20000
                 }
               ]
             }
@@ -96,7 +98,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id": 2,
-          "day": "2023-08-04",
+          "day": "2023-09-02",
           "schedule": [
             {
               "id": 1,
@@ -106,7 +108,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
                   "id": 1,
                   "alias": "홍길동",
                   "color": "0xFF000000",
-                  "cost": 10000
+                  "cost": 20000
                 }
               ]
             },
@@ -177,16 +179,16 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         null,
         null,
       ],
-      "time_stamp": "2023-08-20T21:23:52"
+      "time_stamp": "2023-09-04T21:23:52"
     };
-    print(testData['time_stamp']);
-    print(timeStamp);
+
     //TODO: response status에 따라 분기처리
     if(testData['time_stamp'] == timeStamp){
-      print('스케줄 버전이 최신입니다..');
+      log('스케줄 버전이 최신입니다...');
       return MonthSchedule();
     }else{
-      ScheduleLocalRepository().saveSchedule(testData, testData['time_stamp']);
+      log('스케줄 버전 정보가 다릅니다...');
+      await ScheduleLocalRepository().saveSchedule(testData, testData['time_stamp']);
     }
     return MonthSchedule.fromJson(testData);
   }
