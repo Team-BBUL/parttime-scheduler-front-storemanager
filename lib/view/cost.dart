@@ -75,7 +75,9 @@ class CostScreen extends StatelessWidget{
                                         ),
                                       ),
                                       Expanded(
-                                        child: Text("${viewModel.getPrevDate().month}월 달 보다 "
+                                        child: Text(
+                                            "${viewModel.dateList![viewModel.dateIndex ?? 0]
+                                                .subtract(const Duration(days: 30)).month}월 달 보다 "
                                             "${(viewModel.totalPay - viewModel.prevMonthTotalPay >= 0) ?
                                         "${viewModel.totalPay - viewModel.prevMonthTotalPay}원 증가"
                                             :
@@ -102,9 +104,7 @@ class CostScreen extends StatelessWidget{
                                     ],
                                   )
                               ),
-                              Container(
-                                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-                                  color: const Color(0xB3FFFFFF),
+                              Expanded(
                                   child: Column(
                                     children: [
                                       Row(
@@ -151,10 +151,26 @@ class CostScreen extends StatelessWidget{
                                               );
                                             },
                                           )
-                                      )
+                                      ),
+
+
+
                                     ],
                                   )
                               ),
+                              // Expanded(
+                              //     child :  ListView.builder(
+                              //       scrollDirection: Axis.vertical,
+                              //       itemCount: viewModel.monthSchedule?.date?.length ?? 0,
+                              //       itemBuilder: (context, index) {
+                              //         String day = viewModel.monthSchedule!.date![index].day;
+                              //         return Expanded(
+                              //           child: Text("$day"),
+                              //         );
+                              //
+                              //       },
+                              //     )
+                              // ),
                             ]
                         );
                     }
@@ -172,18 +188,22 @@ Widget selectDateWidget(CostViewModel viewModel, BuildContext context){
     children: [
       Expanded(
         child: IconButton(
-            onPressed: () {
+            onPressed: () async {
               int index = viewModel.dateIndex!;
               if(index > 0 ) {
-                viewModel.setDate(index-1);
-                viewModel.getCost();
+                await viewModel.setDate(index-1);
+                await viewModel.loadSchedule();
+                await viewModel.getCost();
               }
             },
             icon: Icon(Icons.arrow_circle_left)),
       ),
       Expanded(
         child: TextButton(
-          child: Text('${viewModel.selectedDate}', style: TextStyle(color: Colors.black)),
+          child: Text(
+              '${viewModel.dateList![viewModel.dateIndex ?? 0].year}년 '
+              '${viewModel.dateList![viewModel.dateIndex ?? 0].month}월',
+              style: TextStyle(color: Colors.black)),
           onPressed: () => showDialog(
               CupertinoPicker(
                 backgroundColor: Colors.white,
@@ -204,10 +224,11 @@ Widget selectDateWidget(CostViewModel viewModel, BuildContext context){
                 List<Widget>.generate(viewModel.dateList!.length, (int index) {
                   int reversedIndex = viewModel.dateList!.length - index - 1;
                   return Center(
-                      child: Text('${viewModel.dateList![reversedIndex]}'));
+                      child: Text(
+                          '${viewModel.dateList![reversedIndex].year}년'
+                              ' ${viewModel.dateList![reversedIndex].month}월'));
                 }),
               ),
-
               context,
               viewModel
           ),
@@ -215,11 +236,12 @@ Widget selectDateWidget(CostViewModel viewModel, BuildContext context){
       ),
       Expanded(
         child: IconButton(
-            onPressed: () {
-              int index = viewModel.dateIndex!;
+            onPressed: () async {
+              int index = viewModel.dateIndex ?? 0;
               if(index < viewModel.dateList!.length-1) {
-                viewModel.setDate(index+1);
-                viewModel.getCost();
+                await viewModel.setDate(index+1);
+                await viewModel.loadSchedule();
+                await viewModel.getCost();
               }
             },
 
@@ -249,8 +271,9 @@ showDialog(Widget child, BuildContext context, CostViewModel viewModel) async {
       ),
     ),
   );
-  viewModel.setDate(viewModel.dateIndex!);
-  viewModel.getCost();
+  await viewModel.setDate(viewModel.dateIndex!);
+  await viewModel.loadSchedule();
+  await viewModel.getCost();
 }
 
 

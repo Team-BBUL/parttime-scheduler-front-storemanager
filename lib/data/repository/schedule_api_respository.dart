@@ -21,7 +21,7 @@ class ScheduleApiRepository implements ScheduleRemoteRepository{
   Future<MonthSchedule> fetchSchedule(String timeStamp, int year, int month, int day) async {
     SPHelper helper = SPHelper();
 
-    final String apiUrl = '$scheduleApi/${helper.getStoreId()}?id=${helper.getRoleId()}&version=$timeStamp&year=2021&month=8&day=1';
+    final String apiUrl = '$scheduleApi/${helper.getStoreId()}?id=${helper.getRoleId()}&version=$timeStamp&year=$year&month=$month&day=$day';
 
     log("fetchSchedule $apiUrl");
 

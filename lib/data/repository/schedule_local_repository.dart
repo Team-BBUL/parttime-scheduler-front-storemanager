@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:sidam_storemanager/data/local_data_source.dart';
 
 import '../../model/schedule.dart';
@@ -9,34 +10,46 @@ import '../../model/schedule.dart';
 
 class ScheduleLocalRepository{
 
-  String? _yearMonth;
-  String? _prevYearMonth;
+  DateTime? _curDate;
+  DateTime? _prevDate;
   int? _costDay;
   String? _recentTimeStamp;
 
-  Future<MonthSchedule> fetchSchedule(String yearMonth) async {
+  Future<MonthSchedule> fetchSchedule(DateTime date) async {
     try {
-      dynamic decodedData = await loadJson(yearMonth);
+      dynamic decodedData = await getFileData(date);
       return MonthSchedule.fromJson(decodedData);
     } catch (e) {
-      print('fetchSchedule : Error loading cells from JSON: $e');
+      log('fetchSchedule : Error loading cells from JSON: $e');
     }
+    log("fetchSchedule");
     return MonthSchedule();
   }
 
-  Future<MonthSchedule> fetchScheduleByPaycheck(String date, int costDay) async {
+  Future<MonthSchedule> fetchScheduleByPaycheck(DateTime date, int costDay) async {
     initData(date, costDay);
-    Map<String,dynamic> data = await getScheduleBasedOnCostDay();
-    print("fetchScheduleByPaycheck = $data");
-    return MonthSchedule.fromJson(data);
+    try {
+      Map<String, dynamic> data = await getScheduleBasedOnCostDay();
+      return MonthSchedule.fromJson(data);
+    }catch(e){
+      return MonthSchedule();
+    }
   }
 
-  Future<int> getPrevMonthCost(String date, int costDay) async{
-    String prevYearMonth = getPrevYearMonth(date, costDay);
+  initData(DateTime date, int day){
+    _curDate = date;
+    _costDay = day;
+    _prevDate = getPrevYearMonth(date, day);
+    _recentTimeStamp = null;
+  }
+
+  Future<int> getPrevMonthCost(DateTime date, int costDay) async{
+    DateTime prevYearMonth = getPrevYearMonth(date, costDay);
     initData(prevYearMonth, costDay);
     Map<String,dynamic> data = await getScheduleBasedOnCostDay();
     return calculateTotalCostWithJson(data);
   }
+
   //TODO calculateTotalCost 코드 중복 => ScheduleRepository
   int calculateTotalCostWithJson(Map<String, dynamic> data) {
     int totalCost = 0;
@@ -59,51 +72,74 @@ class ScheduleLocalRepository{
         }
       }
     }
+    print("calculateTotalCostWithJson$totalCost");
 
     return totalCost;
   }
 
-  initData(String date, int day){
-    _yearMonth = date;
-    _costDay = day;
-    _prevYearMonth = getPrevYearMonth(date, day);
-  }
 
-  String getPrevYearMonth(String yearMonth, int costDay) {
-    DateTime curDate = DateTime(int.parse(yearMonth.substring(0,4)),
-        int.parse(yearMonth.substring(4,6)), costDay);
-    DateTime prevDate = DateTime(curDate.year, curDate.month-1, costDay+1);
-    if( 9 < curDate.month - 1 ) {
-      return '${prevDate.year}${prevDate.month}';
-    } else {
-      return '${prevDate.year}${prevDate.month.toString().padLeft(2, '0')}';
-    }
+  DateTime getPrevYearMonth(DateTime nowDate, int costDay) {
+    DateTime prevDate = DateTime(nowDate.year, nowDate.month-1, costDay+1);
+    return prevDate;
   }
 
   Future<Map<String, dynamic>> getScheduleBasedOnCostDay() async {
     List<dynamic> prevMonthData = [];
     List<dynamic> curMonthData = [];
 
-    prevMonthData = await getMonthData(_prevYearMonth);
-    curMonthData = await getMonthData(_yearMonth);
+    try {
+      prevMonthData = await getMonthData(_prevDate!);
+      log("prevMonth $prevMonthData");
+      curMonthData = await getMonthData(_curDate!);
+      log("curmonth");
+      for (var item in curMonthData) {
+        log('${item['day']}');
+      }
+      if (prevMonthData.isNotEmpty && curMonthData.isNotEmpty) {
+        prevMonthData.addAll(curMonthData);
+      } else if (prevMonthData.isNotEmpty) {
+        prevMonthData = prevMonthData;
+      } else if (curMonthData.isNotEmpty) {
+        prevMonthData = curMonthData;
+      }
 
-    if(prevMonthData.isNotEmpty && curMonthData.isNotEmpty) {
-      prevMonthData.addAll(curMonthData);
-    } else if( prevMonthData.isNotEmpty) {
-      prevMonthData = prevMonthData;
-    } else if( curMonthData.isNotEmpty) {
-      prevMonthData = curMonthData;
+      // for (var item in prevMonthData) {
+      //   log('${item['day']}');
+      // }
+      // log("getScheduleBasedOnCostDay $prevMonthData");
+
+      return {'date': prevMonthData, 'time_stamp': _recentTimeStamp};
+    }catch(e){
+      log("getScheduleBasedOnCostDay $e");
+      rethrow;
     }
-    return {'date' : prevMonthData, 'time_stamp' : _recentTimeStamp};
   }
 
-  Future<List<dynamic>> getMonthData(String? date) async{
-    dynamic decodedData = await loadJson(date!);
-    if(decodedData.isNotEmpty) {
+  Future<List<dynamic>> getMonthData(DateTime date) async{
+    try {
+      dynamic decodedData = await getFileData(date);
       setRecentTimeStamp(decodedData);
       decodedData = filterData(decodedData, date);
+      return decodedData;
+    }catch(e){
+      log("getMonthData $e");
     }
-    return decodedData;
+    return [];
+  }
+
+  Future<dynamic> getFileData(DateTime date) async {
+    LocalDataSource localDataSource = LocalDataSource();
+    try {
+
+      final decodedData = await localDataSource.loadJson("schedule/${DateFormat('yyyyMM').format(date)}");
+      if(decodedData["message"] != null){
+        throw("no data");
+      }
+      return decodedData;
+    } catch (e) {
+      log('getFileData : Error loading cells from JSON: $e');
+      rethrow;
+    }
   }
 
   void setRecentTimeStamp(decodedData) {
@@ -117,16 +153,6 @@ class ScheduleLocalRepository{
     }
   }
 
-  Future<dynamic> loadJson(String date) async {
-    LocalDataSource localDataSource = LocalDataSource();
-    List<dynamic> data = [];
-    try {
-      localDataSource.loadJson(date);
-    } catch (e) {
-      log('loadJson : Error loading cells from JSON: $e');
-    }
-    return data;
-  }
 
   DateTime convertTimeStampToDateTime(String? timeStamp){
     String year = timeStamp!.substring(0,4);
@@ -145,15 +171,27 @@ class ScheduleLocalRepository{
     return recentTimeStamp;
   }
 
-  List filterData(decodedData, String date) {
-
+  List filterData(decodedData, DateTime date) {
+    log("$date, $_curDate");
+    log("${date.isAtSameMomentAs(_curDate!)}");
     List<Map<String, dynamic>> filteredData = deleteDateBodyAndNull(decodedData);
 
-    if(int.parse(date) < int.parse(_yearMonth!)){
-      filteredData = removeUnderCostDay(filteredData);
-    }else{
+    if(date.isAtSameMomentAs(_curDate!)){
+      for (var o in filteredData) {
+        log("removeOverCostDay ${o['day']}");
+
+      }
       filteredData = removeOverCostDay(filteredData);
+    }else{
+      print("hereeeeeeeeeeeeeeeeeeeee");
+      for (var o in filteredData) {
+        log("removeUnderCostDay ${o['day']}");
+
+      }
+      filteredData = removeUnderCostDay(filteredData);
+
     }
+
     return filteredData;
   }
 
@@ -165,57 +203,46 @@ class ScheduleLocalRepository{
   }
 
   List<Map<String, dynamic>> removeUnderCostDay(List<Map<String, dynamic>> dateList) {
+
+
     return dateList.where((item) => int.parse(item['day'].substring(8,10)) > _costDay!).toList();
   }
 
   List<Map<String, dynamic>> removeOverCostDay(List<Map<String, dynamic>> dateList) {
+    // for (var item in dateList) {
+    //   print('removeOverCostDay ${item['day']}');
+    // }
+    // print(_costDay);
     return dateList.where((item) => int.parse(item['day'].substring(8,10)) <= _costDay!).toList();
   }
 
-  Future<List<String>> getDateList() async {
-    List<String> fileNames = await getFileNames();
-    List<String> dateList = fileToDate(fileNames);
+  Future<List<DateTime>> getDateList() async {
+    List<String> fileNames = await getScheduleFileNames();
+    List<DateTime> dateList = [];
+    for (var file in fileNames) {
+      String yyyyMM = file.split('.').first;
+      dateList.add(DateTime.parse("$yyyyMM-01"));
+    }
+    dateList.sort((a,b) => a.compareTo(b));
     return dateList;
   }
 
-   getFileNames() async{
+   Future<List<String>> getScheduleFileNames() async{
     LocalDataSource localDataSource = LocalDataSource();
     try {
-      return await localDataSource.getScheduleFileNames();
+      return await localDataSource.getFileNames("schedule/");
     } catch (e) {
       log('getFileNames : Error get schedule file name: $e');
     }
+    return [];
   }
 
-  List<String> fileToDate(List<String> fileList) {
-    List<String> dateList = [];
-    for (String yearMonth in fileList) {
-      int year = int.parse(yearMonth.substring(0, 4));
-      int month = int.parse(yearMonth.substring(4, 6));
-      String parsedString = '$year년 ${month.toString().padLeft(2, '0')}월';
-      dateList.add(parsedString);
-    }
-    return dateList;
-  }
+  Future<void> saveSchedule(Map<String, dynamic> decodedData, String timeStamp) async {
+    LocalDataSource localDataSource = LocalDataSource();
 
-  // Future<List<String>> getFileNames() async {
-  //   String directory = 'asset/json/';
-  //
-  //   List<String> assetList = await rootBundle.loadString('AssetManifest.json')
-  //       .then((jsonStr) => json.decode(jsonStr) as Map<String, dynamic>)
-  //       .then((map) => map.keys.toList());
-  //
-  //   List<String> jsonFiles = assetList
-  //       .where((file) => file.startsWith(directory) && file.endsWith('.json'))
-  //       .toList();
-  //
-  //   return jsonFiles;
-  // }
-
-  String convertCostScreenDateToYearMonth(String date) {
-    String year = date.substring(0, 4);
-    String month = date.substring(6, 8);
-    return year + month;
+    String yearMonth = convertTimeStampToYearMonth(timeStamp);
+    await localDataSource.saveModels(decodedData, "schedule", yearMonth);
+    log("schedule saved");
   }
 
   String convertTimeStampToYearMonth(String date){
@@ -223,13 +250,4 @@ class ScheduleLocalRepository{
     String month = date.substring(5, 7);
     return year + month;
   }
-
-  void saveSchedule(Map<String, dynamic> decodedData, String timeStamp) async {
-    LocalDataSource localDataSource = LocalDataSource();
-
-    String yearMonth = convertTimeStampToYearMonth(timeStamp);
-    localDataSource.saveModels(decodedData, yearMonth);
-    log("schedule saved");
-  }
-
 }
