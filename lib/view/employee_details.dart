@@ -62,101 +62,102 @@ class EmployeeDetailScreen extends StatelessWidget {
                   child: InputDecorator(
                       decoration: AppInputTheme()
                           .buildDecoration(borderText: "기념일", writable: true),
-                      child: Column(children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                           children: [
-                            Expanded(
-                                child: TextField(
-                              enabled: true,
-                              onChanged: (text) =>
-                                  viewModel.setAnniversaryName(text),
-                            )),
-                            ElevatedButton(
-                              onPressed: () async {
-                                final selectedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime.now(),
-                                  locale: const Locale('ko', 'KO'),
-                                );
-                                if (selectedDate != null) {
-                                  viewModel.setDate(selectedDate);
-                                }
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                      viewModel.date == null
-                                          ? "날짜를 선택해주세요"
-                                          : "${viewModel.date?.month}월 ${viewModel.date?.day}일",
-                                      style: const TextStyle(
-                                          fontSize: 16, color: Colors.black)),
-                                  const SizedBox(width: 8),
-                                  const Icon(
-                                    Icons.calendar_today,
-                                    color: Colors.black,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                    child: TextField(
+                                      enabled: true,
+                                      onChanged: (text) =>
+                                          viewModel.setAnniversaryName(text),
+                                    )),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    final selectedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime.now(),
+                                      locale: const Locale('ko', 'KO'),
+                                    );
+                                    if (selectedDate != null) {
+                                      viewModel.setDate(selectedDate);
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                          viewModel.date == null
+                                              ? "날짜를 선택해주세요"
+                                              : "${viewModel.date?.month}월 ${viewModel.date?.day}일",
+                                          style: const TextStyle(
+                                              fontSize: 16, color: Colors.black)),
+                                      const SizedBox(width: 8),
+                                      const Icon(
+                                        Icons.calendar_today,
+                                        color: Colors.black,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Message().showConfirmDialog(
+                                        context: context,
+                                        title: "기념일을 추가하시겠습니까?",
+                                        message: "",
+                                        apiCall: () => viewModel.createAnniversary(),
+                                        popCount: 1);
+                                  },
+                                  icon: Icon(Icons.add),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              onPressed: () {
-                                Message().showConfirmDialog(
-                                    context: context,
-                                    title: "기념일을 추가하시겠습니까?",
-                                    message: "",
-                                    apiCall: () => viewModel.createAnniversary(),
-                                    popCount: 1);
-                              },
-                              icon: Icon(Icons.add),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: viewModel.anniversaries == null
-                              ? []
-                              : viewModel.anniversaries!
+                            Column(
+                              children: viewModel.anniversaries == null
+                                  ? []
+                                  : viewModel.anniversaries!
                                   .asMap()
                                   .entries
                                   .map((entry) {
-                                  int index = entry.key;
-                                  Anniversary anniversary = entry.value;
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: TextField(
-                                            enabled: false,
-                                            controller: TextEditingController(
-                                                text: '${anniversary.name}'),
-                                            style: TextStyle(fontSize: 16)),
-                                      ),
-                                      Container(
-                                        child: Text(
-                                            '${anniversary.date!.month}월 .${anniversary.date!.day}일',
-                                            style: TextStyle(fontSize: 16)),
-                                      ),
-                                      Icon(null),
-                                      IconButton(
-                                        icon: const Icon(Icons.remove),
-                                        onPressed: () async {
-                                          Message().showConfirmDialog(
-                                              context: context,
-                                              title: "기념일을 삭제하시겠습니까?",
-                                              message: "message",
-                                              apiCall: () => viewModel
-                                                  .removeAnniversary(viewModel.anniversaries![index].id!),
-                                              popCount: 1);
-                                        },
-                                      )
-                                    ],
-                                  );
-                                }).toList(),
-                        ),
+                                int index = entry.key;
+                                Anniversary anniversary = entry.value;
+                                return Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                          enabled: false,
+                                          controller: TextEditingController(
+                                              text: '${anniversary.name}'),
+                                          style: TextStyle(fontSize: 16)),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                          '${anniversary.date!.month}월 .${anniversary.date!.day}일',
+                                          style: TextStyle(fontSize: 16)),
+                                    ),
+                                    Icon(null),
+                                    IconButton(
+                                      icon: const Icon(Icons.remove),
+                                      onPressed: () async {
+                                        Message().showConfirmDialog(
+                                            context: context,
+                                            title: "기념일을 삭제하시겠습니까?",
+                                            message: "message",
+                                            apiCall: () => viewModel
+                                                .removeAnniversary(viewModel.anniversaries![index].id!),
+                                            popCount: 1);
+                                      },
+                                    )
+                                  ],
+                                );
+                              }).toList(),
+                            ),
                       ])),
                 ),
                 Container(

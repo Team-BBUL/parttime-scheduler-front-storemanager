@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:intl/intl.dart';
+
 import '../../model/Incentive.dart';
 import '../../utils/sp_helper.dart';
 import 'package:http/http.dart' as http;
 
 abstract class IncentiveRepository{
-  Future fetchMonthIncentives(int employeeId, DateTime date);
+  Future fetchMonthIncentives(DateTime date);
   Future fetchOnesMonthIncentive(int employeeId);
   Future fetchIncentives(int employeeId);
   Future fetchIncentive(int employeeId,int incentiveId);
@@ -20,12 +22,11 @@ class IncentiveRepositoryImpl extends IncentiveRepository{
 
   String incentiveApi = 'http://10.0.2.2:8088/api/stores';
 
-
   @override
-  Future fetchMonthIncentives(int employeeId, DateTime date) async {
+  Future fetchMonthIncentives(DateTime date) async {
     SPHelper helper = SPHelper();
 
-    final String apiUrl = '$incentiveApi/${helper.getStoreId()}/incentives?month=$date';
+    final String apiUrl = '$incentiveApi/${helper.getStoreId()}/incentives?month=${DateFormat('yyyyMM').format(date)}';
 
     log("fetchMonthIncentives $apiUrl");
 
@@ -40,6 +41,9 @@ class IncentiveRepositoryImpl extends IncentiveRepository{
       log("response.body${response.body}");
       Map<String, dynamic> decodedData = json.decode(response.body);
       List<Incentive> incentiveList = [];
+      if(decodedData['data'].isEmpty){
+        return MonthIncentive();
+      }
       for (var item in decodedData['data']['incentives']) {
         incentiveList.add(Incentive.fromJson(item));
       }
