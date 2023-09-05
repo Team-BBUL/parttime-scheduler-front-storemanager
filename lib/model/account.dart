@@ -1,10 +1,11 @@
 class Account {
   String? name;
-
-  Account({this.name});
+  bool? onceVerified;
+  Account({this.name, this.onceVerified});
 
   Account.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    onceVerified = json['onceVerified'];
   }
 
   Map<String, dynamic> toJson() {
