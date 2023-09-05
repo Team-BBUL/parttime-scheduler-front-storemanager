@@ -43,10 +43,7 @@ class CostViewModel extends ChangeNotifier{
       await fetchRemoteSchedule();
       await loadDateList();
       await getMonthIncentive();
-      if (dateList!.length > 1) {
-        prevMonthTotalPay = await _scheduleLocalRepository.getPrevMonthCost(
-            dateList![dateIndex!], costDay);
-      }
+
       await getCost();
       dateIndex = dateList!.length -1;
     }catch(e){
@@ -75,6 +72,10 @@ class CostViewModel extends ChangeNotifier{
   getCost() async {
     await calculateCost();
     await calculateTotalCost();
+    if (dateList!.length > 1) {
+      prevMonthTotalPay = await _scheduleLocalRepository.getPrevMonthCost(
+          dateList![dateIndex!], costDay);
+    }
     notifyListeners();
   }
 
