@@ -39,8 +39,8 @@ class CostViewModel extends ChangeNotifier{
     try {
       log("----------------------------------------loadData-----------------------");
       await loadDateList();
-      await fetchLocalSchedule(dateList![dateList!.length - 1]);
       await fetchRemoteSchedule();
+      await fetchLocalSchedule(dateList![dateList!.length - 1]);
       await loadDateList();
       await getMonthIncentive();
 
@@ -53,7 +53,7 @@ class CostViewModel extends ChangeNotifier{
 
   loadDateList() async{
     dateList = await _scheduleLocalRepository.getDateList();
-    if(dateList!.length == 0) {
+    if(dateList!.isNotEmpty) {
       dateIndex = dateList!.length - 1;
     }
     log("loadDateList $dateList");
