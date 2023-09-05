@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:sidam_storemanager/data/repository/user_repository.dart';
+import 'package:sidam_storemanager/model/account.dart';
 
 import '../utils/sp_helper.dart';
 import '../model/web_view_token.dart';
@@ -11,6 +13,8 @@ import '../model/web_view_token.dart';
 class LoginViewModel extends ChangeNotifier{
   InAppWebViewController? webViewController;
   late WebViewToken webViewToken;
+  UserRepository? _userRepository;
+  Account? account;
   ValueNotifier<String> newUrl = ValueNotifier<String>("");
   SPHelper helper = SPHelper();
 
@@ -31,7 +35,7 @@ class LoginViewModel extends ChangeNotifier{
   double progress = 0;
   final urlController = TextEditingController();
 
-  LoginViewModel() {
+  LoginViewModel(this._userRepository) {
     helper.init();
     pullToRefreshController = PullToRefreshController(
       options: PullToRefreshOptions(
@@ -49,6 +53,11 @@ class LoginViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
+  Future<void> getAccountInfo() async{
+    account = await _userRepository?.fetchUser();
+    helper.writeIsRegistered(account!.onceVerified ?? false);
+  }
+
   Future<bool> saveToken(String url) async{
     final Uri parsedUri= Uri.parse(url);
     final Map<String, String> queryParams = parsedUri.queryParameters;
@@ -57,6 +66,7 @@ class LoginViewModel extends ChangeNotifier{
         String? jwt = queryParams['token'];
         helper.writeIsLoggedIn(true);
         helper.writeJWT(jwt!);
+
         print(helper.getJWT());
         print("token: ${jwt}");
         return true;
@@ -64,5 +74,4 @@ class LoginViewModel extends ChangeNotifier{
     }
     return false;
   }
-
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -89,7 +91,8 @@ class LoginWebView extends StatelessWidget{
                           );
                           viewModel.urlController.text = viewModel.url;
                           var isSuccess = await viewModel.saveToken(viewModel.url);
-                          if(isSuccess){
+                          if(isSuccess) {
+                            await viewModel.getAccountInfo();
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(
                                     builder: (context) => CheckLoginScreen()
