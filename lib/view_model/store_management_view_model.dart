@@ -22,11 +22,11 @@ class StoreManagementViewModel extends ChangeNotifier {
   final IncentiveRepository _incentiveRepository;
   final CostPolicyRepository _costPolicyRepository;
   List<int> time = List<int>.generate(24, (index) => index);
-  List<int> dayIndexes = List<int>.generate(7, (index) => (index + 1) % 7 + 1);
   List<String> _day =
       List<String>.generate(28, (index) => (index + 1).toString()) + ["말"];
   List<double> _multiplies =
   List<double>.generate(20, (index) =>   double.parse(((index + 11) * 0.1).toStringAsFixed(1)));
+  List<int> _levels = List<int>.generate(6, (index) => index);
   String? anniversaryName;
   DateTime? date;
   double? multiplyValue;
@@ -49,6 +49,7 @@ class StoreManagementViewModel extends ChangeNotifier {
   get updatedAt => _updatedAt;
   List<String>? get day => _day;
   List<double>? get multiplies => _multiplies;
+  List<int>? get levels => _levels;
   Store? get store => _store;
   List<AccountRole>? get employees => _employees;
   AccountRole? get selectedEmployee => _selectedEmployee;
@@ -66,8 +67,8 @@ class StoreManagementViewModel extends ChangeNotifier {
       this._storeRepository, this._userRepository, this._anniversaryRepository,
       this._incentiveRepository, this._costPolicyRepository){
     _renderStoreName();
-
   }
+
   Future<void> sendStoreManagementScreenData() async {
     try{
       await _storeRepository.updateStore(_store!);
@@ -212,13 +213,19 @@ class StoreManagementViewModel extends ChangeNotifier {
       _store?.payday = int.parse(_day[selectedItem]);
     }
 
-    print('StoreManagerViewModel.setPayday:${_store?.payday}');
+    log('StoreManagerViewModel.setPayday:${_store?.payday}');
+    notifyListeners();
+  }
+
+  void setLevel(int selectedItem) {
+    _selectedEmployee!.level = selectedItem;
+    log('StoreManagerViewModel.setLevel:${_selectedEmployee?.level}');
     notifyListeners();
   }
 
   void toggle(selected) {
     costPolicyList[selected] = !costPolicyList[selected]!;
-    print(costPolicyList[selected]);
+    log("${costPolicyList[selected]}");
     notifyListeners();
   }
 
@@ -229,7 +236,7 @@ class StoreManagementViewModel extends ChangeNotifier {
 
   void setDeadlineOfSubmit(int index) {
     _store?.deadlineOfSubmit = index;
-    print("setDeadLineOfSubmit ${_store?.deadlineOfSubmit}");
+    log("setDeadLineOfSubmit ${_store?.deadlineOfSubmit}");
     notifyListeners();
   }
 
@@ -250,7 +257,8 @@ class StoreManagementViewModel extends ChangeNotifier {
 
   void setMultiplyValue(int i) {
     _newCostPolicy!.multiplyCost = _multiplies[i];
-    print(multiplyValue);
+    print(i);
+    print(_newCostPolicy!.multiplyCost);
     notifyListeners();
   }
   setStoreName(String text) {
