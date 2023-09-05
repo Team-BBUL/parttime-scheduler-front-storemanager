@@ -58,11 +58,11 @@ class CostPolicyRepositoryImpl implements CostPolicyRepository{
   @override
   Future postPolicy(CostPolicy policy) async {
 
-    final String apiUrl = '$policyApi/${helper.getStoreId()}/costpolicy}';
+    final String apiUrl = '$policyApi/${helper.getStoreId()}/costpolicy';
 
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
-
+    log("costpolicy post url $apiUrl");
     log("policy incentive  ${policy.toJson()}");
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -89,7 +89,7 @@ class CostPolicyRepositoryImpl implements CostPolicyRepository{
   Future deletePolicy(int policyId) async {
     SPHelper helper = new SPHelper();
 
-    final String apiUrl = '$policyApi/${helper.getStoreId()}/costpolicies/$policyId}';
+    final String apiUrl = '$policyApi/${helper.getStoreId()}/costpolicies/$policyId';
 
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};

@@ -201,8 +201,8 @@ Widget selectDateWidget(CostViewModel viewModel, BuildContext context){
       Expanded(
         child: TextButton(
           child: Text(
-              '${viewModel.dateList![viewModel.dateIndex ?? 0].year}년 '
-              '${viewModel.dateList![viewModel.dateIndex ?? 0].month}월',
+              '${viewModel.dateList?[viewModel.dateIndex ?? 0].year}년 '
+              '${viewModel.dateList?[viewModel.dateIndex ?? 0].month}월',
               style: TextStyle(color: Colors.black)),
           onPressed: () => showDialog(
               CupertinoPicker(
