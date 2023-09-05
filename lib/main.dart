@@ -37,7 +37,7 @@ void main() {
               create: (_) => StoreListViewModel(StoreRepositoryImpl(),UserRepositoryImpl()),
             ),
             ChangeNotifierProvider(
-                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),)
+                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()))
       ],
           child: MyApp()
 
