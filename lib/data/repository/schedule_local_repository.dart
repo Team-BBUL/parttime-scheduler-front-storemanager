@@ -230,7 +230,7 @@ class ScheduleLocalRepository{
    Future<List<String>> getScheduleFileNames() async{
     LocalDataSource localDataSource = LocalDataSource();
     try {
-      return await localDataSource.getFileNames("schedule/");
+      return await localDataSource.getFileNames("schedules/");
     } catch (e) {
       log('getFileNames : Error get schedule file name: $e');
     }
@@ -241,7 +241,7 @@ class ScheduleLocalRepository{
     LocalDataSource localDataSource = LocalDataSource();
 
     String yearMonth = convertTimeStampToYearMonth(timeStamp);
-    await localDataSource.saveModels(decodedData, "schedule", yearMonth);
+    await localDataSource.saveModels(decodedData, "schedules", yearMonth);
     log("schedule saved");
   }
 

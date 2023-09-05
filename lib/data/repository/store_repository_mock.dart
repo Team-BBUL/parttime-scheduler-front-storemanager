@@ -10,7 +10,6 @@ class MockStoreRepository implements StoreRepository{
 
   @override
   Future deleteStore(String id) {
-    // TODO: implement deleteStore
     throw UnimplementedError();
   }
 
@@ -44,43 +43,36 @@ class MockStoreRepository implements StoreRepository{
 
   @override
   Future<String> fetchSearchedStores(String search) {
-    // TODO: implement fetchSearchedStores
     throw UnimplementedError();
   }
 
   @override
   Future<String> fetchStores() {
-    // TODO: implement fetchStores
     throw UnimplementedError();
   }
 
   @override
   Future<StoreList> getAllStores() {
-    // TODO: implement getAllStores
     throw UnimplementedError();
   }
 
   @override
   Future<StoreList> getStores(String search) {
-    // TODO: implement getStores
     throw UnimplementedError();
   }
 
   @override
   Future<Store> fetchStore(int? storeId) {
-    // TODO: implement fetchStore
     throw UnimplementedError();
   }
 
   @override
   Future<List<Store>> fetchMyStoreList() {
-    // TODO: implement fetchMyStoreList
     throw UnimplementedError();
   }
 
   @override
   Future<Store> fetchStoreById(int storeId) {
-    // TODO: implement fetchStoreById
     throw UnimplementedError();
   }
 }

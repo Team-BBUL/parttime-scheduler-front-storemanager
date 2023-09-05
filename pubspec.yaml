@@ -48,6 +48,7 @@ dependencies:
   html: ^0.15.4
   fluttertoast: ^8.2.2
   logger: ^2.0.1
+  webview_flutter: ^4.2.4
 
 
 dev_dependencies:

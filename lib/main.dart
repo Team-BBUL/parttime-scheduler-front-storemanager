@@ -6,6 +6,7 @@ import 'package:sidam_storemanager/data/mock_repository/mock_schedule_api_reposi
 import 'package:sidam_storemanager/data/repository/anniversary_repository.dart';
 import 'package:sidam_storemanager/data/repository/cost_policy_repository.dart';
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
+import 'package:sidam_storemanager/view/alarm_view.dart';
 import 'package:sidam_storemanager/view/chatting_page.dart';
 import 'package:sidam_storemanager/view/cost.dart';
 import 'package:sidam_storemanager/view/home.dart';
@@ -37,7 +38,8 @@ void main() {
               create: (_) => StoreListViewModel(StoreRepositoryImpl(),UserRepositoryImpl()),
             ),
             ChangeNotifierProvider(
-                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),)
+                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),
+            ),
       ],
           child: const MyApp()
 
@@ -82,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   init(){
     helper.init();
   }
-  final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostScreen(), ChattingPage()];
+  final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostScreen(), AlarmView()];
 
   void _onTap(int index) {
     setState(() {
@@ -145,11 +147,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             BottomNavigationBarItem(
-              icon: SvgPicture.asset('asset/icons/message_square_icon.svg'),
-              label: "Chatting",
+              icon: SvgPicture.asset('asset/icons/bell_icon.svg'),
+              label: "Alarm",
               activeIcon: Column(
                 children: <Widget>[
-                  SvgPicture.asset('asset/icons/message_square_icon.svg', color: color.mainColor),
+                  SvgPicture.asset('asset/icons/bell_icon.svg', color: color.mainColor),
                   Container(
                     height: 4,
                     width: 24,

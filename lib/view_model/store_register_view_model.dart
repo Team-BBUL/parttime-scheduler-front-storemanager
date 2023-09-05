@@ -1,9 +1,7 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sidam_storemanager/data/repository/store_repository.dart';
-import 'package:sidam_storemanager/data/repository/store_repository_mock.dart';
 import 'package:sidam_storemanager/main.dart';
 
 import '../model/store.dart';

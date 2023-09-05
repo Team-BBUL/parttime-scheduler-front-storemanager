@@ -48,56 +48,47 @@ class FixedUserRepositoryStub extends UserRepository{
 
   @override
   Future deleteUser(String id) {
-    // TODO: implement deleteUser
     throw UnimplementedError();
   }
 
   @override
   Future createUser(String kakaoId) {
-    // TODO: implement createUser
     throw UnimplementedError();
   }
 
   @override
   Future<Account> getUser() {
-    // TODO: implement getUser
     throw UnimplementedError();
   }
 
   @override
   Future<Account> fetchUser() {
-    // TODO: implement fetchUser
     throw UnimplementedError();
   }
 
   @override
   Future<List<AccountRole>> fetchUsers() {
-    // TODO: implement fetchUsers
     throw UnimplementedError();
   }
 
   @override
   Future<AccountRole> fetchAccountRole(int storeId) {
-    // TODO: implement fetchAccountRole
     throw UnimplementedError();
   }
 
   @override
   Future<List<AccountRole>> fetchAccountRoles() {
-    // TODO: implement fetchAccountRoles
     throw UnimplementedError();
   }
 
 
   @override
   Future updateAccountRole(AccountRole accountRole) {
-    // TODO: implement updateAccountRole
     throw UnimplementedError();
   }
 
   @override
   Future<Map<AccountRole, Store>> enter(int? storeId) {
-    // TODO: implement enter
     throw UnimplementedError();
   }
 
