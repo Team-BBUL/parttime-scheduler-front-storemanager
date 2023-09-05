@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_storemanager/utils/dialog_message.dart';
+import 'package:sidam_storemanager/utils/horizontal_line.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
 
 import '../model/Incentive.dart';
@@ -9,6 +10,7 @@ import '../model/account_role.dart';
 import '../model/anniversary.dart';
 import '../utils/app_color.dart';
 import '../utils/app_input_theme.dart';
+import '../utils/app_picker_sheet.dart';
 
 class EmployeeDetailScreen extends StatelessWidget {
   @override
@@ -38,6 +40,7 @@ class EmployeeDetailScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                HorizontalLine(label: "필수정보", height: 30),
                 Container(
                     margin: AppInputTheme().marginSpace(),
                     child: TextField(
@@ -58,6 +61,94 @@ class EmployeeDetailScreen extends StatelessWidget {
                           text: viewModel.selectedEmployee?.alias ?? ''),
                     )),
                 Container(
+                    margin: AppInputTheme().marginSpace(),
+                    child: InputDecorator(
+                        decoration: AppInputTheme().buildDecoration(
+                            borderText: "급여 방식 구분", writable: true),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                    viewModel.selectedEmployee!.salary!
+                                        ? '월급'
+                                        : '시급',
+                                    style: TextStyle(fontSize: 16)),
+                                IconButton(
+                                  icon: const Icon(Icons.arrow_drop_down_outlined),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return _Salarydialog(
+                                            context, viewModel);
+                                      },
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    viewModel.selectedEmployee!.salary!
+                                        ? '월급'
+                                        : '시간당 ',
+                                    style: TextStyle(fontSize: 16)),
+                                Expanded(
+                                  child: TextField(
+                                    textAlign: TextAlign.right,
+                                    enabled: true,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    // Only numbers can
+                                    onChanged: (text) =>
+                                        viewModel.setCost(text),
+                                    controller: TextEditingController(
+                                        text:
+                                        '${viewModel.selectedEmployee!.cost}' ??
+                                            ''),
+                                  ),
+                                ),
+                                Expanded(
+                                  child:
+                                  Text('원', style: TextStyle(fontSize: 16)),
+                                ),
+                              ],
+                            )
+                          ],
+                        )
+                    )
+                ),
+                Container(
+                    margin: AppInputTheme().marginSpace(),
+                    child: InputDecorator(
+                        decoration: AppInputTheme()
+                            .buildDecoration(borderText: "레벨", writable: true),
+                        child: Container(
+                              padding: EdgeInsets.all(8),
+                              child: GestureDetector(
+                                onTap: () => showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AppPickerSheet().customCupertinoPicker(
+                                          indicator: '레벨',
+                                          setTime : viewModel.setLevel,
+                                          selected : (viewModel.selectedEmployee!.level) ?? 0,
+                                          times : viewModel.levels);
+                                    }),
+                                child: Text(
+                                    "${viewModel.selectedEmployee!.level} 레벨",
+                                    style: const TextStyle(
+                                      fontSize: 16,)),
+                              ),
+                            ),
+                    )),
+                HorizontalLine(label: "추가정보", height: 30),
+                Container(
                   margin: AppInputTheme().marginSpace(),
                   child: InputDecorator(
                       decoration: AppInputTheme()
@@ -69,6 +160,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                     child: TextField(
+                                      decoration: const InputDecoration(hintText: "기념일 이름"),
                                       enabled: true,
                                       onChanged: (text) =>
                                           viewModel.setAnniversaryName(text),
@@ -91,7 +183,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                           viewModel.date == null
-                                              ? "날짜를 선택해주세요"
+                                              ? "선택"
                                               : "${viewModel.date?.month}월 ${viewModel.date?.day}일",
                                           style: const TextStyle(
                                               fontSize: 16, color: Colors.black)),
@@ -158,79 +250,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                                 );
                               }).toList(),
                             ),
-                      ])),
-                ),
-                Container(
-                    margin: AppInputTheme().marginSpace(),
-                    child: TextField(
-                      decoration: AppInputTheme()
-                          .buildDecoration(borderText: "레벨", writable: true),
-                      enabled: false,
-                      controller: TextEditingController(
-                          text: '${viewModel.selectedEmployee?.level ?? ''}'),
-                    )),
-                Container(
-                    margin: AppInputTheme().marginSpace(),
-                    child: InputDecorator(
-                        decoration: AppInputTheme().buildDecoration(
-                            borderText: "급여 방식 구분", writable: true),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                    viewModel.selectedEmployee!.salary!
-                                        ? '월급'
-                                        : '시급',
-                                    style: TextStyle(fontSize: 16)),
-                                IconButton(
-                                  icon: const Icon(Icons.arrow_drop_down_outlined),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return _Salarydialog(
-                                            context, viewModel);
-                                      },
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                    viewModel.selectedEmployee!.salary!
-                                        ? '월급'
-                                        : '시간당 ',
-                                    style: TextStyle(fontSize: 16)),
-                                Expanded(
-                                  child: TextField(
-                                    textAlign: TextAlign.right,
-                                    enabled: true,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    // Only numbers can
-                                    onChanged: (text) =>
-                                        viewModel.setCost(text),
-                                    controller: TextEditingController(
-                                        text:
-                                            '${viewModel.selectedEmployee!.cost}' ??
-                                                ''),
-                                  ),
-                                ),
-                                Expanded(
-                                  child:
-                                      Text('원', style: TextStyle(fontSize: 16)),
-                                ),
-                              ],
-                            )
-                          ],
-                        )
-                    )
+                          ])),
                 ),
                 Container(
                   margin: AppInputTheme().marginSpace(),
@@ -246,7 +266,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                             Expanded(
                                 child: TextField(
                                   decoration: const InputDecoration(
-                                    hintText: "지급 명목",
+                                    hintText: "지급 내용",
                                   ),
                                   enabled: true,
                                   onChanged: (text) =>
