@@ -128,25 +128,21 @@ class StoreRepositoryImpl implements StoreRepository{
 
   @override
   Future deleteStore(String id) {
-    // TODO: implement deleteStore
     throw UnimplementedError();
   }
 
   @override
   Future<String> fetchSearchedStores(String search) {
-    // TODO: implement fetchSearchedStores
     throw UnimplementedError();
   }
 
   @override
   Future<String> fetchStores() {
-    // TODO: implement fetchStores
     throw UnimplementedError();
   }
 
   @override
   Future<List> geCostPolicies() {
-    // TODO: implement geCostPolicies
     throw UnimplementedError();
   }
 

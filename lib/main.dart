@@ -37,9 +37,10 @@ void main() {
               create: (_) => StoreListViewModel(StoreRepositoryImpl(),UserRepositoryImpl()),
             ),
             ChangeNotifierProvider(
-                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()))
+                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),
+            ),
       ],
-          child: MyApp()
+          child: const MyApp()
 
       )
   );
@@ -85,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
   init(){
     helper.init();
   }
-  final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostScreen(), ChattingPage()];
+  final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostScreen(), AlarmView()];
 
   void _onTap(int index) {
     setState(() {
@@ -148,11 +149,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             BottomNavigationBarItem(
-              icon: SvgPicture.asset('asset/icons/message_square_icon.svg'),
-              label: "Chatting",
+              icon: SvgPicture.asset('asset/icons/bell_icon.svg'),
+              label: "Alarm",
               activeIcon: Column(
                 children: <Widget>[
-                  SvgPicture.asset('asset/icons/message_square_icon.svg', color: color.mainColor),
+                  SvgPicture.asset('asset/icons/bell_icon.svg', color: color.mainColor),
                   Container(
                     height: 4,
                     width: 24,

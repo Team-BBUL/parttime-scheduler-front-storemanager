@@ -53,7 +53,6 @@ class AnniversaryRepositoryImpl implements AnniversaryRepository{
 
   @override
   Future fetchAnniversary(int id) {
-    // TODO: implement fetchAnniversary
     throw UnimplementedError();
   }
 
@@ -90,7 +89,6 @@ class AnniversaryRepositoryImpl implements AnniversaryRepository{
 
   @override
   Future putAnniversary(Anniversary anniversary) {
-    // TODO: implement putAnniversary
     throw UnimplementedError();
   }
 

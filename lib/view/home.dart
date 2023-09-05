@@ -14,6 +14,8 @@ import '../view_model/store_management_view_model.dart';
 class HomeScreen extends StatelessWidget {
   final SPHelper helper = SPHelper();
 
+  // TODO: 홈 화면 예쁘게 만들어주기
+
   @override
   Widget build(BuildContext context) {
     int? id = helper.getStoreId();
