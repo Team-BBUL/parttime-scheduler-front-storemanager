@@ -6,6 +6,7 @@ import 'package:sidam_storemanager/data/mock_repository/mock_schedule_api_reposi
 import 'package:sidam_storemanager/data/repository/anniversary_repository.dart';
 import 'package:sidam_storemanager/data/repository/cost_policy_repository.dart';
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
+import 'package:sidam_storemanager/view/alarm_view.dart';
 import 'package:sidam_storemanager/view/chatting_page.dart';
 import 'package:sidam_storemanager/view/cost.dart';
 import 'package:sidam_storemanager/view/home.dart';

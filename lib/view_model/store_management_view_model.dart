@@ -27,6 +27,7 @@ class StoreManagementViewModel extends ChangeNotifier {
   List<double> _multiplies =
   List<double>.generate(20, (index) =>   double.parse(((index + 11) * 0.1).toStringAsFixed(1)));
   List<int> _levels = List<int>.generate(6, (index) => index);
+  List<int> _costPolicyDays = List<int>.generate(31, (index) => index + 1);
   String? anniversaryName;
   DateTime? date;
   double? multiplyValue;
@@ -50,6 +51,7 @@ class StoreManagementViewModel extends ChangeNotifier {
   List<String>? get day => _day;
   List<double>? get multiplies => _multiplies;
   List<int>? get levels => _levels;
+  List<int>? get costPolicyDays => _costPolicyDays;
   Store? get store => _store;
   List<AccountRole>? get employees => _employees;
   AccountRole? get selectedEmployee => _selectedEmployee;
@@ -115,7 +117,7 @@ class StoreManagementViewModel extends ChangeNotifier {
   }
 
   Future<void> _getPolicies() async {
-    _newCostPolicy = CostPolicy();
+    _newCostPolicy = CostPolicy(multiplyCost: 2.0);
     try{
       _policyList = await _costPolicyRepository.fetchAllPolicy();
     }catch(e){
@@ -156,6 +158,7 @@ class StoreManagementViewModel extends ChangeNotifier {
       print(e);
     }
   }
+
   Future<void> createAnniversary() async {
     try {
       int id = await _anniversaryRepository.postAnniversary(
@@ -177,31 +180,58 @@ class StoreManagementViewModel extends ChangeNotifier {
   Future<dynamic> removeAnniversary(int id) async{
     try {
       await _anniversaryRepository.deleteAnniversary(id);
-      await deleteAnniversary(id);
+      await _deleteAnniversary(id);
     } catch (e) {
       print(e);
       throw e;
     }
   }
 
-  Future<dynamic> deleteAnniversary(int id) async {
+  Future<dynamic> _deleteAnniversary(int id) async {
     _anniversaries?.removeWhere((element) => element.id == id);
     notifyListeners();
   }
+  Future<void> createPolicy() async {
+    try {
+      int id = await _costPolicyRepository.postPolicy(CostPolicy( multiplyCost: _newCostPolicy!.multiplyCost,
+          description: _newCostPolicy!.description, day: _newCostPolicy!.day));
+      await _addPolicy(id);
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
 
-  Map<String, bool> costPolicyList = {
-    'policyOne': false,
-  };
+  Future<dynamic> _addPolicy(int id) async {
+    _policyList?.add(CostPolicy(id: id, multiplyCost: _newCostPolicy!.multiplyCost,
+        description: _newCostPolicy!.description, day: _newCostPolicy!.day));
+    notifyListeners();
+  }
+
+  Future<dynamic> removePolicy(int id) async{
+    try {
+      await _costPolicyRepository.deletePolicy(id);
+      await _deletePolicy(id);
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<dynamic> _deletePolicy(int id) async {
+    _policyList?.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
 
   void setOpenTime(int time) {
     _store?.open = time;
-    print('StoreManagerViewModel.setOpenTime:${_store?.open}');
+    log('StoreManagerViewModel.setOpenTime:${_store?.open}');
     notifyListeners();
   }
 
   void setCloseTime(int time) {
     _store?.closed = time;
-    print('StoreManagerViewModel.setCloseTime:${_store?.closed}');
+    log('StoreManagerViewModel.setCloseTime:${_store?.closed}');
     notifyListeners();
   }
 
@@ -220,12 +250,6 @@ class StoreManagementViewModel extends ChangeNotifier {
   void setLevel(int selectedItem) {
     _selectedEmployee!.level = selectedItem;
     log('StoreManagerViewModel.setLevel:${_selectedEmployee?.level}');
-    notifyListeners();
-  }
-
-  void toggle(selected) {
-    costPolicyList[selected] = !costPolicyList[selected]!;
-    log("${costPolicyList[selected]}");
     notifyListeners();
   }
 
@@ -377,8 +401,8 @@ class StoreManagementViewModel extends ChangeNotifier {
     _newCostPolicy?.description = text;
   }
 
-  void setCostPolicyDate(DateTime selectedDate) {
-    _newCostPolicy?.date = selectedDate;
+  void setCostPolicyDate(int selected) {
+    _newCostPolicy?.day = costPolicyDays![selected];
     notifyListeners();
   }
 }

@@ -337,25 +337,27 @@ class StoreManagementScreen extends StatelessWidget {
                                                   fontSize: 16, color: Colors.black)),
                                           ),
                                           ElevatedButton(
-                                            onPressed: () async {
-                                              final selectedDate = await showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now(),
-                                                firstDate: DateTime(2000),
-                                                lastDate: DateTime.now(),
-                                                locale: const Locale('ko', 'KO'),
-                                              );
-                                              if (selectedDate != null) {
-                                                viewModel.setCostPolicyDate(selectedDate);
-                                              }
+                                            onPressed: () {
+                                              showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AppPickerSheet().customCupertinoPicker(
+                                                        indicator: '일',
+                                                        setTime : viewModel.setCostPolicyDate,
+                                                        selected : (
+                                                            (viewModel.newCostPolicy?.day) == null ? 0
+                                                            :
+                                                        (viewModel.newCostPolicy?.day)! - 1 ) ,
+                                                        times : viewModel.costPolicyDays);
+                                                  });
                                             },
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text(
-                                                    viewModel.date == null
+                                                    viewModel.newCostPolicy?.day == null
                                                         ? "날짜"
-                                                        : "${viewModel.date?.month}월 ${viewModel.date?.day}일",
+                                                        : "${viewModel.newCostPolicy?.day}일",
                                                     style: const TextStyle(
                                                         fontSize: 16, color: Colors.black)),
                                                 const SizedBox(width: 8),
@@ -372,7 +374,7 @@ class StoreManagementScreen extends StatelessWidget {
                                                   context: context,
                                                   title: "급여 정책을 추가하시겠습니까?",
                                                   message: "",
-                                                  apiCall: () => viewModel.createAnniversary(),
+                                                  apiCall: () => viewModel.createPolicy(),
                                                   popCount: 1);
                                             },
                                             icon: Icon(Icons.add),
@@ -391,39 +393,32 @@ class StoreManagementScreen extends StatelessWidget {
                                                       fontSize: 16)),
                                             ),
                                             Expanded(
-                                              child: Text("${policy.multiplyCost}",
+                                              child: Text("${policy.multiplyCost} 배",
                                                   style: const TextStyle(
                                                       fontSize: 16)),
                                             ),
                                             Expanded(
-                                              child: GestureDetector(
-                                                onTap: () => showModalBottomSheet(
+                                              child: Text("${policy.day} 일",
+                                                  style: const TextStyle(
+                                                      fontSize: 16)),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.remove),
+                                              onPressed: () async {
+                                                Message().showConfirmDialog(
                                                     context: context,
-                                                    builder: (BuildContext context) {
-                                                      return AppPickerSheet().customCupertinoPicker(
-                                                          indicator: '일',
-                                                          setTime : viewModel.setMultiplyValue,
-                                                          selected :
-                                                          ((viewModel.newCostPolicy?.multiplyCost)! - 1) * 10?? 1.1,
-                                                          times : viewModel.multiplies);
-                                                    }),
-                                                child: Text(
-                                                    viewModel.store?.payday == null ?
-                                                    '선택안됨'
-                                                        :
-                                                    '매월  ${
-                                                        viewModel.store?.payday == 31
-                                                            ? '말'
-                                                            :
-                                                        viewModel.store?.payday} 일',
-                                                    style: const TextStyle(
-                                                      fontSize: 16,)),
-                                              ),
+                                                    title: "일간 시급 보너스 데이를 삭제하시겠습니까?",
+                                                    message: "",
+                                                    apiCall: () => viewModel
+                                                        .removePolicy(policy.id!),
+                                                    popCount: 1);
+                                              },
                                             )
                                           ],
                                         ))
                                             .toList(),
-                                      )
+                                      ),
+
                                     ],
                                   )
 
@@ -438,19 +433,5 @@ class StoreManagementScreen extends StatelessWidget {
               )
           );
       });
-  }
-
-  Widget toggleButton(StoreManagementViewModel viewModel, String key) {
-    return FlutterSwitch(
-      width: 36,
-      height: 20,
-      toggleSize: 17,
-      padding: 2,
-      value: viewModel.costPolicyList[key]!,
-      activeColor: Color(0xFF7CFF67),
-      onToggle: (bool value) {
-        viewModel.toggle(key);
-      },
-    );
   }
 }
