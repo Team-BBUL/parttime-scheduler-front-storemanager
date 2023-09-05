@@ -206,11 +206,12 @@ class UserRepositoryImpl implements UserRepository {
 
         AccountRole accountRole =AccountRole.fromJson(decodedData['data']['accountRole']);
         helper.writeRoleId(accountRole.id!);
-
         Store store = Store.fromJson(decodedData['data']['store']);
+        helper.writeStoreName(store.name!);
         helper.writeStoreId(store.id!);
         return {accountRole : store};
       } else {
+
         log("response = ${response.body}");
         throw Exception('Failed to get user.');
       }
