@@ -236,40 +236,62 @@ class StoreManagementScreen extends StatelessWidget {
                                   decoration: AppInputTheme().buildDecoration(
                                       borderText: "근무자 관리", writable: false),
                                   child: Column(
-                                    children: viewModel.employees == null
-                                        ? []
-                                        : viewModel.employees!
-                                        .map((employee) => Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text("${employee.level}",
-                                              style: const TextStyle(
-                                                  fontSize: 16)),
+                                    children: [
+                                      Container(
+                                        // color: Colors.grey[100],
+                                        child: Row(
+                                          children: [
+                                            const Expanded(
+                                              child: Text('레벨',
+                                                  style: TextStyle(fontSize: 16,  color: Colors.grey)),
+                                            ),
+                                            const Expanded(
+                                              child: Text('이름',
+                                                  style: TextStyle(fontSize: 16, color: Colors.grey)),
+                                            ),
+                                            Expanded(
+                                              child: Container(),
+                                            )
+                                          ],
                                         ),
-                                        Expanded(
-                                          child: Text("${employee.alias}",
-                                              style: const TextStyle(
-                                                  fontSize: 16)),
-                                        ),
-                                        Expanded(
-                                          child: IconButton(
-                                            icon: const Icon(Icons.edit),
-                                            onPressed: () async {
-                                              await viewModel.getEmployee(employee.id!);
-                                              await viewModel.getAnniversary(
-                                                  employee.id!);
-                                              await viewModel.getIncentiveList(employee.id!);
-                                              Navigator.push(context,
-                                                  MaterialPageRoute<void>(
-                                                      builder: (context) {
-                                                        return EmployeeDetailScreen();
-                                                      }));
-                                            },
-                                          ),
-                                        )
-                                      ],
-                                    ))
-                                        .toList(),
+                                      ),
+                                      Column(
+                                        children: viewModel.employees == null
+                                            ? []
+                                            : viewModel.employees!
+                                            .map((employee) => Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Expanded(
+                                              child: Text("${employee.level}",
+                                                  style: const TextStyle(
+                                                      fontSize: 16)),
+                                            ),
+                                            Expanded(
+                                              child: Text("${employee.alias}",
+                                                  style: const TextStyle(
+                                                      fontSize: 16)),
+                                            ),
+                                            Expanded(
+                                              child: IconButton(
+                                                icon: const Icon(Icons.edit),
+                                                onPressed: () async {
+                                                  await viewModel.getEmployee(employee.id!);
+                                                  await viewModel.getAnniversary(
+                                                      employee.id!);
+                                                  await viewModel.getIncentiveList(employee.id!);
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute<void>(
+                                                          builder: (context) {
+                                                            return EmployeeDetailScreen();
+                                                          }));
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        )).toList(),
+                                      )
+                                    ],
                                   )
                               ),
                             ),
@@ -280,7 +302,7 @@ class StoreManagementScreen extends StatelessWidget {
                                 margin: AppInputTheme().marginSpace(),
                                 child: InputDecorator(
                                   decoration: AppInputTheme().buildDecoration(
-                                      borderText: "급여 정책 관리", writable: true),
+                                      borderText: "월간 시급 보너스 데이", writable: true),
                                   child:
                                   Column(
                                     children: [
@@ -289,26 +311,31 @@ class StoreManagementScreen extends StatelessWidget {
                                         children: [
                                           Expanded(
                                               child: TextField(
+                                                decoration: InputDecoration(
+                                                  hintText: '보너스 이름'
+                                                ),
                                                 enabled: true,
                                                 onChanged: (text) =>
                                                     viewModel.setPolicyDescription(text),
+
                                               )),
-                                          GestureDetector(
-                                            onTap: () => showModalBottomSheet(
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              showModalBottomSheet(
                                                 context: context,
                                                 builder: (BuildContext context) {
                                                   return AppPickerSheet().customCupertinoPicker(
                                                       indicator: '배',
                                                       setTime : viewModel.setMultiplyValue,
-                                                      selected : (viewModel.newCostPolicy?.multiplyCost)?? 0,
+                                                      selected : ((viewModel.newCostPolicy?.multiplyCost ?? 0) * 10 - 11).round(),
                                                       times : viewModel.multiplies);
-                                                }),
-                                            child: Text('${viewModel.newCostPolicy!.multiplyCost}',
+                                                });
+                                              },
+                                            child: Text('${viewModel.newCostPolicy!.multiplyCost ?? 2.0} 배',
 
                                                 style: const TextStyle(
-                                                  fontSize: 16,)),
+                                                  fontSize: 16, color: Colors.black)),
                                           ),
-                                          Text("배"),
                                           ElevatedButton(
                                             onPressed: () async {
                                               final selectedDate = await showDatePicker(
@@ -343,7 +370,7 @@ class StoreManagementScreen extends StatelessWidget {
                                             onPressed: () {
                                               Message().showConfirmDialog(
                                                   context: context,
-                                                  title: "기념일을 추가하시겠습니까?",
+                                                  title: "급여 정책을 추가하시겠습니까?",
                                                   message: "",
                                                   apiCall: () => viewModel.createAnniversary(),
                                                   popCount: 1);
