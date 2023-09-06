@@ -11,6 +11,7 @@ import 'package:sidam_storemanager/view/chatting_page.dart';
 import 'package:sidam_storemanager/view/cost.dart';
 import 'package:sidam_storemanager/view/home.dart';
 import 'package:sidam_storemanager/view/time_table.dart';
+import 'package:sidam_storemanager/view_model/alarm_http_provider.dart';
 import 'package:sidam_storemanager/view_model/announcement_view_model.dart';
 import 'package:sidam_storemanager/view_model/cost_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
@@ -39,6 +40,9 @@ void main() {
             ),
             ChangeNotifierProvider(
                 create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),
+            ),
+            ChangeNotifierProvider(create:
+                (_) => AlarmHttpProvider()
             ),
       ],
           child: const MyApp()

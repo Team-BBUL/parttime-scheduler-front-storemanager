@@ -13,11 +13,9 @@ class AlarmViewModel {
 
     Session session = Session();
 
-    var res = await session.post('api/alarm/$category/${session.roleId}?accept=$answer&id=$id', null);
+    var res = await session.post('/api/alarm/$category/${session.roleId}?accept=$answer&id=$id', null);
     // 변경 요청 알림 승낙/거절 api
     var data = jsonDecode(res.body);
-
-    logger.i(data.toString());
 
     if (300 > data['status_code'] && data['status_code'] >= 200) {
       return true;
@@ -31,7 +29,7 @@ class AlarmViewModel {
     Session session = Session();
     session.init();
 
-    var res = await session.delete('api/alarm/list/${session.roleId}?id=$id');
+    var res = await session.delete('/api/alarm/list/${session.roleId}?id=$id');
     // 알림 삭제 api 전송
     var data = jsonDecode(res.body);
 

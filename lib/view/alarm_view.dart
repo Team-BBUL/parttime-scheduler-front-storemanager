@@ -109,7 +109,7 @@ class _AlarmState extends State<AlarmView> {
                                     padding: const EdgeInsets.all(0),
                                     child: Column(children: [
                                       alarmBuilder(
-                                          state.alarms[index], deviceWidth),
+                                          state.alarms[index], deviceWidth, index),
                                       Divider(
                                         indent: indent,
                                         endIndent: indent,
@@ -139,7 +139,7 @@ class _AlarmState extends State<AlarmView> {
   }
 
   // 알림 객체를 이용해 내용을 생성, 위젯을 반환하는 메소드
-  Widget alarmBuilder(Alarm alarm, double width) {
+  Widget alarmBuilder(Alarm alarm, double width, int idx) {
     AlarmViewModel alarmVM = AlarmViewModel();
 
     return Container(
@@ -180,9 +180,9 @@ class _AlarmState extends State<AlarmView> {
                 ),
 
                 // 알림의 종류가 교환이고 점주와 근무자가 모두 수락했다면
-                if (alarm.type == "CHANGE" &&
-                    alarm.request?.own == "PASS" &&
-                    alarm.request?.res == "PASS")
+                if ((alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "PASS") ||
+                    (alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "INVALID")
+                )
                   Row(children: [
                     // 알림 승낙
                     SvgPicture.asset('asset/icons/accept.svg'),
@@ -203,9 +203,7 @@ class _AlarmState extends State<AlarmView> {
                   ])
 
                 // 알림의 종류가 교환이고 점주와 근무자 둘 중 하나라도 거절했다면
-                else if (alarm.type == "CHANGE" &&
-                    (alarm.request?.own == "FAIL" ||
-                        alarm.request?.res == "FAIL"))
+                else if (alarm.type == "CHANGE" && (alarm.request?.own == "FAIL" || alarm.request?.res == "FAIL"))
                   Row(children: [
                     // 알림 거절
                     SvgPicture.asset('asset/icons/denial.svg'),
@@ -266,14 +264,9 @@ class _AlarmState extends State<AlarmView> {
                             primary: Colors.white,
                             padding: EdgeInsets.zero),
                         onPressed: () async {
-                          Future<bool> check =
-                              alarmVM.answerAlarm("change", true, alarm.id);
-                          check.then((value) {
-                            setState(() {
-                              alarm.request?.own = "PASS";
-                            });
-                          }).catchError((error) {
-                            logger.e(error);
+                          checkPopup(true, idx, alarm);
+                          setState(() {
+                            alarm.request?.own = 'STANDBY';
                           });
                         },
                         child: const Text(
@@ -289,16 +282,11 @@ class _AlarmState extends State<AlarmView> {
                             primary: Colors.white,
                             padding: EdgeInsets.zero),
                         onPressed: () async {
-                          Future<bool> check =
-                              alarmVM.answerAlarm("change", false, alarm.id);
-                          check.then((value) {
-                            setState(() {
-                              alarm.request?.own = "FAIL";
-                            });
-                          }).catchError((error) {
-                            logger.e(error);
-                          });
+                          checkPopup(false, idx, alarm);
                           // api 요청 -> 알림 거절
+                          setState(() {
+                            alarm.request?.own = 'STANDBY';
+                          });
                         },
                         child: const Text(
                           "거절",
@@ -343,8 +331,6 @@ class _AlarmState extends State<AlarmView> {
                           }).catchError((error) {
                             logger.e(error);
                           });
-
-
                         },
                         child: const Text(
                           "수락",
@@ -494,5 +480,44 @@ class _AlarmState extends State<AlarmView> {
       }
     }
     return const Text("alarm formatting error");
+  }
+
+  // 재확인 체크 팝업을 띄우는 메소드
+  void checkPopup(bool pf, int idx, Alarm alarm) {
+
+    AlarmViewModel alarmVM = AlarmViewModel();
+
+    showDialog(context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0)),
+          contentPadding: const EdgeInsets.all(25),
+          actionsAlignment: MainAxisAlignment.spaceAround,
+          alignment: Alignment.center,
+          backgroundColor: Colors.white,
+          content: Text(
+              '정말 교환 요청을 ${pf ? '승낙' : '거절'}하시겠습니까?\n이 선택은 되돌릴 수 없습니다.'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: SvgPicture.asset('asset/icons/x.svg')),
+            IconButton(
+                onPressed: () {
+                  Future<bool> check = alarmVM.answerAlarm("change", pf ? true : false, alarm.id);
+                  check.then((value) {
+                    setState(() {
+                      alarm.request?.own = pf ? "PASS" : 'FAIL';
+                    });
+                  }).catchError((error){
+                    logger.e(error);
+                  });
+                  Navigator.of(context).pop();
+                },
+                icon: SvgPicture.asset('asset/icons/check.svg')),
+          ],
+        );
+    });
   }
 }
