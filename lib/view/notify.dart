@@ -15,158 +15,67 @@ class NotifyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Notify Screen'),
-
+          title: const Text('알림 설정'),
+          centerTitle: true,
         ),
         body : Consumer<NotifyViewModel>(
             builder: (context, viewModel, _) {
               return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         decoration: const BoxDecoration(
                           border: Border(
-                              bottom : BorderSide(width: 1, color: Colors.grey)
+                              bottom : BorderSide(width: 1, color: Colors.black12)
                           ),
                         ),
-                    ),
-                    Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                              bottom : BorderSide(width: 1, color: Colors.grey)
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 8,
-                              child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Text("알림", style: TextStyle(fontSize: 16)),
-                              ),
-                            ),
-                            Expanded(
-                                flex: 3,
-                                child: toggleButton(viewModel,'notify')
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("알림", style: TextStyle(fontSize: 16)),
+                                Container(child: toggleButton(viewModel,'notify'))
+                              ],
                             )
-                          ],
                         )
                     ),
                     Container(
                         margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                         decoration: const BoxDecoration(
                           border: Border(
-                              bottom : BorderSide(width: 1, color: Colors.grey)
+                              bottom : BorderSide(width: 1, color: Colors.black12)
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 8,
-                              child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Text("근무표 작성 및 수정 알림", style: TextStyle(fontSize: 16)),
-                              ),
-                            ),
-                            Expanded(
-                                flex: 3,
-                                child: toggleButton(viewModel,'modifyNotify')
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("근무표 작성 및 수정 알림", style: TextStyle(fontSize: 16)),
+                                Container(child: toggleButton(viewModel,'modifyNotify'))
+                              ],
                             )
-                          ],
                         )
                     ),
                     Container(
                         margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                         decoration: const BoxDecoration(
                           border: Border(
-                              bottom : BorderSide(width: 1, color: Colors.grey)
+                              bottom : BorderSide(width: 1, color: Colors.black12)
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Text("근무 시간 알림", style: TextStyle(fontSize: 16)),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 4,
-                                    child: ElevatedButton(
-                                      onPressed: () => showDialog(
-                                        AppPickerSheet().customCupertinoPicker(
-                                          indicator: '분',
-                                          setTime : viewModel.setTime,
-                                          selected : viewModel.selectedNotifyWorkTime,
-                                          times : viewModel.times,
-                                          ),
-                                          context,
-                                          viewModel
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text("${viewModel.selectedNotifyWorkTime}${viewModel.indicator} 전", style: TextStyle(fontSize: 16,color: Colors.black)),
-                                          SizedBox(width: 8),
-                                          Icon(Icons.arrow_drop_down,color: Colors.black,),
-                                        ],
-                                      ),
-                                    )
-                                ),
-                            Expanded(
-                                flex: 3,
-                                child: toggleButton(viewModel,'workTimeNotify')
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("근무변경요청 알림", style: TextStyle(fontSize: 16)),
+                                Container(child: toggleButton(viewModel,'changeRequestNotify'))
+                              ],
                             )
-                          ],
-                        )
-                    ),
-                    Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                              bottom : BorderSide(width: 1, color: Colors.grey)
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 8,
-                              child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Text("근무변경요청 알림", style: TextStyle(fontSize: 16)),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                                child: toggleButton(viewModel,'changeRequestNotify')
-                            )
-                          ],
-                        )
-                    ),
-                    Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                              bottom : BorderSide(width: 1, color: Colors.grey)
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 8,
-                                child: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text("채팅 알림", style: TextStyle(fontSize: 16)),
-                                ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: toggleButton(viewModel,'chattingNotify')
-                            )
-                          ],
                         )
                     ),
                   ]

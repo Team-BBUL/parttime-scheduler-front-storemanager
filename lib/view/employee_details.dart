@@ -19,7 +19,8 @@ class EmployeeDetailScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
       return Scaffold(
           appBar: AppBar(
-            title: const Text('Employee Details Screen'),
+            title: const Text('근무자 정보'),
+            centerTitle: true,
             actions: <Widget>[
               IconButton(
                 icon: const Icon(Icons.check_box),
