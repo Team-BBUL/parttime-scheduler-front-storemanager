@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 
+import 'package:sidam_storemanager/data/local_data_source.dart';
+
 import '../../model/jwt_exception.dart';
 import '../../model/store.dart';
 import '../../utils/sp_helper.dart';
@@ -20,7 +22,7 @@ abstract class StoreRepository{
 
 class StoreRepositoryImpl implements StoreRepository{
   static String storeApi = 'http://10.0.2.2:8088/store';
-
+  final LocalDataSource _dataSource = LocalDataSource();
 
   @override
   Future<Store> fetchStore(int? storeId) async{
@@ -198,5 +200,9 @@ class StoreRepositoryImpl implements StoreRepository{
   }
 
 
+  Future<Store> loadStore() async {
+
+    return Store.fromJson(await _dataSource.loadJson('store'));
+  }
 
 }

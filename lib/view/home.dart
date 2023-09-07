@@ -18,8 +18,6 @@ class HomeScreen extends StatelessWidget {
   final SPHelper helper = SPHelper();
   final AppColor color = AppColor();
 
-  // TODO: 홈 화면 예쁘게 만들어주기
-
   @override
   Widget build(BuildContext context) {
     int? id = helper.getStoreId();
@@ -31,8 +29,8 @@ class HomeScreen extends StatelessWidget {
           leading: Consumer<StoreListViewModel>(
               builder: (context, viewModel, child) {
                 return Center(child: Text(
-                    "${viewModel.accountRole?.alias ?? ''}",
-                    style: TextStyle(color: Colors.black, fontSize: 16)
+                    viewModel.accountRole?.alias ?? '',
+                    style: const TextStyle(color: Colors.black, fontSize: 16)
                 ));
               }
             ),
@@ -122,7 +120,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget mainTimeTable(double deviceHeight) {
 
-    return Container(
+    return SizedBox(
         width: double.infinity,
         height: deviceHeight - 250,
         child: Column(

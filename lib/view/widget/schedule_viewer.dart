@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_storemanager/utils/app_color.dart';
-import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
 
+import '../../model/store.dart';
 import '../../view_model/schedule_view_model.dart';
+import '../../view_model/store_view_model.dart';
 
 class ScheduleViewer extends StatefulWidget {
   @override
@@ -20,6 +21,8 @@ class ScheduleViewerState extends State<ScheduleViewer> {
     final deviceHeight = MediaQuery.of(context).size.height;
     var week = ['error', '월', '화', '수', '목', '금', '토', '일'];
     DateTime now = DateTime.now();
+
+    StoreViewModel storeViewModel = StoreViewModel();
 
     return Consumer<ScheduleViewModel>(builder: (context, state, child) {
       return SizedBox(
@@ -58,15 +61,26 @@ class ScheduleViewerState extends State<ScheduleViewer> {
                           )),
                     )
                   ])),
-              timeTable(deviceWidth, deviceHeight),
+              FutureBuilder(
+                  future: storeViewModel.getStore(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return timeTable(deviceWidth, deviceHeight, snapshot.data);
+                    }
+                    else if (snapshot.hasError) {
+                      return Text('시간표를 불러오는데 오류가 있습니다.\n${snapshot.hasError.toString()}');
+                    } else {
+                      return const Text('시간표가 없어요');
+                    }
+              }),
             ],
           ));
     });
   }
 
-  Widget timeTable(double deviceWidth, double deviceHeight) {
-    return Consumer2<ScheduleViewModel, StoreListViewModel>(
-        builder: (context, schedule, store, child) {
+  Widget timeTable(double deviceWidth, double deviceHeight, Store store) {
+    return Consumer<ScheduleViewModel>(
+        builder: (context, schedule, child) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         child: SizedBox(
@@ -75,9 +89,9 @@ class ScheduleViewerState extends State<ScheduleViewer> {
           child: ListView.builder(
             physics: const ClampingScrollPhysics(),
               itemCount:
-                  ((store.store!.closed ?? 0) - (store.store!.open ?? 0)) < 0
+                  ((store.closed ?? 0) - (store.open ?? 0)) < 0
                       ? 0
-                      : (store.store!.closed ?? 0) - (store.store!.open ?? 0),
+                      : (store.closed ?? 0) - (store.open ?? 0),
               itemBuilder: (context, idx) {
                 int before = idx - 1 < 0 ? 12 : idx - 1;
                 return SizedBox(
@@ -90,7 +104,7 @@ class ScheduleViewerState extends State<ScheduleViewer> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Text(
-                                '${idx + (store.store!.open ?? 0)}:00',
+                                '${idx + (store.open ?? 0)}:00',
                                 style: const TextStyle(fontSize: 16),
                               ),
                               Row(
@@ -109,9 +123,15 @@ class ScheduleViewerState extends State<ScheduleViewer> {
                                           style: const TextStyle(color: Colors.white),
                                         ),
                                       ),
+                                    ],
 
-                                    ]
-                                  ]
+                                    if (schedule.today.isEmpty)
+                                      Container(
+                                        height: 38,
+                                        width: deviceWidth - 90,
+                                        color: Colors.black12,
+                                      )
+                                  ],
                               )
                             ]
                         )

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:sidam_storemanager/data/local_data_source.dart';
 import 'package:sidam_storemanager/data/repository/store_repository.dart';
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
 
@@ -13,6 +14,7 @@ class StoreListViewModel extends ChangeNotifier{
   StoreRepository _storeRepository;
   UserRepository _userRepository;
   ScrollController? _scrollController;
+  late final LocalDataSource _dataSource;
   Store? _store;
   AccountRole? _accountRole;
   DateTime? _updatedAt;
@@ -20,6 +22,7 @@ class StoreListViewModel extends ChangeNotifier{
 
   StoreListViewModel(this._storeRepository, this._userRepository){
     enterStore(null);
+    _dataSource = LocalDataSource();
   }
 
   get updatedAt => _updatedAt;
@@ -47,8 +50,9 @@ class StoreListViewModel extends ChangeNotifier{
         _store = element;
       });
       log("enterStore._accountRole.name : ${_accountRole!.alias}");
-      log("enterStore._store.name : ${_store!.name}");
+      log("enterStore._store.name : ${_store!.name ?? ''}");
       _helper.writeWeekStartDay(_store?.startDayOfWeek ?? 0);
+      _dataSource.saveModels(_store!.toJson(), '', 'store');
       _updatedAt = DateTime.now();
       notifyListeners();
     }catch(e){

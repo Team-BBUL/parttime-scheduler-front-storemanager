@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('로그인'),
+        //title: const Text('로그인'),
       ),
       body: SafeArea(
         child: Column(
