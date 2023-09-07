@@ -49,6 +49,7 @@ dependencies:
   fluttertoast: ^8.2.2
   logger: ^2.0.1
   webview_flutter: ^4.2.4
+  package_info_plus: ^4.1.0
 
 dev_dependencies:
   flutter_test:

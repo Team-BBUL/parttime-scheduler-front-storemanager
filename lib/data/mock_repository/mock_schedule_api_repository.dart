@@ -11,175 +11,590 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
 
     Map<String,dynamic> testData =
     {
-      "date": [
+      "date":[
         {
-          "id": 1,
-          "day": "2023-09-01",
-          "schedule": [
+          "id":1,
+          "day":"2023-9-4",
+          "schedule":[
             {
-              "id": 1,
-              "time": [true, true, true, true, true, false, false, false, false, false, false, false ],
-              "workers": [
+              "id":52,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
                 {
-                  "id": 1,
-                  "alias": "홍길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
+                  "name":"연지원",
+                  "id":3,
+                  "color":"0xFFFACC2E",
+                  "cost":0
                 }
               ]
             },
             {
-              "id": 2,
-              "time": [false, false, false, true, true, true, true, true, true, false, false, false ],
-              "workers": [
+              "id":53,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
                 {
-                  "id": 1,
-                  "alias": "최판서",
-                  "color": "0xFF000000",
-                  "cost": 10000
+                  "name":"도희영",
+                  "id":2,
+                  "color":"0xFF01A9DB",
+                  "cost":0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id":2,
+          "day":"2023-9-5",
+          "schedule":[
+            {
+              "id":54,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"도희영",
+                  "id":2,
+                  "color":"0xFF01A9DB",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":55,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"박예희",
+                  "id":50202,
+                  "color":"0xFF0404B4",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":57,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              "workers":[
+                {
+                  "name":"전효권",
+                  "id":4,
+                  "color":"0xFF1C1C1C",
+                  "cost":0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id":3,
+          "day":"2023-9-6",
+          "schedule":[
+            {
+              "id":56,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"연지원",
+                  "id":3,
+                  "color":"0xFFFACC2E",
+                  "cost":0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id":4,
+          "day":"2023-9-7",
+          "schedule":[
+            {
+              "id":58,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"진유민",
+                  "id":5,
+                  "color":"0xFFB40404",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":59,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"이선우",
+                  "id":50152,
+                  "color":"0xFF3ADF00",
+                  "cost":10000
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id":5,
+          "day":"2023-9-8",
+          "schedule":[
+            {
+              "id":60,
+              "time":[
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"박채미",
+                  "id":6,
+                  "color":"0xFFD358F7",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":61,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"장효원",
+                  "id":7,
+                  "color":"0xFF088A68",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":62,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"진유민",
+                  "id":5,
+                  "color":"0xFFB40404",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":63,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              "workers":[
+                {
+                  "name":"전효권",
+                  "id":4,
+                  "color":"0xFF1C1C1C",
+                  "cost":0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id":6,
+          "day":"2023-9-9",
+          "schedule":[
+            {
+              "id":64,
+              "time":[
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"전효권",
+                  "id":4,
+                  "color":"0xFF1C1C1C",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":65,
+              "time":[
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"도희영",
+                  "id":2,
+                  "color":"0xFF01A9DB",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":66,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"장효원",
+                  "id":7,
+                  "color":"0xFF088A68",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":67,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
+                {
+                  "name":"박예희",
+                  "id":50202,
+                  "color":"0xFF0404B4",
+                  "cost":0
+                }
+              ]
+            },
+            {
+              "id":68,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              "workers":[
+                {
+                  "name":"진유민",
+                  "id":5,
+                  "color":"0xFFB40404",
+                  "cost":0
                 },
                 {
-                  "id": 2,
-                  "alias": "홍길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 3,
-              "time": [false, false, false, false, true, true, true, true, false, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "김길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 4,
-              "time": [false, false, false, false, false, true, true, true, true, false, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "성춘향",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 5,
-              "time": [false, false, false, false, false, false, true, true, true, true, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "아무개",
-                  "color": "0xFF000000",
-                  "cost": 20000
-                }
-              ]
-            },
-            {
-              "id": 6,
-              "time": [false, false, false, false, false, false, false, true, true, true, true, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "박아무",
-                  "color": "0xFF000000",
-                  "cost": 20000
+                  "name":"이선우",
+                  "id":50152,
+                  "color":"0xFF3ADF00",
+                  "cost":10000
                 }
               ]
             }
           ]
         },
         {
-          "id": 2,
-          "day": "2023-09-02",
-          "schedule": [
+          "id":7,
+          "day":"2023-9-10",
+          "schedule":[
             {
-              "id": 1,
-              "time": [true, true, true, true, false, false, false, false, false, false, false, false ],
-              "workers": [
+              "id":69,
+              "time":[
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "workers":[
                 {
-                  "id": 1,
-                  "alias": "홍길동",
-                  "color": "0xFF000000",
-                  "cost": 20000
+                  "name":"박예희",
+                  "id":50202,
+                  "color":"0xFF0404B4",
+                  "cost":0
                 }
               ]
             },
             {
-              "id": 2,
-              "time": [false, false, false, true, true, true, true, false, false, false, false, false ],
-              "workers": [
+              "id":70,
+              "time":[
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "workers":[
                 {
-                  "id": 1,
-                  "alias": "최판서",
-                  "color": "0xFF000000",
-                  "cost": 10000
+                  "name":"장효원",
+                  "id":7,
+                  "color":"0xFF088A68",
+                  "cost":0
                 }
               ]
             },
             {
-              "id": 3,
-              "time": [false, false, false, false, true, true, true, true, false, false, false, false ],
-              "workers": [
+              "id":71,
+              "time":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "workers":[
                 {
-                  "id": 1,
-                  "alias": "김길동",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 4,
-              "time": [false, false, false, false, false, true, true, true, true, false, false, false ],
-              "workers": [
+                  "name":"연지원",
+                  "id":3,
+                  "color":"0xFFFACC2E",
+                  "cost":0
+                },
                 {
-                  "id": 1,
-                  "alias": "성춘향",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 5,
-              "time": [false, false, false, false, false, false, true, true, true, true, false, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "아무개",
-                  "color": "0xFF000000",
-                  "cost": 10000
-                }
-              ]
-            },
-            {
-              "id": 6,
-              "time": [false, false, false, false, false, false, false, true, true, true, true, false ],
-              "workers": [
-                {
-                  "id": 1,
-                  "alias": "박아무",
-                  "color": "0xFF000000",
-                  "cost": 10000
+                  "name":"박채미",
+                  "id":6,
+                  "color":"0xFFD358F7",
+                  "cost":0
                 }
               ]
             }
           ]
-        },
-        null,
-        null,
-        null,
-        null,
-      ],
-      "time_stamp": "2023-09-04T21:23:52"
+        }
+      ]
     };
 
     //TODO: response status에 따라 분기처리

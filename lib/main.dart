@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_storemanager/data/mock_repository/mock_schedule_api_repository.dart';
 import 'package:sidam_storemanager/data/repository/anniversary_repository.dart';
 import 'package:sidam_storemanager/data/repository/cost_policy_repository.dart';
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
 import 'package:sidam_storemanager/view/alarm_view.dart';
-import 'package:sidam_storemanager/view/chatting_page.dart';
 import 'package:sidam_storemanager/view/cost.dart';
 import 'package:sidam_storemanager/view/home.dart';
 import 'package:sidam_storemanager/view/time_table.dart';
 import 'package:sidam_storemanager/view_model/alarm_http_provider.dart';
 import 'package:sidam_storemanager/view_model/announcement_view_model.dart';
 import 'package:sidam_storemanager/view_model/cost_view_model.dart';
+import 'package:sidam_storemanager/view_model/notice_view_model.dart';
+import 'package:sidam_storemanager/view_model/schedule_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
 
@@ -25,6 +27,9 @@ import 'utils/sp_helper.dart';
 import 'view/check_login.dart';
 
 void main() {
+
+  PackageInfo.fromPlatform();
+
   runApp(
       MultiProvider(
           providers: [
@@ -41,8 +46,14 @@ void main() {
             ChangeNotifierProvider(
                 create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),
             ),
-            ChangeNotifierProvider(create:
-                (_) => AlarmHttpProvider()
+            ChangeNotifierProvider(
+                create:(_) => AlarmHttpProvider()
+            ),
+            ChangeNotifierProvider(
+                create: (_) => NoticeViewModel()
+            ),
+            ChangeNotifierProvider(
+                create: (context) => ScheduleViewModel()
             ),
       ],
           child: const MyApp()
@@ -72,8 +83,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
 
 
 class MyHomePage extends StatefulWidget {
