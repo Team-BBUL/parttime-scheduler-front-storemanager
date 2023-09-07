@@ -27,9 +27,6 @@ import 'utils/sp_helper.dart';
 import 'view/check_login.dart';
 
 void main() {
-
-  PackageInfo.fromPlatform();
-
   runApp(
       MultiProvider(
           providers: [
