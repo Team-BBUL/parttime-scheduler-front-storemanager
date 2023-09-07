@@ -109,8 +109,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                                         viewModel.setCost(text),
                                     controller: TextEditingController(
                                         text:
-                                        '${viewModel.selectedEmployee!.cost}' ??
-                                            ''),
+                                        '${viewModel.selectedEmployee!.cost}'),
                                   ),
                                 ),
                                 Expanded(

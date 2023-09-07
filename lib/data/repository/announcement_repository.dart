@@ -93,7 +93,7 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
       'POST',
       Uri.parse(apiUrl),
     );
-    int length = images.length ?? 0;
+    int length = images.length;
     log("length : $length");
     for(int i =0; i < length ; i++){
       var image = images[i];

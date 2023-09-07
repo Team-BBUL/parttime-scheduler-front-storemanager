@@ -210,7 +210,7 @@ class StoreManagementScreen extends StatelessWidget {
                                                 return AppPickerSheet().customCupertinoPicker(
                                                     indicator: '일',
                                                     setTime : viewModel.setPayday,
-                                                    selected : (viewModel.store?.payday)! - 1 ?? 0,
+                                                    selected : (viewModel.store?.payday)! - 1,
                                                     times : viewModel.day);
                                               }),
                                           child: Text(

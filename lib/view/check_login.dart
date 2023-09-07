@@ -39,7 +39,7 @@ class _CheckLoginScreenState extends State<CheckLoginScreen> {
 
   _checkLoginStatus() async {
     await helper.init();
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     bool isLoggedIn = helper.getIsLoggedIn();
     int? currentStoreId = helper.getStoreId();
     bool isRegistered = helper.getIsRegistered();

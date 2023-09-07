@@ -111,7 +111,7 @@ class AnnouncementViewModel extends ChangeNotifier {
   Future deleteAnnouncement(int? announcementId) async{
     try{
       await _announcementRepository.deleteAnnouncement(announcementId!);
-      _announcementList!.removeWhere((Announcement announcement) => announcement!.id == announcementId);
+      _announcementList!.removeWhere((Announcement announcement) => announcement.id == announcementId);
       print(_announcementList!.length);
       notifyListeners();
     }catch(e){

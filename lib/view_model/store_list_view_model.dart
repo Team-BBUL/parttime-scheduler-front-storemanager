@@ -16,6 +16,7 @@ class StoreListViewModel extends ChangeNotifier{
   Store? _store;
   AccountRole? _accountRole;
   DateTime? _updatedAt;
+  final SPHelper _helper = SPHelper();
 
   StoreListViewModel(this._storeRepository, this._userRepository){
     enterStore(null);
@@ -47,6 +48,7 @@ class StoreListViewModel extends ChangeNotifier{
       });
       log("enterStore._accountRole.name : ${_accountRole!.alias}");
       log("enterStore._store.name : ${_store!.name}");
+      _helper.writeWeekStartDay(_store?.startDayOfWeek ?? 0);
       _updatedAt = DateTime.now();
       notifyListeners();
     }catch(e){
