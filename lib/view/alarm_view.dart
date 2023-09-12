@@ -316,10 +316,7 @@ class _AlarmState extends State<AlarmView> {
                         onPressed: () async {
                           // TODO: 매장 가입 요청 승낙 전송 메소드 넣기
                           // 그냥 push로 -> 알림 목록 화면으로 돌아오게
-                          Future<bool> check = Future.delayed(const Duration(milliseconds: 500), () {
-                            return true;
-                          });
-                              //alarmVM.answerAlarm("change", true, alarm.id);
+                          Future<bool> check = alarmVM.answerAlarm("change", true, alarm.id);
                           check.then((value) {
                             setState(() {
                               alarm.state = "PASS";
@@ -346,8 +343,7 @@ class _AlarmState extends State<AlarmView> {
                             padding: EdgeInsets.zero),
                         onPressed: () async {
                           // TODO: 매장 가입 요청 거절 전송 메소드 넣기
-                          Future<bool> check = Future(() => true);
-                              //alarmVM.answerAlarm("change", false, alarm.id);
+                          Future<bool> check = alarmVM.answerAlarm("change", false, alarm.id);
                           check.then((value) {
                             setState(() {
                               alarm.state = "FAIL";

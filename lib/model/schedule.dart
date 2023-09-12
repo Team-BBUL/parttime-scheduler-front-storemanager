@@ -58,10 +58,11 @@ class Date {
 
 class Schedule {
   int? id;
+  DateTime? day;
   List<bool>? time;
   List<Workers>? workers;
 
-  Schedule({this.id, this.time, this.workers});
+  Schedule({this.id, this.time, this.workers, this.day});
 
   Schedule.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -69,17 +70,17 @@ class Schedule {
     if (json['workers'] != null) {
       workers = <Workers>[];
       json['workers'].forEach((v) {
-        workers!.add(new Workers.fromJson(v));
+        workers!.add(Workers.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['time'] = this.time;
-    if (this.workers != null) {
-      data['workers'] = this.workers!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['time'] = time;
+    if (workers != null) {
+      data['workers'] = workers!.map((v) => v.toJson()).toList();
     }
     return data;
   }

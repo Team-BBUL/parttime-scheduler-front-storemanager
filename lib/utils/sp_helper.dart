@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SPHelper{
@@ -46,6 +44,10 @@ class SPHelper{
     prefs.setInt('roleId', roleId);
   }
 
+  Future writeWeekStartDay(int startDay) async {
+    prefs.setInt('weekStartDay', startDay);
+  }
+
   String getJWT(){
     return prefs.getString('jwt') ?? '';
   }
@@ -72,5 +74,9 @@ class SPHelper{
 
   int? getRoleId(){
     return prefs.getInt('roleId');
+  }
+
+  int? getWeekStartDay() {
+    return prefs.getInt('weekStartDay');
   }
 }

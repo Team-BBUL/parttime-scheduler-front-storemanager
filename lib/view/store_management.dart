@@ -24,7 +24,8 @@ class StoreManagementScreen extends StatelessWidget {
         builder: (context, snapshot) {
           return Scaffold(
               appBar: AppBar(
-                title: const Text('Store Management Screen'),
+                title: const Text('매장 정보'),
+                centerTitle: true,
                 actions: <Widget>[
                   IconButton(
                     icon: const Icon(Icons.check_box),
@@ -210,7 +211,7 @@ class StoreManagementScreen extends StatelessWidget {
                                                 return AppPickerSheet().customCupertinoPicker(
                                                     indicator: '일',
                                                     setTime : viewModel.setPayday,
-                                                    selected : (viewModel.store?.payday)! - 1 ?? 0,
+                                                    selected : (viewModel.store?.payday)! - 1,
                                                     times : viewModel.day);
                                               }),
                                           child: Text(

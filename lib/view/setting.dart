@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:sidam_storemanager/main.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:sidam_storemanager/utils/app_color.dart';
 import 'package:sidam_storemanager/view/account_withdrawal.dart';
+import 'package:sidam_storemanager/view/help.dart';
+import 'package:sidam_storemanager/view/policy_terms.dart';
 
 import '../utils/sp_helper.dart';
 import 'check_login.dart';
@@ -8,38 +13,120 @@ import 'notify_page.dart';
 
 class SettingScreen extends StatelessWidget{
 
+  AppColor color = AppColor();
+
+  Future<String> loading() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    PackageInfo info = await PackageInfo.fromPlatform();
+    return info.version;
+  }
+
   final SPHelper helper = SPHelper();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Setting Screen'),
+          title: const Text('설정'),
+          centerTitle: true,
 
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
+                width: double.infinity,
                   margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                   decoration: const BoxDecoration(
                     border: Border(
-                        bottom : BorderSide(width: 1, color: Colors.grey)
+                        bottom : BorderSide(width: 1, color: Colors.black12)
+                    ),
+                  ),
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NotifyPage(),
+                          ),
+                        );
+                      },
+                      child: const Padding(
+                          padding: EdgeInsets.all(8),
+                          child:  Text("알림 설정", style: TextStyle(fontSize: 16)
+                          ),
+                      )
+                  )
+              ),
+              Container(
+                width: double.infinity,
+                  margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                        bottom : BorderSide(width: 1, color: Colors.black12)
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HelpView(),),
+                      );
+                    },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text("도움말", style: TextStyle(fontSize: 16)),
+                      ),
+                  )
+              ),
+              Container(
+                width: double.infinity,
+                  margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                        bottom : BorderSide(width: 1, color: Colors.black12)
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => PolicyTermsView())
+                      );
+                    },
+                    child: const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text("약관 및 정책", style: TextStyle(fontSize: 16)),
+                      ),
+                  )
+              ),
+              Container(
+                width: double.infinity,
+                  margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                        bottom : BorderSide(width: 1, color: Colors.black12)
                     ),
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text("앱 버전 정보", style: TextStyle(fontSize: 16)),
+                      ),
                       Padding(
-                          padding: EdgeInsets.all(8),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const NotifyPage(),
-                                ),
-                              );
-                            },
-                            child: Text("알림 설정", style: TextStyle(fontSize: 16)),
+                        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                          child: FutureBuilder(
+                            future: loading(),
+                            builder: (BuildContext context, AsyncSnapshot snapshot) {
+                              if (!snapshot.hasData) {
+                                return CircularProgressIndicator(color: color.mainColor,);
+                              }
+                              else if (snapshot.hasError) {
+                                return const Text('버전 정보 불러오기 실패');
+                              }
+                              else {
+                                return Text('v ${snapshot.data.toString()}');
+                              }},
                           )
                       ),
                     ],
@@ -49,109 +136,56 @@ class SettingScreen extends StatelessWidget{
                   margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                   decoration: const BoxDecoration(
                     border: Border(
-                        bottom : BorderSide(width: 1, color: Colors.grey)
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text("도움말", style: TextStyle(fontSize: 16)),
-                      ),
-                    ],
-                  )
-              ),
-              Container(
-                  margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                        bottom : BorderSide(width: 1, color: Colors.grey)
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text("약관 및 정책", style: TextStyle(fontSize: 16)),
-                      ),
-                    ],
-                  )
-              ),
-              Container(
-                  margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                        bottom : BorderSide(width: 1, color: Colors.grey)
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text("앱 버전 정보", style: TextStyle(fontSize: 16)),
-                      ),
-                    ],
-                  )
-              ),
-              Container(
-                  margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                        bottom : BorderSide(width: 1, color: Colors.grey)
+                        bottom : BorderSide(width: 1, color: Colors.black12)
                     ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: TextButton(
-                            onPressed: () => _showMyDialog(context),
-                            child: Text('로그아웃', style: TextStyle(fontSize: 16, color: Colors.red)),),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: TextButton(
+                          onPressed: () => _showMyDialog(context),
+                          child: const Text('로그아웃', style: TextStyle(fontSize: 16, color: Colors.red)),),
                       ),
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: TextButton(
-                            onPressed: () => Navigator.push(context,
-                                MaterialPageRoute(
-                                    builder: (context) => AccountWithdrawalScreen()
-                                )),
-                            child: Text('회원 탈퇴', style: TextStyle(fontSize: 16, color: Colors.red)),),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: TextButton(
+                          onPressed: () => Navigator.push(context,
+                              MaterialPageRoute(
+                                  builder: (context) => AccountWithdrawalScreen()
+                              )),
+                          child: const Text('회원 탈퇴', style: TextStyle(fontSize: 16, color: Colors.red)),),
                       ),
                     ],
                   )
               ),
-              Container(
+              kDebugMode ? Container(
                   margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                   decoration: const BoxDecoration(
                     border: Border(
-                        bottom : BorderSide(width: 1, color: Colors.grey)
+                        bottom : BorderSide(width: 1, color: Colors.black12)
                     ),
                   ),
                   child: Row(
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: ElevatedButton(
-                              onPressed: () async {await helper.init(); helper.clear(); },
-                              child: Text('shared_preferences 초기화 버튼(개발용)', style: TextStyle(fontSize: 18, color: Colors.red)),),
-                          ),
+                        padding: const EdgeInsets.all(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: ElevatedButton(
+                            onPressed: () async {await helper.init(); helper.clear(); },
+                            child: const Text('shared_preferences 초기화 버튼(개발용)', style: TextStyle(fontSize: 18, color: Colors.red)),),
                         ),
                       ),
                     ],
                   )
-              ),
+              ) : const SizedBox(),
             ]
         )
     );
   }
+
   Future<void> _showMyDialog(context) async {
     showDialog<String>(
       context: context,

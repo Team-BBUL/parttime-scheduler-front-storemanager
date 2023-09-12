@@ -19,7 +19,8 @@ class StoreListScreen extends StatelessWidget{
         builder: (builder,context){
           return Scaffold(
             appBar: AppBar(
-                title: const Text('Store List Screen'),
+                title: const Text('매장 목록'),
+                centerTitle: true,
                 actions: <Widget>[
                   IconButton(
                     icon: const Icon(Icons.add_box),

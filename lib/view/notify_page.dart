@@ -16,5 +16,4 @@ class NotifyPage extends StatelessWidget{
         child: const NotifyScreen());
   }
 
-
 }
