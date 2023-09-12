@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_storemanager/data/repository/store_repository.dart';
 import 'package:sidam_storemanager/utils/app_color.dart';
@@ -17,9 +19,12 @@ import '../view_model/store_management_view_model.dart';
 class HomeScreen extends StatelessWidget {
   final SPHelper helper = SPHelper();
   final AppColor color = AppColor();
+  final Logger _logger = Logger();
 
   @override
   Widget build(BuildContext context) {
+
+    viewPushToken();
     int? id = helper.getStoreId();
     final deviceHeight = MediaQuery.of(context).size.height;
 
@@ -132,5 +137,10 @@ class HomeScreen extends StatelessWidget {
           ],
         )
     );
+  }
+
+  void viewPushToken() async {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    _logger.i(fcmToken);
   }
 }

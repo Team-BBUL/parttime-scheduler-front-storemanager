@@ -66,6 +66,7 @@ class LoginWebView extends StatelessWidget{
                   Expanded(
                       child: InAppWebView(
                         initialUrlRequest: URLRequest(
+                          // TODO: 실제 서버 주소로 바꾸기
                             url: Uri.parse("http://10.0.2.2:8088/auth/authorize/kakao")
                         ),
                         pullToRefreshController: viewModel.pullToRefreshController,
