@@ -3,21 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_storemanager/main.dart';
 import 'package:sidam_storemanager/utils/app_color.dart';
-import 'package:sidam_storemanager/view/account_details.dart';
-import 'package:sidam_storemanager/view/register.dart';
-import 'package:sidam_storemanager/view/store_register_page.dart';
-import 'package:sidam_storemanager/view_model/local_login_view_model.dart';
+import 'package:sidam_storemanager/view_model/register_view_model.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _LoginState();
+  State<StatefulWidget> createState() => _RegisterState();
 }
 
-class _LoginState extends State<LoginScreen> {
-  final _designWidth = 411;
-  final _designHeight = 683;
+class _RegisterState extends State<RegisterScreen> {
 
   AppColor color = AppColor();
 
@@ -50,29 +44,24 @@ class _LoginState extends State<LoginScreen> {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
 
-    double maxWidth = 280 * deviceWidth / _designWidth;
-
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: color.mainColor,
-        //title: const Text('로그인'),
+        title: const Text(
+          '회원가입',
+          style: TextStyle(fontSize: 20),
+        ),
+        centerTitle: true,
       ),
-      body: SafeArea(child: Consumer<LocalLoginViewModel>(builder: (context, state, child) {
+      body: SafeArea(child: Consumer<RegisterViewModel>(builder: (context, state, child) {
         if (!state.loading) {
-        return SizedBox(
+          return SizedBox(
           height: deviceHeight - 50,
           width: deviceWidth,
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text("\"시담\"에 오신 것을 환영합니다.\n "
-                    "\"시담\"은 점주님의 아르바이트 스케줄\n "
-                    "관리를 위한 앱입니다."),
-                const SizedBox(
-                  height: 20,
-                  width: 2,
-                ),
                 Form(
                     key: formKey,
                     child: Column(children: [
@@ -111,7 +100,7 @@ class _LoginState extends State<LoginScreen> {
                             ],
                           )),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       SizedBox(
                           width: 300,
@@ -148,65 +137,44 @@ class _LoginState extends State<LoginScreen> {
                           )),
                     ])),
                 const SizedBox(
-                  height: 20,
+                  height: 50,
                 ),
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     bool validationResult = true;
+
                     setState(() {
-                      validationResult = formKey.currentState?.validate() ?? false;
+                      validationResult =
+                          formKey.currentState?.validate() ?? false;
                     });
 
                     if (validationResult) {
-                      // 로그인 로직
-                      state.fetchLogin(_idController.text, _pwController.text)
-                          .then((value) {
-                        // 로그인 성공/실패 여부 판별
-                        if (state.success) {
-                          // 로그인 성공시
+                      log('유효성 검사 통과');
+                      log('id: ${_idController.text}\npw: ${_pwController.text}');
 
-                          // 회원 정보 등록 확인 로직 ?
-                          if (state.init) { // 회원정보 등록이 되어 있고
-                            // 회원 정보 받아서 json 저장 -> _helper에 등록 OK
-
-                            if (state.inStore) { // 등록된 매장이 있으면
-                              // 등록 매장 정보 받아서 json 저장 -> _helper에 등록
-                              state.getStoreData();
-
-                              Navigator.pushReplacement(context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const MyHomePage(
-                                          title: 'Home')));
-                            } else { // 매장 등록으로 이동
-                              Navigator.pushReplacement(context,
-                                  MaterialPageRoute(builder: (context) =>
-                                      StoreRegisterPage()));
-                            }
-                          } else { // 회원 정보 등록으로 이동
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) =>
-                                    AccountDetailsScreen()));
-                          }
-
-                        } else {
-                          // 로그인 실패시
-                          showDialog(context: context, builder: (context) {
-                            return AlertDialog(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                              ),
-                              backgroundColor: Colors.white,
-                              content: Text(state.message),
-                              actions: [
-                                TextButton(onPressed: (){
+                      state.fetchRegister(_idController.text, _pwController.text)
+                        .then((value) {
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))
+                            ),
+                            backgroundColor: Colors.white,
+                            content: Text(state.message),
+                            actions: [
+                              TextButton(onPressed: (){
+                                Navigator.of(context).pop();
+                                if (state.success) {
                                   Navigator.of(context).pop();
-                                }, child: Text('확인', style: TextStyle(color: color.mainColor),))
-                              ],
-                            );
-                          });
-                        }
-                      }
-                      );
+                                  /*Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => AccountDetailsScreen())
+                                  );*/
+                                }
+                              }, child: Text('확인', style: TextStyle(color: color.mainColor),))
+                            ],
+                          );
+                        });
+                      });
 
                     } else {
                       log('유효성 검사 실패');
@@ -217,50 +185,21 @@ class _LoginState extends State<LoginScreen> {
                     backgroundColor: color.mainColor,
                   ),
                   child: const Text(
-                    '로그인',
+                    '회원가입',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => RegisterScreen()));
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.black54,
-                      minimumSize: const Size(200, 30),
-                    ),
-                    child: const Text(
-                      '회원가입',
-                      style: TextStyle(color: Colors.black),
-                    )),
-                const Divider(
-                  indent: 20,
-                  endIndent: 20,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: maxWidth,
-                  child: const Text(
-                    '위의 "로그인"을 선택하면, '
-                    '시담의 이용약관 및 개인정보 보호정책을 읽고 이해했으며, '
-                    '그에 동의하는 것으로 간주됩니다.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
               ]),
         );
-        }
-        else {
-          return Container(width: double.infinity, height: double.infinity,
+        } else {
+          return Container(
             color: Colors.white,
-            child: Center(child: CircularProgressIndicator(color: color.mainColor,)),
+            child: Center(
+              child: CircularProgressIndicator(color: color.mainColor,),
+            ),
           );
         }
-      })
-    ),
+      })),
     );
   }
 }

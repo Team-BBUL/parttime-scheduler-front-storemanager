@@ -7,11 +7,11 @@ class AccountRole{
   int? cost;
   String? color;
   bool? salary;
-  bool? vaild;
+  bool? valid;
   String? role;
   Account? account;
 
-  AccountRole({this.id, this.alias, this.level, this.cost, this.color, this.salary, this.vaild, this.account});
+  AccountRole({this.id, this.alias, this.level, this.cost, this.color, this.salary, this.valid, this.account});
   AccountRole.simple({
     required this.id,
     required this.alias,
@@ -26,7 +26,7 @@ class AccountRole{
     cost = json['cost'];
     color = json['color'];
     salary = json['salary'];
-    vaild = json['vaild'];
+    valid = json['valid'];
     role = json['role'];
   }
 
@@ -41,14 +41,38 @@ class AccountRole{
 
   Map<String, dynamic> toJson(){
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = this.id;
-    data['alias'] = this.alias;
-    data['level'] = this.level;
-    data['cost'] = this.cost;
-    data['color'] = this.color;
-    data['salary'] = this.salary;
-    data['vaild'] = this.vaild;
-    data['role'] = this.role;
+    data['id'] = id;
+    data['alias'] = alias;
+    data['level'] = level;
+    data['cost'] = cost;
+    data['color'] = color;
+    data['salary'] = salary;
+    data['valid'] = valid;
+    data['role'] = role;
     return data;
+  }
+
+  Map<String, dynamic> toUpdateAccountJson() {
+    Map<String, dynamic> data = <String, dynamic>{};
+
+    data['alias'] = alias;
+    data['level'] = level ?? 0;
+    data['cost'] = cost ?? 0;
+    data['color'] = color ?? '0x00000000';
+    data['isSalary'] = salary;
+    data['valid'] = valid;
+
+    return data;
+  }
+
+  @override
+  String toString() {
+    return 'id: $id\n'
+        'alias: $alias\n'
+        'level: $level\n'
+        'cost: $cost\n'
+        'color: $color\n'
+        'valid: $valid\n'
+        'role: $role\n';
   }
 }

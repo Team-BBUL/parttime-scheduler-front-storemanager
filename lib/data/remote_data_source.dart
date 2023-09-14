@@ -6,11 +6,7 @@ import 'package:sidam_storemanager/utils/sp_helper.dart';
 
 class Session {
 
-  Session() {
-    init();
-  }
-
-  void init() async {
+  Future init() async {
     await _helper.init();
 
     _accountRoleId = _helper.getRoleId() ?? 0;
@@ -18,7 +14,7 @@ class Session {
   }
 
   var logger = Logger();
-  static SPHelper _helper = SPHelper();
+  static final SPHelper _helper = SPHelper();
 
   // TODO: _server 변수 실제 서버의 주소로 변경하기
   final String _server = "http://10.0.2.2:8088"; // 서버의 주소
@@ -29,7 +25,7 @@ class Session {
   get server { return _server; }
 
   Map<String, String> headers = {
-    'Content_type': 'application/json',
+    'Content-type': 'application/json',
     'Accept': 'application/json',
     'Authorization': 'Bearer ${_helper.getJWT()}',
   };
@@ -70,12 +66,26 @@ class Session {
   Future<http.Response> delete(String url) async {
     logger.i("delete - $url");
     http.Response response =
-    await http.delete(Uri.parse('$server$url'));
+    await http.delete(Uri.parse('$server$url'),
+        headers: headers);
 
     final int statusCode = response.statusCode;
 
     if (statusCode < 200 || statusCode >= 400) {
       logger.w('$url\ndelete warning\n${response.body}');
+    }
+
+    return response;
+  }
+
+  Future<http.Response> put(String url, dynamic data) async {
+    logger.i('put - $url');
+    http.Response response =
+        await http.put(Uri.parse('$server$url'),
+        body: jsonEncode(data), headers: headers);
+
+    if (response.statusCode < 200 || response.statusCode >= 400) {
+      logger.w('$url\nput warning\n${response.body}');
     }
 
     return response;

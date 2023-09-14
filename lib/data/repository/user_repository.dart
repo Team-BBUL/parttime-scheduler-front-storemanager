@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -28,8 +27,9 @@ class UserRepositoryImpl implements UserRepository {
 
     print(helper.getJWT());
 
+    // TODO 서버 주소로 바꾸기
     String apiUrl = 'http://10.0.2.2:8088/api/employees/${helper.getStoreId()}';
-    final headers = {'Authorization': 'Bearer '+helper.getJWT(),
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
     try {
       final response = await http.get(
@@ -57,8 +57,9 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<AccountRole> fetchAccountRole(int employeeId) async {
+    // TODO 서버 주소로 바꾸기
     String apiUrl = 'http://10.0.2.2:8088/api/employee/${helper.getStoreId()}/account?id=$employeeId';
-    final headers = {'Authorization': 'Bearer '+helper.getJWT(),
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
     try {
       final response = await http.get(
@@ -87,8 +88,9 @@ class UserRepositoryImpl implements UserRepository {
   Future updateAccountRole(AccountRole accountRole) async {
     SPHelper helper = SPHelper();
 
+    // TODO 서버 주소로 바꾸기
     String apiUrl = 'http://10.0.2.2:8088/api/employee/${helper.getStoreId()}?id=${accountRole.id!}';
-    final headers = {'Authorization': 'Bearer '+helper.getJWT(),
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
 
     try {
@@ -115,8 +117,9 @@ class UserRepositoryImpl implements UserRepository {
   Future<Account> fetchUser() async {
     SPHelper helper = SPHelper();
 
+    // TODO 서버 주소로 바꾸기
     const String apiUrl = 'http://10.0.2.2:8088/member';
-    final headers = {'Authorization': 'Bearer '+helper.getJWT(),
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
     try {
       final response = await http.get(
@@ -151,8 +154,9 @@ class UserRepositoryImpl implements UserRepository {
     SPHelper helper = SPHelper();
 
     print(helper.getJWT());
+    // TODO 서버 주소로 바꾸기
     const String apiUrl = 'http://10.0.2.2:8088/member/regist';
-    final headers = {'Authorization': 'Bearer '+helper.getJWT(),
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
     try {
       final response = await http.post(
@@ -187,8 +191,10 @@ class UserRepositoryImpl implements UserRepository {
   Future<Map<AccountRole,Store>> enter(int? storeId) async {
     print("enter ${helper.getJWT()}");
     storeId ??= helper.getStoreId();
+
+    // TODO 서버 주소로 바꾸기
     String apiUrl = 'http://10.0.2.2:8088/api/enter/$storeId';
-    final headers = {'Authorization': 'Bearer '+helper.getJWT(),
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
     try {
 
@@ -224,8 +230,9 @@ class UserRepositoryImpl implements UserRepository {
   Future<Account> fetchUserWithId(int id) async {
     SPHelper helper = SPHelper();
 
+    // TODO 서버 주소로 바꾸기
     const String apiUrl = 'http://10.0.2.2:8088/member';
-    final headers = {'Authorization': 'Bearer '+helper.getJWT(),
+    final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
     try {
       final response = await http.get(

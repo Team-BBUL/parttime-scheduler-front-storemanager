@@ -1,16 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_storemanager/view/home.dart';
 
 import '../main.dart';
 import '../utils/app_color.dart';
 import '../utils/app_input_theme.dart';
 import '../utils/app_picker_sheet.dart';
-import '../utils/app_toast.dart';
-import '../utils/dialog_message.dart';
 import '../view_model/store_register_view_model.dart';
-import '../utils/custom_cupertino_picker.dart';
 
 class StoreRegisterScreen extends StatelessWidget{
   final nameController = TextEditingController();
@@ -182,7 +178,7 @@ class StoreRegisterScreen extends StatelessWidget{
                         ),
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(40.0, 80.0, 40.0, 10),
+                          padding: const EdgeInsets.fromLTRB(40.0, 80.0, 40.0, 10),
                           child: FilledButton(
                             onPressed: () => ({
                               if (_formKey.currentState!.validate()) {
@@ -200,7 +196,7 @@ class StoreRegisterScreen extends StatelessWidget{
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
-                            child: Text("진행",
+                            child: const Text("진행",
                               style: TextStyle(fontSize: 17,color: Colors.black),
                             ),
                           ),

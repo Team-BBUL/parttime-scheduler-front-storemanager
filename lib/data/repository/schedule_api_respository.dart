@@ -15,6 +15,7 @@ abstract class ScheduleRemoteRepository {
 
 class ScheduleApiRepository implements ScheduleRemoteRepository{
 
+  // TODO 서버 주소로 바꾸기
   String scheduleApi = 'http://10.0.2.2:8088/api/schedule';
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:sidam_storemanager/data/local_data_source.dart';
 import 'package:sidam_storemanager/data/repository/store_repository.dart';
 import 'package:sidam_storemanager/main.dart';
 
@@ -10,12 +11,14 @@ import '../utils/store_validator.dart';
 
 
 class StoreRegisterViewModel extends ChangeNotifier{
+
   Store? _store = Store();
   StoreValidator storeValidator = StoreValidator();
   String indicator = '시';
   List<int> time = List<int>.generate(24, (index) => index);
   bool isTextFieldChanged = false;
   Map<String, String> _errorMessages = {};
+
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _paydayController = TextEditingController();
   final TextEditingController _startDayOfWeekController = TextEditingController();
@@ -33,7 +36,6 @@ class StoreRegisterViewModel extends ChangeNotifier{
 
   get startDayOfWeekController => _startDayOfWeekController;
   get deadlineOfSubmitController => _deadlineOfSubmitController;
-
 
 
   void setOpenTime(int time){
@@ -105,6 +107,8 @@ class StoreRegisterViewModel extends ChangeNotifier{
       final statusCode = await _storeRepository.createStore(_store!);
 
       if(statusCode == 200){
+
+
         Navigator.pushAndRemoveUntil(
             context,MaterialPageRoute(builder:
             (context)=>MyHomePage(title: 'title')),
