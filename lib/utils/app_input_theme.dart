@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'app_color.dart';
 
 class AppInputTheme{
-  InputDecoration buildDecoration({required String borderText,required bool writable}) => InputDecoration(
+  InputDecoration buildDecoration({required String borderText,required bool writable,}) => InputDecoration(
     contentPadding: EdgeInsets.all(12.0),
     enabled: writable,
     disabledBorder: AppInputTheme()._buildBorder(),
@@ -15,6 +15,31 @@ class AppInputTheme{
     floatingLabelBehavior:FloatingLabelBehavior.always,
     enabledBorder: AppInputTheme()._buildBorder(),
     focusedBorder: AppInputTheme()._buildBorder(),
+  );
+
+  InputDecoration buildSuffixIcon({required String borderText,required bool writable, required Function pressed, required String? errorMsg}) => InputDecoration(
+    contentPadding: EdgeInsets.all(12.0),
+    enabled: writable,
+    disabledBorder: AppInputTheme()._buildBorder(),
+    border: AppInputTheme()._buildBorder(),
+    labelText: borderText,
+    labelStyle: TextStyle(color: Colors.grey[800], fontSize: 20.0),
+    floatingLabelBehavior:FloatingLabelBehavior.always,
+    enabledBorder: AppInputTheme()._buildBorder(),
+    focusedBorder: AppInputTheme()._buildBorder(),
+    suffixIcon: TextButton(
+      onPressed: () =>  pressed(),
+      child: Text('중복확인',style: TextStyle(color: Colors.white),),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(AppColor().mainColor),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14.0),
+          ),
+        ),
+      ),
+    ),
+    errorText: errorMsg
   );
 
   OutlineInputBorder _buildBorder(){

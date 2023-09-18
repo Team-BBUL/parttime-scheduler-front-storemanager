@@ -19,6 +19,7 @@ abstract class AnnouncementRepository {
 
 class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
+  //TODO : change to real server address
   String noticeApi = 'http://10.0.2.2:8088/api/notice/';
 
   @override
@@ -180,6 +181,7 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
   Future getImage(String url, String fileName) async {
     SPHelper helper = SPHelper();
 
+    //TODO : change to real server address
     final String apiUrl = "http://10.0.2.2:8088$url?filename=$fileName";
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};

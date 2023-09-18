@@ -12,6 +12,11 @@ class AccountRole{
   Account? account;
 
   AccountRole({this.id, this.alias, this.level, this.cost, this.color, this.salary, this.valid, this.account});
+  AccountRole.newEmployee({
+    required this.salary,
+    required this.alias,
+    this.role = 'EMPLOYEE',
+});
   AccountRole.simple({
     required this.id,
     required this.alias,
@@ -29,7 +34,19 @@ class AccountRole{
     valid = json['valid'];
     role = json['role'];
   }
-
+  AccountRole.fromJsonWithAccount(Map<String, dynamic> json){
+    account = Account();
+    account?.originAccountId = json['originAccountId'];
+    account?.originPassword = json['originPassword'];
+    id = json['id'];
+    alias = json['alias'];
+    level = json['level'];
+    cost = json['cost'];
+    color = json['color'];
+    salary = json['salary'];
+    valid = json['valid'];
+    role = json['role'];
+  }
   factory AccountRole.fromSimpleJson(Map<String, dynamic> json) {
     return AccountRole(
         id: json['id'],
@@ -41,6 +58,21 @@ class AccountRole{
 
   Map<String, dynamic> toJson(){
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['alias'] = alias;
+    data['level'] = level;
+    data['cost'] = cost;
+    data['color'] = color;
+    data['salary'] = salary;
+    data['valid'] = valid;
+    data['role'] = role;
+    return data;
+  }
+
+  Map<String, dynamic> toJsonWithAccount(){
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['accountId'] = account!.originAccountId;
+    data['password'] = account!.originPassword;
     data['id'] = id;
     data['alias'] = alias;
     data['level'] = level;

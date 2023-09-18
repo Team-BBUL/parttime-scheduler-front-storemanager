@@ -23,6 +23,7 @@ class _RegisterState extends State<RegisterScreen> {
 
   late TextEditingController _idController;
   late TextEditingController _pwController;
+  late TextEditingController _checkPWController;
 
   @override
   void initState() {
@@ -30,12 +31,14 @@ class _RegisterState extends State<RegisterScreen> {
 
     _idController = TextEditingController();
     _pwController = TextEditingController();
+    _checkPWController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _pwController.dispose();
     _idController.dispose();
+    _pwController.dispose();
+    _checkPWController.dispose();
     super.dispose();
   }
 
@@ -127,6 +130,42 @@ class _RegisterState extends State<RegisterScreen> {
                               }
                               if (value.length < 8) {
                                 return '비밀번호가 너무 짧습니다.';
+                              }
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter(
+                                  RegExp(r'[a-zA-Z0-9.,!@#$%^&*=+-]'),
+                                  allow: true),
+                            ],
+                          )),
+                      SizedBox(
+                          width: 300,
+                          height: 65,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                  BorderSide(color: color.mainColor),
+                                ),
+                                floatingLabelBehavior:
+                                FloatingLabelBehavior.never,
+                                labelText: '비밀번호 확인',
+                                labelStyle:
+                                const TextStyle(color: Colors.black26)),
+                            controller: _checkPWController,
+                            obscureText: true,
+                            validator: (String? value) {
+                              if (value?.isEmpty ?? true) {
+                                return '비밀번호를 입력해주세요!';
+                              }
+                              if (value!.length > 50) {
+                                return '비밀번호는 50자를 초과할 수 없습니다!';
+                              }
+                              if (value.length < 8) {
+                                return '비밀번호가 너무 짧습니다.';
+                              }
+                              if(value != _pwController.text) {
+                                return '비밀번호가 일치하지 않습니다.';
                               }
                             },
                             inputFormatters: [

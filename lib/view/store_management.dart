@@ -5,6 +5,7 @@ import 'package:sidam_storemanager/utils/app_input_theme.dart';
 import 'package:sidam_storemanager/utils/dialog_message.dart';
 import 'package:sidam_storemanager/view/cost_policy.dart';
 import 'package:sidam_storemanager/view/employee_details.dart';
+import 'package:sidam_storemanager/view/employee_register.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
 
 import '../utils/app_color.dart';
@@ -251,7 +252,15 @@ class StoreManagementScreen extends StatelessWidget {
                                                   style: TextStyle(fontSize: 16, color: Colors.grey)),
                                             ),
                                             Expanded(
-                                              child: Container(),
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute<void>(
+                                                          builder: (context) {
+                                                            return EmployeeRegisterScreen();
+                                                          }));
+                                                }, child: Text("근무자 추가"),
+                                              ),
                                             )
                                           ],
                                         ),

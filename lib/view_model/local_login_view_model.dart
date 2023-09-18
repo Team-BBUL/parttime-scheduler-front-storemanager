@@ -69,7 +69,7 @@ class LocalLoginViewModel extends ChangeNotifier {
         init = data['user']['valid'] ?? false;
         _helper.writeStoreId(data['store'] ?? 0);
         _helper.writeRoleId(data['user']['id']);
-        _helper.writeAlias(data['user']['alias']);
+        _helper.writeAlias(data['user']['alias'] ??'');
 
         account = AccountRole.fromJson(data['user']);
         log(account.toString());

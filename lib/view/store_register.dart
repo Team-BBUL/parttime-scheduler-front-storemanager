@@ -28,28 +28,41 @@ class StoreRegisterScreen extends StatelessWidget{
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 40, 0, 10),
+                          child: const Text(
+                            '매장을 등록해주세요',
+                            style: TextStyle(
+                                fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        const Divider(
+                          color: Colors.black,
+                          thickness: 1,
+                        ),
                         Padding(
                             padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 10.0),
                             child: Column(
                               children: [
-                                Row(
-                                  children: [
-                                    Flexible(flex: 8, child: Container()),
-                                    Flexible(flex: 3,
-                                        child: Container(
-                                          child: TextButton(
-                                            onPressed: () {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(builder:
-                                                    (context) => MyHomePage(title: '')
-                                                ),
-                                              );
-                                            },
-                                            child: Text('넘어가기'),),
-                                        ))
-                                  ],
-                                ),
+                                // Row(
+                                //   children: [
+                                //     Flexible(flex: 8, child: Container()),
+                                //     Flexible(flex: 3,
+                                //         child: Container(
+                                //           child: TextButton(
+                                //             onPressed: () {
+                                //               Navigator.pushReplacement(
+                                //                 context,
+                                //                 MaterialPageRoute(builder:
+                                //                     (context) => MyHomePage(title: '')
+                                //                 ),
+                                //               );
+                                //             },
+                                //             child: Text('넘어가기'),),
+                                //         ))
+                                //   ],
+                                // ),
                                 TextFormField(
                                   validator: viewModel.storeValidator.validateName,
                                   onChanged: (_) => (viewModel.setTextFieldChanged()),

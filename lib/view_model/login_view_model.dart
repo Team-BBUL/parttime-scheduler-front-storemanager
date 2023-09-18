@@ -53,7 +53,8 @@ class LoginViewModel extends ChangeNotifier{
 
   Future<void> getAccountInfo() async{
     account = await _userRepository?.fetchUser();
-    helper.writeIsRegistered(account!.onceVerified ?? false);
+    //TODO onceVerified 사용 유무 or 대체 결정
+    // helper.writeIsRegistered(account!.onceVerified ?? false);
   }
 
   Future<bool> saveToken(String url) async{
