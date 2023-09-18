@@ -19,8 +19,8 @@ abstract class AnnouncementRepository {
 
 class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
-  //TODO : change to real server address
-  String noticeApi = 'http://10.0.2.2:8088/api/notice/';
+  //String noticeApi = 'http://10.0.2.2:8088/api/notice/';
+  String noticeApi = 'https://sidam-scheduler.link/api/notice/';
 
   @override
   Future<Announcement> fetchAnnouncement(int announcementId) async {
@@ -181,8 +181,8 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
   Future getImage(String url, String fileName) async {
     SPHelper helper = SPHelper();
 
-    //TODO : change to real server address
-    final String apiUrl = "http://10.0.2.2:8088$url?filename=$fileName";
+    //final String apiUrl = "http://10.0.2.2:8088$url?filename=$fileName";
+    final String apiUrl = "https://sidam-scheduler.link$url?filename=$fileName";
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
     Uint8List imageBytes;

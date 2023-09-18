@@ -56,6 +56,7 @@ class LocalLoginViewModel extends ChangeNotifier {
       if (res.statusCode == 200) {
         success = true;
         List<String> token = (res.headers['authorization'] ?? '').split(' ');
+        log('${res.headers['authorization']}');
         _helper.writeJWT(token[1]); // 토큰 넣기
         _helper.writeIsLoggedIn(true); // 로그인 여부 true
 
@@ -67,6 +68,7 @@ class LocalLoginViewModel extends ChangeNotifier {
           inStore = true;
         }
         init = data['user']['valid'] ?? false;
+        _helper.writeIsRegistered(init);
         _helper.writeStoreId(data['store'] ?? 0);
         _helper.writeRoleId(data['user']['id']);
         _helper.writeAlias(data['user']['alias'] ??'');

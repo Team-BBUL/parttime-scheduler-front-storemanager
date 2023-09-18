@@ -17,7 +17,7 @@ abstract class AnniversaryRepository{
 
 class AnniversaryRepositoryImpl implements AnniversaryRepository{
 
-  String anniversaryApi = 'http://10.0.2.2:8088/api/stores';
+  String anniversaryApi = 'https://sidam-scheduler.link/api/stores';
   SPHelper helper = SPHelper();
 
   @override

@@ -17,8 +17,9 @@ import '../model/store.dart';
 import '../utils/sp_helper.dart';
 
 class StoreManagementViewModel extends ChangeNotifier {
+
   final StoreRepository _storeRepository;
-  final UserRepository _userRepository;
+  final UserRepositoryImpl _userRepository;
   final AnniversaryRepository _anniversaryRepository;
   final IncentiveRepository _incentiveRepository;
   final CostPolicyRepository _costPolicyRepository;
@@ -51,6 +52,9 @@ class StoreManagementViewModel extends ChangeNotifier {
 
   String? _idStatusCode;
 
+  bool _clearLoading = false;
+  bool _clearSuccess = false;
+
   get idStatusCode => _idStatusCode;
   get updatedAt => _updatedAt;
   List<String>? get day => _day;
@@ -70,6 +74,8 @@ class StoreManagementViewModel extends ChangeNotifier {
   List<Incentive>? get incentiveList => _incentiveList;
   List<CostPolicy>? get policyList => _policyList;
   Map<String, List<Incentive>>? get monthIncentiveList => _monthIncentiveList;
+  get clearLoading => _clearLoading;
+  get clearSuccess => _clearSuccess;
 
   StoreManagementViewModel(
       this._storeRepository, this._userRepository, this._anniversaryRepository,
@@ -461,6 +467,35 @@ class StoreManagementViewModel extends ChangeNotifier {
     }catch(e){
       log(e.toString());
       throw(e);
+    }
+  }
+
+  // 근무자 ID, PW 초기화
+  Future<void> clearEmployeeAuth() async {
+    if (!_clearLoading){
+      _clearLoading = true;
+
+      if (_selectedEmployee == null) {
+        return;
+      }
+
+      int employeeId = _selectedEmployee?.id ?? 0;
+
+      if (employeeId == 0) {
+        return;
+      }
+
+      try {
+        await _userRepository.clearEmployee(employeeId);
+        _clearSuccess = true;
+        Future.delayed(const Duration(milliseconds: 500), (){
+          _clearLoading = false;
+          notifyListeners();
+        });
+      } catch (e) {
+        log('$e');
+        _clearSuccess = false;
+      }
     }
   }
 }

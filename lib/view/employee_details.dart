@@ -33,7 +33,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                   Message().showConfirmDialog(
                       context: context,
                       title: "회원정보를 수정하시겠습니까?",
-                      message: "message",
+                      message: "",
                       apiCall:  () => viewModel.sendEmployeeScreenData(),
                       popCount: 2
                   );
@@ -183,26 +183,46 @@ class EmployeeDetailScreen extends StatelessWidget {
                       ],
                     ),
                   children: [
-                    Container(
-                        margin: AppInputTheme().marginSpace(),
-                        child: TextField(
-                          decoration: AppInputTheme().buildDecoration(
-                              borderText: "기본 아이디", writable: false),
-                          enabled: false,
+                    Column(
+                        children: [
+                          Container(
+                              margin: AppInputTheme().marginSpace(),
+                              child: TextField(
+                                decoration: AppInputTheme().buildDecoration(
+                                    borderText: "기본 아이디", writable: false),
+                                enabled: false,
 
-                          controller: TextEditingController(
-                              text: viewModel.selectedEmployee?.account?.originAccountId ?? ''),
-                        )),
-                    Container(
-                        margin: AppInputTheme().marginSpace(),
-                        child: TextField(
-                          decoration: AppInputTheme().buildDecoration(
-                              borderText: "기본 비밀번호", writable: false),
-                          enabled: false,
+                                controller: TextEditingController(
+                                    text: viewModel.selectedEmployee?.account?.originAccountId ?? ''),
+                              )),
+                          Container(
+                              margin: AppInputTheme().marginSpace(),
+                              child: TextField(
+                                decoration: AppInputTheme().buildDecoration(
+                                    borderText: "기본 비밀번호", writable: false),
+                                enabled: false,
 
-                          controller: TextEditingController(
-                              text: viewModel.selectedEmployee?.account?.originPassword ?? ''),
-                        )),
+                                controller: TextEditingController(
+                                    text: viewModel.selectedEmployee?.account?.originPassword ?? ''),
+                              )),
+                        ]),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                      ),
+                        onPressed: (){
+                          viewModel.clearEmployeeAuth()
+                            .then((value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('초기화 ${viewModel.clearSuccess ? '성공' : '실패'}!'),
+                                  backgroundColor: Colors.black54,
+                                )
+                              );
+                          });
+
+                    }, child: const Text('ID, 비밀번호 기본값으로 초기화', style: TextStyle(color: Colors.white),)),
                   ],
                 ),
 

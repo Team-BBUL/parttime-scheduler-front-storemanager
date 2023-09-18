@@ -24,14 +24,15 @@ abstract class UserRepository{
 class UserRepositoryImpl implements UserRepository {
   SPHelper helper = SPHelper();
 
-  String base = 'http://10.0.2.2:8088';
+  //String base = 'http://10.0.2.2:8088';
+  String base = 'https://sidam-scheduler.link';
 
   @override
   Future<List<AccountRole>> fetchAccountRoles() async {
 
-    print(helper.getJWT());
+    await helper.init();
+    log(helper.getJWT());
 
-    // TODO 서버 주소로 바꾸기
     String apiUrl = '$base/api/employees/${helper.getStoreId()}';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -61,7 +62,7 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<AccountRole> fetchAccountRole(int employeeId) async {
-    // TODO 서버 주소로 바꾸기
+
     String apiUrl = '$base/api/employee/${helper.getStoreId()}/account?id=$employeeId';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -91,7 +92,6 @@ class UserRepositoryImpl implements UserRepository {
   Future updateAccountRole(AccountRole accountRole) async {
     SPHelper helper = SPHelper();
 
-    // TODO 서버 주소로 바꾸기
     String apiUrl = '$base/api/employee/${helper.getStoreId()}?id=${accountRole.id!}';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -120,7 +120,6 @@ class UserRepositoryImpl implements UserRepository {
   Future<Account> fetchUser() async {
     SPHelper helper = SPHelper();
 
-    // TODO 서버 주소로 바꾸기
     String apiUrl = '$base/member';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -157,7 +156,7 @@ class UserRepositoryImpl implements UserRepository {
     SPHelper helper = SPHelper();
 
     print(helper.getJWT());
-    // TODO 서버 주소로 바꾸기
+
     String apiUrl = '$base/member/regist';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -195,7 +194,6 @@ class UserRepositoryImpl implements UserRepository {
     print("enter ${helper.getJWT()}");
     storeId ??= helper.getStoreId();
 
-    // TODO 서버 주소로 바꾸기
     String apiUrl = '$base/api/enter/$storeId';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -233,7 +231,6 @@ class UserRepositoryImpl implements UserRepository {
   Future<Account> fetchUserWithId(int id) async {
     SPHelper helper = SPHelper();
 
-    // TODO 서버 주소로 바꾸기
     String apiUrl = '$base/member';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -269,7 +266,6 @@ class UserRepositoryImpl implements UserRepository {
   Future<String> checkId(String accountId) async {
     SPHelper helper = SPHelper();
 
-    // TODO 서버 주소로 바꾸기
      String apiUrl = '$base/api/auth/check_duplication_id?accountId=$accountId';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -301,7 +297,6 @@ class UserRepositoryImpl implements UserRepository {
   Future<dynamic> createEmployee(AccountRole accountRole) async{
     SPHelper helper = SPHelper();
 
-    // TODO 서버 주소로 바꾸기
     String apiUrl = '$base/api/store/${helper.getStoreId()}/register/employee';
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json; charset=utf-8'};
@@ -323,6 +318,36 @@ class UserRepositoryImpl implements UserRepository {
       }
     } catch (e) {
       throw Exception('Failed to update user. Error: $e');
+    }
+  }
+
+  Future<dynamic> clearEmployee(int employeeId) async {
+
+    SPHelper helper = SPHelper();
+    await helper.init();
+
+    String apiUrl = '$base/api/employees/$employeeId/clear';
+    final headers = {
+      'Authorization': 'Bearer ${helper.getJWT()}',
+      'Content-Type': 'application/json; charset=utf-8'
+    };
+
+    log(apiUrl);
+
+    try {
+      final res = await http.get(
+        Uri.parse(apiUrl),
+        headers: headers
+      );
+
+      if (res.statusCode == 200) {
+        log('User account clear successfully.');
+      } else {
+        log('User account clear failed.');
+        throw Exception('status code ${res.statusCode}');
+      }
+    } catch(e) {
+      throw Exception('Failed to clear user account. Error: $e');
     }
   }
 

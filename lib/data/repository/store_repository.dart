@@ -21,13 +21,15 @@ abstract class StoreRepository{
 }
 
 class StoreRepositoryImpl implements StoreRepository{
-  // TODO 실제 서버 주소로 바꾸기
-  static String storeApi = 'http://10.0.2.2:8088/store';
+
+  //static String storeApi = 'http://10.0.2.2:8088/store';
+  static String storeApi = 'https://sidam-scheduler.link/store';
   final LocalDataSource _dataSource = LocalDataSource();
 
   @override
   Future<Store> fetchStore(int? storeId) async{
     SPHelper helper = SPHelper();
+    await helper.init();
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
     log("fetStoreSpHash: ${helper.hashCode}");
@@ -44,14 +46,13 @@ class StoreRepositoryImpl implements StoreRepository{
     log('$storeId');
     log('${helper.getStoreId()}');
 
-    helper.init();
-
     final String apiUrl = '$storeApi/$storeId';
 
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: headers,
     );
+    log(response.body);
     Map<String, dynamic> decodedData = json.decode(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> storeData = decodedData['data'];

@@ -39,7 +39,7 @@ class EmployeeRegisterScreen extends StatelessWidget {
                           Message().showConfirmDialog(
                               context: context,
                               title: "근무자를 등록하시겠습니까?",
-                              message: "message",
+                              message: '${_nameController.text} 근무자를 등록합니다.',
                               apiCall:  () =>
                                   viewModel.createNewEmployee(
                                       _idController.text,
@@ -181,7 +181,7 @@ class EmployeeRegisterScreen extends StatelessWidget {
                                     },
                                     inputFormatters: [
                                       FilteringTextInputFormatter(
-                                          RegExp(r'[a-zA-Z0-9.,!@#$%^&*=+-]'),
+                                          RegExp(r'[ㄱ-ㅎ가-힣]'),
                                           allow: true),
                                     ],
                                   )),

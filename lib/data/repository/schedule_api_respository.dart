@@ -15,8 +15,8 @@ abstract class ScheduleRemoteRepository {
 
 class ScheduleApiRepository implements ScheduleRemoteRepository{
 
-  // TODO 서버 주소로 바꾸기
-  String scheduleApi = 'http://10.0.2.2:8088/api/schedule';
+  //String scheduleApi = 'http://10.0.2.2:8088/api/schedule';
+  String scheduleApi = 'https://sidam-scheduler.link/api/schedule';
 
   @override
   Future<MonthSchedule> fetchSchedule(String timeStamp, int year, int month, int day) async {
