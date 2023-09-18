@@ -1,16 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_storemanager/view/home.dart';
 
 import '../main.dart';
 import '../utils/app_color.dart';
 import '../utils/app_input_theme.dart';
 import '../utils/app_picker_sheet.dart';
-import '../utils/app_toast.dart';
-import '../utils/dialog_message.dart';
 import '../view_model/store_register_view_model.dart';
-import '../utils/custom_cupertino_picker.dart';
 
 class StoreRegisterScreen extends StatelessWidget{
   final nameController = TextEditingController();
@@ -32,28 +28,41 @@ class StoreRegisterScreen extends StatelessWidget{
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 40, 0, 10),
+                          child: const Text(
+                            '매장을 등록해주세요',
+                            style: TextStyle(
+                                fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        const Divider(
+                          color: Colors.black,
+                          thickness: 1,
+                        ),
                         Padding(
                             padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 10.0),
                             child: Column(
                               children: [
-                                Row(
-                                  children: [
-                                    Flexible(flex: 8, child: Container()),
-                                    Flexible(flex: 3,
-                                        child: Container(
-                                          child: TextButton(
-                                            onPressed: () {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(builder:
-                                                    (context) => MyHomePage(title: '')
-                                                ),
-                                              );
-                                            },
-                                            child: Text('넘어가기'),),
-                                        ))
-                                  ],
-                                ),
+                                // Row(
+                                //   children: [
+                                //     Flexible(flex: 8, child: Container()),
+                                //     Flexible(flex: 3,
+                                //         child: Container(
+                                //           child: TextButton(
+                                //             onPressed: () {
+                                //               Navigator.pushReplacement(
+                                //                 context,
+                                //                 MaterialPageRoute(builder:
+                                //                     (context) => MyHomePage(title: '')
+                                //                 ),
+                                //               );
+                                //             },
+                                //             child: Text('넘어가기'),),
+                                //         ))
+                                //   ],
+                                // ),
                                 TextFormField(
                                   validator: viewModel.storeValidator.validateName,
                                   onChanged: (_) => (viewModel.setTextFieldChanged()),
@@ -182,7 +191,7 @@ class StoreRegisterScreen extends StatelessWidget{
                         ),
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(40.0, 80.0, 40.0, 10),
+                          padding: const EdgeInsets.fromLTRB(40.0, 80.0, 40.0, 10),
                           child: FilledButton(
                             onPressed: () => ({
                               if (_formKey.currentState!.validate()) {
@@ -200,7 +209,7 @@ class StoreRegisterScreen extends StatelessWidget{
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
-                            child: Text("진행",
+                            child: const Text("진행",
                               style: TextStyle(fontSize: 17,color: Colors.black),
                             ),
                           ),

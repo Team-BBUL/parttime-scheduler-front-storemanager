@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 
 import 'package:sidam_storemanager/data/repository/schedule_repository.dart';
+import 'package:sidam_storemanager/data/repository/store_repository.dart';
 import 'package:sidam_storemanager/model/schedule_model.dart';
+import 'package:sidam_storemanager/model/store.dart';
 import 'package:sidam_storemanager/utils/date_utility.dart';
 import 'package:sidam_storemanager/utils/sp_helper.dart';
 
@@ -11,6 +13,7 @@ class ScheduleViewModel extends ChangeNotifier {
   final _logger = Logger();
 
   late final ScheduleRepository _scheduleRepository;
+  late final StoreRepositoryImpl _storeRepository;
   late final SPHelper _helper;
   late final DateUtility _dateUtility;
 
@@ -20,10 +23,14 @@ class ScheduleViewModel extends ChangeNotifier {
   DateTime _week = DateTime.now(); // 주 시작일
   DateTime get week => _week;
 
+  Store _store = Store();
+  Store get store => _store;
+
   bool _monthly = false;
 
   ScheduleViewModel() {
     _scheduleRepository = ScheduleRepository();
+    _storeRepository = StoreRepositoryImpl();
     _dateUtility = DateUtility();
     _helper = SPHelper();
     _helper.init();
@@ -34,6 +41,7 @@ class ScheduleViewModel extends ChangeNotifier {
 
   void init() async {
     await _helper.init();
+    getStore();
     _week = _dateUtility.findStartDay(DateTime.now(), _helper.getWeekStartDay() ?? 1);
   }
 
@@ -84,5 +92,9 @@ class ScheduleViewModel extends ChangeNotifier {
       _getMonthSchedule();
     }
     _scheduleRepository.getWeeklySchedule(DateTime.now()); // 서버에서 데이터 가져옴
+  }
+
+  Future getStore() async {
+    _store = await _storeRepository.loadStore();
   }
 }

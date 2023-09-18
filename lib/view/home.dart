@@ -1,73 +1,58 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_storemanager/data/repository/store_repository.dart';
 import 'package:sidam_storemanager/utils/app_color.dart';
-import 'package:sidam_storemanager/utils/app_future_builder.dart';
 import 'package:sidam_storemanager/view/announcement_list.dart';
 import 'package:sidam_storemanager/view/setting_page.dart';
-import 'package:sidam_storemanager/view/store_list.dart';
 import 'package:sidam_storemanager/view/store_management.dart';
 import 'package:sidam_storemanager/view_model/notice_view_model.dart';
 
 import './widget/schedule_viewer.dart';
 import '../utils/sp_helper.dart';
-import '../view_model/store_list_view_model.dart';
-import '../view_model/store_management_view_model.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _HomeState();
+}
+
+class _HomeState extends State<HomeScreen> {
+
   final SPHelper helper = SPHelper();
   final AppColor color = AppColor();
   final Logger _logger = Logger();
 
+  String _storeName = '매장';
+  String _userAlias = '이름';
+
+  void loadSPProvider() async {
+
+    await helper.init();
+
+    setState(() {
+      _storeName = helper.getStoreName() ?? '매장';
+      _userAlias = helper.getAlias() ?? '이름';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    loadSPProvider();
 
-    viewPushToken();
     int? id = helper.getStoreId();
     final deviceHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          leading: Consumer<StoreListViewModel>(
-              builder: (context, viewModel, child) {
-                return Center(child: Text(
-                    viewModel.accountRole?.alias ?? '',
-                    style: const TextStyle(color: Colors.black, fontSize: 16)
-                ));
-              }
-            ),
-          title: TextButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => StoreListScreen(),
-                  ));
-            },
-            child: Consumer2<StoreManagementViewModel,StoreListViewModel>(
-              builder: (context, manageViewModel, listViewModel, child) {
-                String storeName ='';
-                if (manageViewModel.store != null && listViewModel.store != null) {
-                  if (manageViewModel.updatedAt.isAfter(listViewModel.updatedAt)) {
-                    storeName = manageViewModel.store!.name!;
-                  } else {
-                    storeName = listViewModel.store!.name!;
-                  }
-                } else if (manageViewModel.store != null) {
-                  storeName = manageViewModel.store!.name!;
-                } else if (listViewModel.store != null) {
-                  storeName = listViewModel.store!.name!;
-                }
-                return Text(
-                    storeName,
-                    style: const TextStyle(color: Colors.black, fontSize: 16)
-                );
-              }
-            )
+          leading: Center(child: Text(_userAlias,
+              style: const TextStyle(color: Colors.black, fontSize: 16)
+          )),
+          title: Text(_storeName,
+              style: const TextStyle(color: Colors.black, fontSize: 16)
           ),
+
           actions: [
             IconButton(
               icon: const Icon(Icons.settings),
@@ -82,10 +67,8 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: AppFutureBuilder(
-          future: StoreRepositoryImpl().fetchStore(id),
-          builder: (context, builder) {
-            return Column(
+        body: SafeArea(
+          child: Column(
               children: [
                 Container(
                   color: color.mainColor,
@@ -117,8 +100,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 mainTimeTable(deviceHeight),
               ],
-            );
-          },
+            )
         )
     );
   }
@@ -137,10 +119,5 @@ class HomeScreen extends StatelessWidget {
           ],
         )
     );
-  }
-
-  void viewPushToken() async {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    _logger.i(fcmToken);
   }
 }

@@ -17,7 +17,7 @@ class SignupScreen extends StatefulWidget{
   _SignupState createState() => _SignupState();
 
 }
-
+//TODO : REMOVE?
 class _SignupState extends State<SignupScreen>{
   final UserRepository _userRepository = UserRepositoryImpl();
   TextEditingController _aliasController = TextEditingController();
@@ -78,9 +78,9 @@ class _SignupState extends State<SignupScreen>{
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 10.0),
                         child: TextFormField(
-                          initialValue: _account?.name,
+                          // initialValue: _account?.name,
                           onChanged: (text) {
-                            _account?.name = text;
+                            // _account?.name = text;
                           },
                           decoration: InputDecoration(
                             hintText: '별명을 입력해주세요',
@@ -108,7 +108,8 @@ class _SignupState extends State<SignupScreen>{
                         padding: EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0.0),
                         child: FilledButton(onPressed: () async{
                           try {
-                            await _userRepository.createUser(_account?.name ?? '');
+                            //TODO account name 사용 유무 or 대체 결정
+                            // await _userRepository.createUser(_account?.name ?? '');
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(builder:

@@ -17,7 +17,8 @@ abstract class CostPolicyRepository{
 class CostPolicyRepositoryImpl implements CostPolicyRepository{
   SPHelper helper = SPHelper();
 
-  String policyApi = 'http://10.0.2.2:8088/api/stores';
+  //String policyApi = 'http://10.0.2.2:8088/api/stores';
+  String policyApi = 'https://sidam-scheduler.link/api/stores';
 
   @override
   Future fetchAllPolicy() async {

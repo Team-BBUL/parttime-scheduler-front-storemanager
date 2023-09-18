@@ -28,7 +28,8 @@ class AnnouncementDetailScreen extends StatelessWidget {
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight), // AppBar의 높이 지정
               child: AppBar(
-                title: const Text('View Mode'),
+                title: const Text('상세보기'),
+                centerTitle: true,
                 actions:[
                   Builder(builder: (context){
                     return IconButton(

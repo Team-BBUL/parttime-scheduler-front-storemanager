@@ -20,7 +20,7 @@ abstract class IncentiveRepository{
 
 class IncentiveRepositoryImpl extends IncentiveRepository{
 
-  String incentiveApi = 'http://10.0.2.2:8088/api/stores';
+  String incentiveApi = 'https://sidam-scheduler.link/api/stores';
 
   @override
   Future fetchMonthIncentives(DateTime date) async {

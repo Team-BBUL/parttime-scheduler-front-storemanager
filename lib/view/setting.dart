@@ -9,7 +9,6 @@ import 'package:sidam_storemanager/view/policy_terms.dart';
 
 import '../utils/sp_helper.dart';
 import 'check_login.dart';
-import 'notify_page.dart';
 
 class SettingScreen extends StatelessWidget{
 
@@ -33,7 +32,7 @@ class SettingScreen extends StatelessWidget{
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
+              /*Container(
                 width: double.infinity,
                   margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                   decoration: const BoxDecoration(
@@ -56,7 +55,7 @@ class SettingScreen extends StatelessWidget{
                           ),
                       )
                   )
-              ),
+              ),*/
               Container(
                 width: double.infinity,
                   margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),

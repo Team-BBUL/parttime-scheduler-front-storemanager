@@ -21,19 +21,22 @@ abstract class StoreRepository{
 }
 
 class StoreRepositoryImpl implements StoreRepository{
-  static String storeApi = 'http://10.0.2.2:8088/store';
+
+  //static String storeApi = 'http://10.0.2.2:8088/store';
+  static String storeApi = 'https://sidam-scheduler.link/store';
   final LocalDataSource _dataSource = LocalDataSource();
 
   @override
   Future<Store> fetchStore(int? storeId) async{
     SPHelper helper = SPHelper();
+    await helper.init();
     final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
     log("fetStoreSpHash: ${helper.hashCode}");
 
-    if(_isSameStore(storeId, helper.getStoreId())) {
+    /*if(_isSameStore(storeId, helper.getStoreId())) {
       return Store();
-    }
+    }*/
     if(_isIdsNull(storeId, helper.getStoreId())){
       return Store();
     }else{
@@ -43,22 +46,22 @@ class StoreRepositoryImpl implements StoreRepository{
     log('$storeId');
     log('${helper.getStoreId()}');
 
-    helper.init();
-
     final String apiUrl = '$storeApi/$storeId';
 
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: headers,
     );
+    log(response.body);
     Map<String, dynamic> decodedData = json.decode(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> storeData = decodedData['data'];
       Store store = Store.fromJson(storeData);
+      _dataSource.saveModels(store.toJson(), '', 'store');
       helper.writeStoreId(store.id!);
       helper.writeStoreName(store.name!);
       helper.writeIsRegistered(true);
-      log('fetchStore.helper.getCurrentStoreId" = ${helper.getStoreId()}');
+      log('fetchStore.helper.getCurrentStoreId = ${helper.getStoreId()}');
       log('Store get successfully.');
       return store;
     } else if(response.statusCode == 400) {
@@ -79,7 +82,7 @@ class StoreRepositoryImpl implements StoreRepository{
       'Content-Type': 'application/json'};
     helper.init();
     final String apiUrl = '$storeApi/regist';
-    log("createStore ${headers}");
+    log("createStore $headers");
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: headers,
@@ -89,8 +92,12 @@ class StoreRepositoryImpl implements StoreRepository{
       helper.writeIsRegistered(true);
       helper.writeStoreName(store.name!);
       log(response.body);
+
       Map<String, dynamic> decodedData = json.decode(response.body);
       helper.writeStoreId(decodedData['store_id']);
+      store.id = decodedData['store_id'];
+      _dataSource.saveModels(store.toJson(), '', 'store');
+
       log('store_repository.helper.getCurrentStoreId" = ${helper.getStoreId()}');
       log('Post created successfully.');
       return decodedData['status_code'];
@@ -182,7 +189,7 @@ class StoreRepositoryImpl implements StoreRepository{
     }
   }
 
-  bool _isSameStore(int? storeId, int? currentStoreId) {;
+  bool _isSameStore(int? storeId, int? currentStoreId) {
     if(currentStoreId != null && currentStoreId == storeId){
       return true;
     }

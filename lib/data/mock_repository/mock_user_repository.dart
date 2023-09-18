@@ -92,5 +92,16 @@ class FixedUserRepositoryStub extends UserRepository{
     throw UnimplementedError();
   }
 
+  @override
+  Future<String> checkId(String accountId) {
+    // TODO: implement checkId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future createEmployee(AccountRole accountRole) {
+    // TODO: implement createEmployee
+    throw UnimplementedError();
+  }
 
 }

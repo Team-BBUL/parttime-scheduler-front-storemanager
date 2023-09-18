@@ -13,7 +13,9 @@ import 'package:sidam_storemanager/view/time_table.dart';
 import 'package:sidam_storemanager/view_model/alarm_http_provider.dart';
 import 'package:sidam_storemanager/view_model/announcement_view_model.dart';
 import 'package:sidam_storemanager/view_model/cost_view_model.dart';
+import 'package:sidam_storemanager/view_model/local_login_view_model.dart';
 import 'package:sidam_storemanager/view_model/notice_view_model.dart';
+import 'package:sidam_storemanager/view_model/register_view_model.dart';
 import 'package:sidam_storemanager/view_model/schedule_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
@@ -51,9 +53,14 @@ void main() {
             ChangeNotifierProvider(
                 create: (context) => ScheduleViewModel()
             ),
+            ChangeNotifierProvider(
+                create: (context) => LocalLoginViewModel()
+            ),
+            ChangeNotifierProvider(
+                create: (context) => RegisterViewModel()
+            )
       ],
           child: const MyApp()
-
       )
   );
 }
@@ -96,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
   init(){
     helper.init();
   }
-  final List<Widget> _children = [HomeScreen(), TimeTableScreen(), CostScreen(), AlarmView()];
+  final List<Widget> _children = [const HomeScreen(), TimeTableScreen(), CostScreen(), AlarmView()];
 
   void _onTap(int index) {
     setState(() {

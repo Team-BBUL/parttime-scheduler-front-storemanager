@@ -5,14 +5,13 @@ import 'package:sidam_storemanager/utils/app_color.dart';
 
 import '../../model/store.dart';
 import '../../view_model/schedule_view_model.dart';
-import '../../view_model/store_view_model.dart';
 
 class ScheduleViewer extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => ScheduleViewerState();
+  State<StatefulWidget> createState() => ScheduleViewState();
 }
 
-class ScheduleViewerState extends State<ScheduleViewer> {
+class ScheduleViewState extends State<ScheduleViewer> {
   AppColor color = AppColor();
 
   @override
@@ -22,9 +21,12 @@ class ScheduleViewerState extends State<ScheduleViewer> {
     var week = ['error', '월', '화', '수', '목', '금', '토', '일'];
     DateTime now = DateTime.now();
 
-    StoreViewModel storeViewModel = StoreViewModel();
-
     return Consumer<ScheduleViewModel>(builder: (context, state, child) {
+
+      if (state.store.id == null || state.store.id == 0) {
+        state.getStore();
+      }
+
       return SizedBox(
           height: deviceHeight - 250,
           width: double.infinity,
@@ -61,18 +63,7 @@ class ScheduleViewerState extends State<ScheduleViewer> {
                           )),
                     )
                   ])),
-              FutureBuilder(
-                  future: storeViewModel.getStore(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      return timeTable(deviceWidth, deviceHeight, snapshot.data);
-                    }
-                    else if (snapshot.hasError) {
-                      return Text('시간표를 불러오는데 오류가 있습니다.\n${snapshot.hasError.toString()}');
-                    } else {
-                      return const Text('시간표가 없어요');
-                    }
-              }),
+              timeTable(deviceWidth, deviceHeight, state.store)
             ],
           ));
     });

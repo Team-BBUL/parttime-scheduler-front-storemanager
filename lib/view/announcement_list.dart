@@ -17,7 +17,8 @@ class AnnouncementListScreen extends StatelessWidget{
         builder: (builder, context){
           return Scaffold(
               appBar: AppBar(
-                  title: const Text('Announcement List Screen'),
+                  title: const Text('공지사항 목록'),
+                  centerTitle: true,
                   actions: <Widget>[
                     IconButton(
                       icon: const Icon(Icons.add_box),

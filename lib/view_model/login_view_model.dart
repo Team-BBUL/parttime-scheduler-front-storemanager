@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:sidam_storemanager/data/repository/user_repository.dart';
@@ -55,7 +53,8 @@ class LoginViewModel extends ChangeNotifier{
 
   Future<void> getAccountInfo() async{
     account = await _userRepository?.fetchUser();
-    helper.writeIsRegistered(account!.onceVerified ?? false);
+    //TODO onceVerified 사용 유무 or 대체 결정
+    // helper.writeIsRegistered(account!.onceVerified ?? false);
   }
 
   Future<bool> saveToken(String url) async{

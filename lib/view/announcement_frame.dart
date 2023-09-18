@@ -18,8 +18,9 @@ class AnnouncementFrameScreen extends StatelessWidget{
               appBar: AppBar(
                 title:
                 viewModel.mode == AnnouncementMode.CREATE ?
-                const Text('Create Mode')
-                    : const Text('Edit Mode'),
+                const Text('작성하기')
+                    : const Text('수정하기'),
+                centerTitle: true,
                 actions:[
                   viewModel.mode == AnnouncementMode.CREATE ?
                   IconButton(
@@ -29,7 +30,7 @@ class AnnouncementFrameScreen extends StatelessWidget{
                         Message().showConfirmDialog(
                             context: context,
                             title: "저장하시겠습니까?",
-                            message: "message",
+                            message: "",
                             apiCall: () => viewModel.createAnnouncement(),
                         popCount: 2);
                       }
@@ -41,7 +42,7 @@ class AnnouncementFrameScreen extends StatelessWidget{
                         Message().showConfirmDialog(
                             context: context,
                             title: "수정하시겠습니까??",
-                            message: "message",
+                            message: "",
                             apiCall: () => viewModel.updateAnnouncement(),
                         popCount: 2);
                       }

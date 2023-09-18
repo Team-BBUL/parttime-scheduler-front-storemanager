@@ -10,14 +10,16 @@ import 'package:sidam_storemanager/model/Incentive.dart';
 import 'package:sidam_storemanager/model/anniversary.dart';
 
 import '../data/repository/cost_policy_repository.dart';
+import '../model/account.dart';
 import '../model/account_role.dart';
 import '../model/cost_policy.dart';
 import '../model/store.dart';
 import '../utils/sp_helper.dart';
 
 class StoreManagementViewModel extends ChangeNotifier {
+
   final StoreRepository _storeRepository;
-  final UserRepository _userRepository;
+  final UserRepositoryImpl _userRepository;
   final AnniversaryRepository _anniversaryRepository;
   final IncentiveRepository _incentiveRepository;
   final CostPolicyRepository _costPolicyRepository;
@@ -44,9 +46,16 @@ class StoreManagementViewModel extends ChangeNotifier {
   MonthIncentive? _monthIncentive;
   Store? _store;
   AccountRole? _selectedEmployee;
+  AccountRole? _newEmployee;
   int? _monthIncentiveCost;
   CostPolicy? _newCostPolicy;
 
+  String? _idStatusCode;
+
+  bool _clearLoading = false;
+  bool _clearSuccess = false;
+
+  get idStatusCode => _idStatusCode;
   get updatedAt => _updatedAt;
   List<String>? get day => _day;
   List<double>? get multiplies => _multiplies;
@@ -55,6 +64,7 @@ class StoreManagementViewModel extends ChangeNotifier {
   Store? get store => _store;
   List<AccountRole>? get employees => _employees;
   AccountRole? get selectedEmployee => _selectedEmployee;
+  AccountRole? get newEmployee => _newEmployee;
   List<Anniversary>? get anniversaries => _anniversaries;
   MonthIncentive? get monthIncentive => _monthIncentive;
   CostPolicy? get newCostPolicy => _newCostPolicy;
@@ -64,12 +74,16 @@ class StoreManagementViewModel extends ChangeNotifier {
   List<Incentive>? get incentiveList => _incentiveList;
   List<CostPolicy>? get policyList => _policyList;
   Map<String, List<Incentive>>? get monthIncentiveList => _monthIncentiveList;
+  get clearLoading => _clearLoading;
+  get clearSuccess => _clearSuccess;
 
   StoreManagementViewModel(
       this._storeRepository, this._userRepository, this._anniversaryRepository,
       this._incentiveRepository, this._costPolicyRepository){
+    _newEmployee ??= AccountRole.newEmployee(salary: false, alias: '');
     _renderStoreName();
   }
+
 
   Future<void> sendStoreManagementScreenData() async {
     try{
@@ -90,6 +104,9 @@ class StoreManagementViewModel extends ChangeNotifier {
     }catch(e){
       rethrow;
     }
+  }
+  void initEmployeeRegisterScreen() {
+    _idStatusCode = null;
   }
 
   Future<void> _getStore() async {
@@ -247,12 +264,6 @@ class StoreManagementViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLevel(int selectedItem) {
-    _selectedEmployee!.level = selectedItem;
-    log('StoreManagerViewModel.setLevel:${_selectedEmployee?.level}');
-    notifyListeners();
-  }
-
   void setStartDayOfWeek(int index) {
     _store?.startDayOfWeek = index;
     notifyListeners();
@@ -308,11 +319,37 @@ class StoreManagementViewModel extends ChangeNotifier {
     _selectedEmployee?.alias = text;
   }
 
+  void setLevel(int selectedItem) {
+    _selectedEmployee?.level = selectedItem;
+    log('StoreManagerViewModel.setLevel:${_selectedEmployee?.level}');
+    notifyListeners();
+  }
+
+  setNewIsSalary(bool bool) {
+    _newEmployee?.salary = bool;
+    notifyListeners();
+  }
+
+  setNewCost(String text) {
+    _newEmployee?.cost = int.parse(text);
+    log("setCost ${_newEmployee?.cost}");
+  }
+
+  setNewAlias(String text) {
+    _newEmployee?.alias = text;
+  }
+
+  void setNewLevel(int selectedItem) {
+    _newEmployee?.level = selectedItem;
+    log('StoreManagerViewModel.setLevel:${_newEmployee?.level}');
+    notifyListeners();
+  }
   void _renderStoreName() {
     SPHelper spHelper = SPHelper();
     _store = Store();
     _store!.name = spHelper.getStoreName();
   }
+
   void _calculateMonthIncentiveCost() {
     _monthIncentiveCost = 0;
     if(monthIncentive != null) {
@@ -404,6 +441,62 @@ class StoreManagementViewModel extends ChangeNotifier {
   void setCostPolicyDate(int selected) {
     _newCostPolicy?.day = costPolicyDays![selected];
     notifyListeners();
+  }
+
+  Future<void> checkAccountId(String? accountId) async{
+    if(accountId != null) {
+      _idStatusCode = await _userRepository.checkId(accountId);
+    }
+    notifyListeners();
+  }
+
+  createNewEmployee(String accountId, String pw, String name) async {
+    _newEmployee?.account = Account();
+    _newEmployee?.account?.originAccountId = accountId;
+    _newEmployee?.account?.originPassword = pw;
+    _newEmployee?.alias = name;
+    log("createNewEmployee ${accountId} ");
+    log("createNewEmployee ${pw} ");
+    log("createNewEmployee newEmployee account accountId ${_newEmployee?.account?.originAccountId} ");
+    log("createNewEmployee newEmployee account pw ${_newEmployee?.account?.originPassword} ");
+    log("createNewEmployee alias ${_newEmployee?.alias} ");
+
+    try{
+      await _userRepository.createEmployee(_newEmployee!);
+      await _getEmployees();
+    }catch(e){
+      log(e.toString());
+      throw(e);
+    }
+  }
+
+  // 근무자 ID, PW 초기화
+  Future<void> clearEmployeeAuth() async {
+    if (!_clearLoading){
+      _clearLoading = true;
+
+      if (_selectedEmployee == null) {
+        return;
+      }
+
+      int employeeId = _selectedEmployee?.id ?? 0;
+
+      if (employeeId == 0) {
+        return;
+      }
+
+      try {
+        await _userRepository.clearEmployee(employeeId);
+        _clearSuccess = true;
+        Future.delayed(const Duration(milliseconds: 500), (){
+          _clearLoading = false;
+          notifyListeners();
+        });
+      } catch (e) {
+        log('$e');
+        _clearSuccess = false;
+      }
+    }
   }
 }
 
