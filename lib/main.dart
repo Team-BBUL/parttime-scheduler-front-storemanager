@@ -10,6 +10,7 @@ import 'package:sidam_storemanager/view/alarm_view.dart';
 import 'package:sidam_storemanager/view/cost.dart';
 import 'package:sidam_storemanager/view/home.dart';
 import 'package:sidam_storemanager/view/time_table.dart';
+import 'package:sidam_storemanager/view/widget/weekly_schedule_viewer.dart';
 import 'package:sidam_storemanager/view_model/alarm_http_provider.dart';
 import 'package:sidam_storemanager/view_model/announcement_view_model.dart';
 import 'package:sidam_storemanager/view_model/cost_view_model.dart';
@@ -19,6 +20,7 @@ import 'package:sidam_storemanager/view_model/register_view_model.dart';
 import 'package:sidam_storemanager/view_model/schedule_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
+import 'package:sidam_storemanager/view_model/weekly_schedule_view_model.dart';
 
 import 'data/repository/announcement_repository.dart';
 import 'data/repository/incentive_repository.dart';
@@ -58,7 +60,10 @@ void main() {
             ),
             ChangeNotifierProvider(
                 create: (context) => RegisterViewModel()
-            )
+            ),
+            ChangeNotifierProvider(
+                create: (context) => WeeklyScheduleViewModel()
+            ),
       ],
           child: const MyApp()
       )
