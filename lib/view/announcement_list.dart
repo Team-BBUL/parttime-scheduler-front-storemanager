@@ -26,7 +26,7 @@ class AnnouncementListScreen extends StatelessWidget{
                       onPressed: () {
                         viewModel.createNewForm();
                         Navigator.push(mainContext , MaterialPageRoute(
-                            builder: (bcontext) {
+                            builder: (context) {
                               return AnnouncementFrameScreen();
                               // const AnnouncementFramePage(
                               //   announcement: null,
@@ -54,12 +54,13 @@ class AnnouncementListScreen extends StatelessWidget{
                               ));
                             },
                             child : Container(
+                              width: double.infinity,
                               height: 50,
                               alignment: Alignment.centerLeft,
-                              padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                              margin: const EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                              margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
                               decoration: const BoxDecoration(
-                                border: Border(bottom: BorderSide(color: Colors.grey,width: 1.0,),),
+                                border: Border(bottom: BorderSide(color: Colors.black12,width: 1.0,),),
                                 // border: Border.all(width: 1, color: Colors.black)
                               ),
                               child: Column(
@@ -70,7 +71,6 @@ class AnnouncementListScreen extends StatelessWidget{
                                         viewModel.announcementList?[index].subject ?? '',
                                         style: TextStyle(fontSize: 16)),
                                   ),
-                                  const Spacer(),
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(viewModel.announcementList?[index].timeStamp != null

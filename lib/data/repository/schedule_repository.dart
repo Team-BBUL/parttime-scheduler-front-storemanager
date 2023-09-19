@@ -139,13 +139,11 @@ class ScheduleRepository{
     bring.sort((a, b) => a.day.compareTo(b.day));
 
     int last = (bring.length - 1) < 0 ? 0 : bring.length - 1;
-    DateTime start = bring[0].day; // 스케줄 시작일
-    DateTime next = DateTime(start.year, start.month + 1, 1); // 다음달의 첫날
-    DateTime end = bring[last].day.isBefore(next)
-        ? bring[last].day : next.subtract(const Duration(days: 1)); // 스케줄 마지막날
+    DateTime start = bring[0].day.subtract(const Duration(days: 1)); // 스케줄 시작일 - 1
+    DateTime end = bring[last].day.add(const Duration(days: 1));
 
-    // 스케줄 시작일보다 이전이거나 스케줄 마지막날 이후인 경우 삭제
-    saved.removeWhere((element) => start.isBefore(element.day) || end.isAfter(element.day));
+    // 서버에서 가져온 데이터와 겹치는 데이터 삭제
+    saved.removeWhere((element) => element.day.isAfter(start) && element.day.isBefore(end));
     saved.addAll(bring);
 
     _dataSource.saveModels({

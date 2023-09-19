@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:sidam_storemanager/view/widget/weekly_schedule_viewer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:sidam_storemanager/utils/app_color.dart';
@@ -11,11 +14,21 @@ class TimeTableScreen  extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('주간 시간표'),
+        centerTitle: true,
+        actions: [
+          TextButton(onPressed: (){
+            launchUrl(
+              Uri.parse('https://naver.com/')
+            );
+          }, child: Text('수정'))
+        ],
+      ),
         body: Center(
-            child: Container(
-              color: Color(0xFFa0c0c0), // 0xffc1c1c1 부터 검은색
-              child: Text('스케줄', style: TextStyle(color: Colors.white),),)//Text('스케줄'),//scheduleView(),
-        ));
+          child: WeeklyScheduleViewer(),
+        )
+    );
   }
 
   Widget scheduleView() {
