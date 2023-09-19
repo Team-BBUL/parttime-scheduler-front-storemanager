@@ -8,13 +8,12 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
 
   @override
   Future<MonthSchedule> fetchSchedule(String timeStamp, int year, int month, int day) async {
-
     Map<String,dynamic> testData =
     {
       "date":[
         {
           "id":1,
-          "day":"2023-9-4",
+          "day":"2023-09-04",
           "schedule":[
             {
               "id":52,
@@ -74,7 +73,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id":2,
-          "day":"2023-9-5",
+          "day":"2023-09-05",
           "schedule":[
             {
               "id":54,
@@ -161,7 +160,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id":3,
-          "day":"2023-9-6",
+          "day":"2023-09-06",
           "schedule":[
             {
               "id":56,
@@ -194,7 +193,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id":4,
-          "day":"2023-9-7",
+          "day":"2023-09-07",
           "schedule":[
             {
               "id":58,
@@ -254,7 +253,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id":5,
-          "day":"2023-9-8",
+          "day":"2023-09-08",
           "schedule":[
             {
               "id":60,
@@ -364,7 +363,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id":6,
-          "day":"2023-9-9",
+          "day":"2023-09-09",
           "schedule":[
             {
               "id":64,
@@ -506,7 +505,7 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
         },
         {
           "id":7,
-          "day":"2023-9-10",
+          "day":"2023-09-10",
           "schedule":[
             {
               "id":69,
@@ -594,7 +593,8 @@ class FixedScheduleApiRepositoryStub implements ScheduleRemoteRepository{
             }
           ]
         }
-      ]
+      ],
+      "time_stamp" : "2023-09-10 00:00:00.000"
     };
 
     //TODO: response status에 따라 분기처리

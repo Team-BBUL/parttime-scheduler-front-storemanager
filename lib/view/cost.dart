@@ -1,13 +1,68 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sidam_storemanager/utils/app_color.dart';
 import 'package:sidam_storemanager/utils/app_future_builder.dart';
+import 'package:sidam_storemanager/utils/custom_expansion_tile.dart';
 import 'package:sidam_storemanager/view_model/cost_view_model.dart';
 
 import '../model/employee_cost.dart';
 
-class CostScreen extends StatelessWidget{
+class CostScreen extends StatelessWidget {
   const CostScreen({super.key});
+
+  List<Widget> generateRowOfMonths(from, to, CostViewModel viewModel) {
+    List<Widget> months = [];
+    for (int i = from; i <= to; i++) {
+      DateTime dateTime = DateTime(viewModel.pickerYear, i, 1);
+      final selectedColor = dateTime.isAtSameMomentAs(viewModel.selectedMonth)
+          ? AppColor().mainColor
+          : Colors.transparent;
+      months.add(
+        AnimatedSwitcher(
+          duration: kThemeChangeDuration,
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          child: TextButton(
+            key: ValueKey(selectedColor),
+            onPressed: () {
+              viewModel.changeMonth(dateTime);
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: selectedColor,
+              side: BorderSide(
+                color: selectedColor,
+                width: 1,
+              ),
+              shape: CircleBorder(),
+            ),
+            child: Text(
+              '${DateFormat('M').format(dateTime)}월',style: TextStyle(color: Colors.black, fontSize: 16),
+            ),
+          ),
+        ),
+      );
+    }
+    return months;
+  }
+
+  List<Widget> generateMonths(CostViewModel viewModel) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: generateRowOfMonths(1, 6, viewModel),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: generateRowOfMonths(7, 12, viewModel),
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,157 +75,175 @@ class CostScreen extends StatelessWidget{
               body: SafeArea(
                 child : Consumer<CostViewModel>(
                     builder:(context, viewModel,child){
-                        return viewModel.dateList ==null ?
-                          Container(
-                            child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("근무표 데이터가 없습니다."),
-                                    Text("웹에서 근무표를 등록해주세요.")
-                                  ],
-                                )
-                            ),
-                          )
-                              :
-                        Column(
+                        return Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                                child: selectDateWidget(viewModel, context),
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-                                  child: Row(
-                                    children:  [
-                                      Expanded(
-                                          child:
-                                          viewModel.dateIndex == viewModel.dateList!.length -1 ?
-                                          Text("이번 달 예상 총 급여 (급여일 기준 : ${viewModel.costDay}일 )")
-                                              :
-                                          Text("총 지급 급여 (급여일 기준 : ${viewModel.costDay}일 )")
-                                      ),
-                                    ],
-                                  )
-                              ),
-                              Container(
-                                  child: Row(
-                                    children:  [
-                                      Expanded(
-                                        child: Center(
-                                          child: Text('${viewModel.totalPay}원',
-                                              style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                              ),
-                              Container(
-                                  child: Row(
-                                    children: [
-                                      const Expanded(
-                                        child: Center(
-                                            child: Text("")
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                            "${viewModel.dateList![viewModel.dateIndex ?? 0]
-                                                .subtract(const Duration(days: 30)).month}월 달 보다 "
-                                            "${(viewModel.totalPay - viewModel.prevMonthTotalPay >= 0) ?
-                                        "${viewModel.totalPay - viewModel.prevMonthTotalPay}원 증가"
-                                            :
-                                        "${-(viewModel.totalPay - viewModel.prevMonthTotalPay)}원 감소"}"
-                                        ),
-                                      )
-                                    ],
-                                  )
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-                                  child: Row(
-                                    children: const [
-                                      Expanded(
-                                          child:
-                                          Text("근무자 별 월급")
-                                      ),
-                                      Expanded(
-                                        child: Text(""),
-                                      ),
-                                      Expanded(
-                                        child: Text(""),
-                                      ),
-                                    ],
-                                  )
-                              ),
-                              Expanded(
-                                  child: Column(
-                                    children: [
-                                      Row(
+                              monthPicker(viewModel),
+                                Expanded(
+                                    child: SingleChildScrollView(
+                                      child: Column(
                                         children: [
-                                          Expanded(
-                                            child:  box('근무자명',FontWeight.bold),
+                                          Container(
+                                              padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+                                              child: Row(
+                                                children:  [
+                                                  Expanded(
+                                                      child:
+                                                      Text("총 지급 급여 (급여일 기준 : ${viewModel.costDay}일 )")
+                                                  ),
+                                                ],
+                                              )
                                           ),
-                                          Expanded(
-                                            child:  box('총근무시간',FontWeight.bold),
+                                          Container(
+                                              child: Row(
+                                                children:  [
+                                                  Expanded(
+                                                    child: Center(
+                                                      child: Text('${viewModel.totalPay}원',
+                                                          style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
                                           ),
-                                          Expanded(
-                                            child:  box('주휴수당',FontWeight.bold),
+                                          Container(
+                                              child: Row(
+                                                children: [
+                                                  const Expanded(
+                                                    child: Center(
+                                                        child: Text("")
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(
+                                                      "${viewModel.selectedMonth!.subtract(const Duration(days: 30)).month}월 달 보다 "
+                                                          "${(viewModel.totalPay - viewModel.prevMonthTotalPay >= 0) ?
+                                                      "${viewModel.totalPay - viewModel.prevMonthTotalPay}원 증가"
+                                                          :
+                                                      "${-(viewModel.totalPay - viewModel.prevMonthTotalPay)}원 감소"}"
+                                                    ),
+                                                  )
+                                                ],
+                                              )
                                           ),
-                                          Expanded(
-                                            child:  box('시급',FontWeight.bold),
+                                          Container(
+                                              padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+                                              child: Row(
+                                                children: const [
+                                                  Expanded(
+                                                      child:
+                                                      Text("근무자 별 월급")
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(""),
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(""),
+                                                  ),
+                                                ],
+                                              )
                                           ),
+                                          SizedBox(
+                                            height: 500,
+                                            child:  Row(
+                                              children: [
+                                                Flexible(
+                                                  flex: 2,
+                                                  child:   Container(
+                                                    // padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        Expanded(child: box("근무자명",FontWeight.bold)),
+                                                        Expanded(child: box("시급/월급",FontWeight.bold)),
+                                                        Expanded(child: box("근무시간",FontWeight.bold)),
+                                                        Expanded(child: box("주휴수당",FontWeight.bold)),
+                                                        Expanded(child: box("인센티브", FontWeight.bold)),
+                                                        Expanded(child: box("보너스데이 지급액", FontWeight.bold)),
+                                                        Expanded(child: box("총 월급여", FontWeight.bold)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Flexible(
+                                                  flex: 8,
+                                                    child:
+                                                    viewModel.employeesCost!.isEmpty ?
+                                                    Center(
+                                                      child: Text("근무 스케쥴이 없습니다."),
+                                                    )
+                                                        :
+                                                    ListView.builder(
+                                                      physics: ClampingScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      scrollDirection: Axis.horizontal,
+                                                      itemCount: viewModel.employeesCost!.length,
+                                                      itemBuilder: (context, index) {
+                                                        EmployeeCost employeeCost = viewModel.getEmployeeCost(index);
+                                                        return Card(
+                                                            child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children : [
+                                                                  Expanded(
+                                                                      child: Center(
+                                                                        child: Text(employeeCost.alias,
+                                                                          style: TextStyle(fontSize: 16),),
+                                                                      )
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Center(
+                                                                      child: Text('${employeeCost.hourlyPay}원',
+                                                                        style: TextStyle(fontSize: 16),),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Center(
+                                                                      child: Text('${employeeCost.totalWorkTime}시간',
+                                                                        style: TextStyle(fontSize: 16),),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Center(
+                                                                      child: Text('${employeeCost.holidayPay}원',
+                                                                        style: TextStyle(fontSize: 16),),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Center(
+                                                                      child: Text('${employeeCost.monthIncentive}원',
+                                                                        style: TextStyle(fontSize: 16),),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Center(
+                                                                      child: Text('${employeeCost.bonusDayPay}원',
+                                                                        style: TextStyle(fontSize: 16),),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child:
+                                                                    Container(
+                                                                      color: Colors.green[200],
+                                                                      child: Center(
+                                                                        child: Text('${employeeCost.monthPay}원',
+                                                                          style: TextStyle(fontSize: 16),),
+                                                                      ),
+                                                                    )
+                                                                  )
+                                                                ]
+                                                            )
+                                                        );
+                                                      },
+                                                    )
+
+                                                )
+                                              ],
+                                            )
+                                          )
                                         ],
                                       ),
-                                      Container(
-                                          height: 400,
-                                          child :  ListView.builder(
-                                            itemCount: viewModel.employeesCost!.length,
-                                            itemBuilder: (context, index) {
-                                              EmployeeCost employeeCost = viewModel.getEmployeeCost(index);
-                                              return Container(
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: box(employeeCost.alias,FontWeight.normal),
-                                                      ),
-                                                      Expanded(
-                                                          child: box('${employeeCost.totalWorkTime}h',FontWeight.normal)
-
-                                                      ),
-                                                      Expanded(
-                                                          child: box('${employeeCost.holidayPay}',FontWeight.normal)
-
-                                                      ),
-                                                      Expanded(
-                                                          child: box('${employeeCost.hourlyPay}원',FontWeight.normal)
-                                                      ),
-                                                    ],
-                                                  )
-                                              );
-                                            },
-                                          )
-                                      ),
-
-
-
-                                    ],
-                                  )
-                              ),
-                              // Expanded(
-                              //     child :  ListView.builder(
-                              //       scrollDirection: Axis.vertical,
-                              //       itemCount: viewModel.monthSchedule?.date?.length ?? 0,
-                              //       itemBuilder: (context, index) {
-                              //         String day = viewModel.monthSchedule!.date![index].day;
-                              //         return Expanded(
-                              //           child: Text("$day"),
-                              //         );
-                              //
-                              //       },
-                              //     )
-                              // ),
+                                    )
+                                )
                             ]
                         );
                     }
@@ -180,102 +253,64 @@ class CostScreen extends StatelessWidget{
         }
     );
   }
-}
 
-
-Widget selectDateWidget(CostViewModel viewModel, BuildContext context){
-  return Row(
-    children: [
-      Expanded(
-        child: IconButton(
-            onPressed: () async {
-              int index = viewModel.dateIndex!;
-              if(index > 0 ) {
-                await viewModel.setDate(index-1);
-                await viewModel.loadSchedule();
-                await viewModel.getCost();
-              }
+  Widget monthPicker(CostViewModel viewModel) {
+    return MyExpansionTile(
+      onExpansionChanged: (value) {
+        viewModel.setCustomTileExpanded(value);
+      },
+      textColor: Colors.black,
+      title: Row(
+        children: [
+          IconButton(
+            onPressed: () {
+              viewModel.serPickerYear(viewModel.pickerYear - 1);
             },
-            icon: Icon(Icons.arrow_circle_left)),
-      ),
-      Expanded(
-        child: TextButton(
-          child: Text(
-              '${viewModel.dateList?[viewModel.dateIndex ?? 0].year}년 '
-              '${viewModel.dateList?[viewModel.dateIndex ?? 0].month}월',
-              style: TextStyle(color: Colors.black)),
-          onPressed: () => showDialog(
-              CupertinoPicker(
-                backgroundColor: Colors.white,
-                magnification: 1.22,
-                squeeze: 1.2,
-                useMagnifier: true,
-                itemExtent: 32.0,
-                looping: false,
-                // This sets the initial item.
-                scrollController: FixedExtentScrollController(
-                    initialItem:  viewModel.dateList!.length - viewModel.dateIndex! - 1
-                ),
-                // This is called when selected item is changed.
-                onSelectedItemChanged: (int selectedItemIndex) {
-                  viewModel.dateIndex = viewModel.dateList!.length - selectedItemIndex - 1;
-                },
-                children:
-                List<Widget>.generate(viewModel.dateList!.length, (int index) {
-                  int reversedIndex = viewModel.dateList!.length - index - 1;
-                  return Center(
-                      child: Text(
-                          '${viewModel.dateList![reversedIndex].year}년'
-                              ' ${viewModel.dateList![reversedIndex].month}월'));
-                }),
-              ),
-              context,
-              viewModel
+            icon: const Icon(Icons.navigate_before_rounded, color: Colors.black,),
           ),
-        ),
-      ),
-      Expanded(
-        child: IconButton(
-            onPressed: () async {
-              int index = viewModel.dateIndex ?? 0;
-              if(index < viewModel.dateList!.length-1) {
-                await viewModel.setDate(index+1);
-                await viewModel.loadSchedule();
-                await viewModel.getCost();
-              }
+          Expanded(
+            child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(width: 30,height: 30),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        viewModel.pickerYear.toString() + "년 "+ viewModel.selectedMonth.month.toString() + "월",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    viewModel.customTileExpanded ?
+                    const SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Icon(Icons.arrow_drop_up,size: 30, color: Colors.black,),
+                    )
+                        :
+                    const SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Icon(Icons.arrow_drop_down, size: 30, color: Colors.black,)
+                    )
+                  ],
+                )
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              viewModel.serPickerYear(viewModel.pickerYear + 1);
             },
-
-            icon: Icon(Icons.arrow_circle_right)),
+            icon: const Icon(Icons.navigate_next_rounded, color: Colors.black,),
+          ),
+        ],
       ),
-    ],
-  );
+      children: generateMonths(viewModel),
+    );
+  }
+
+
 }
-
-showDialog(Widget child, BuildContext context, CostViewModel viewModel) async {
-  await showCupertinoModalPopup<void>(
-    context: context,
-    builder: (BuildContext context) => Container(
-      height: 300,
-      padding: const EdgeInsets.only(top: 3.0),
-      // The bottom margin is provided to align the popup above the system
-      // navigation bar.
-      margin: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      // Provide a background color for the popup.
-      color: CupertinoColors.systemBackground.resolveFrom(context),
-      // Use a SafeArea widget to avoid system overlaps.
-      child: SafeArea(
-        top: true,
-        child: child,
-      ),
-    ),
-  );
-  await viewModel.setDate(viewModel.dateIndex!);
-  await viewModel.loadSchedule();
-  await viewModel.getCost();
-}
-
 
 Widget box(String text,FontWeight font ){
   return Container(

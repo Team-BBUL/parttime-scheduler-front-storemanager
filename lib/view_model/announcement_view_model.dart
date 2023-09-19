@@ -30,6 +30,7 @@ class AnnouncementViewModel extends ChangeNotifier {
   Announcement? get newAnnouncement => _newAnnouncement;
 
   AnnouncementViewModel(this._announcementRepository){
+    log('---------------------------------AnnouncementViewModel constructor----------------------------------------------------------------------');
     int page = 1;
     _scrollController = ScrollController();
     _scrollController!.addListener(() {

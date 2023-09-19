@@ -40,22 +40,28 @@ class IncentiveRepositoryImpl extends IncentiveRepository{
     if (response.statusCode == 200) {
       log("response.body${response.body}");
       Map<String, dynamic> decodedData = json.decode(response.body);
+      List<MonthIncentive> monthIncentives = [];
       List<Incentive> incentiveList = [];
+      MonthIncentive monthIncentive = MonthIncentive();
       if(decodedData['data'].isEmpty){
         return MonthIncentive();
       }
-      for (var item in decodedData['data']['incentives']) {
-        incentiveList.add(Incentive.fromJson(item));
+      for (var worker in decodedData['data']) {
+        for (var item in worker['incentives']) {
+          incentiveList.add(Incentive.fromJson(item));
+        }
+        monthIncentive = MonthIncentive(
+            id: worker['roleId'],
+            alias: worker['alias'],
+            incentives: incentiveList
+        );
       }
-      MonthIncentive monthIncentive = MonthIncentive(
-          id: decodedData['data']['id'],
-          alias: decodedData['data']['alias'],
-          incentives: incentiveList
-      );
+      monthIncentives.add(monthIncentive);
+
 
       log('fetchMonthIncentives get successfully.');
 
-      return monthIncentive;
+      return monthIncentives;
     } else if(response.statusCode == 400) {
       log('failed : ${response.body}');
       throw response.body;

@@ -128,7 +128,7 @@ class ScheduleLocalRepository{
     LocalDataSource localDataSource = LocalDataSource();
     try {
 
-      final decodedData = await localDataSource.loadJson("schedule/${DateFormat('yyyyMM').format(date)}");
+      final decodedData = await localDataSource.loadJson("schedules/${DateFormat('yyyyMM').format(date)}");
       if(decodedData["message"] != null){
         throw("no data");
       }
@@ -202,15 +202,16 @@ class ScheduleLocalRepository{
   List<Map<String, dynamic>> removeUnderCostDay(List<Map<String, dynamic>> dateList) {
 
 
-    return dateList.where((item) => int.parse(item['day'].substring(8,10)) > _costDay!).toList();
+    return dateList.where((item) => DateTime.parse(item['day']).day > _costDay!).toList();
   }
 
   List<Map<String, dynamic>> removeOverCostDay(List<Map<String, dynamic>> dateList) {
+
     // for (var item in dateList) {
     //   print('removeOverCostDay ${item['day']}');
     // }
     // print(_costDay);
-    return dateList.where((item) => int.parse(item['day'].substring(8,10)) <= _costDay!).toList();
+    return dateList.where((item) => DateTime.parse(item['day']).day <= _costDay!).toList();
   }
 
   Future<List<DateTime>> getDateList() async {
@@ -236,6 +237,7 @@ class ScheduleLocalRepository{
 
   Future<void> saveSchedule(Map<String, dynamic> decodedData, String timeStamp) async {
     LocalDataSource localDataSource = LocalDataSource();
+    log("schedule saved working...");
 
     String yearMonth = convertTimeStampToYearMonth(timeStamp);
     await localDataSource.saveModels(decodedData, "schedules", yearMonth);
