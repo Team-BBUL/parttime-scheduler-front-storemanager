@@ -149,18 +149,31 @@ class CostScreen extends StatelessWidget {
                                               children: [
                                                 Flexible(
                                                   flex: 2,
-                                                  child:   Container(
-                                                    // padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                                                  child:Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey[300],
+                                                      borderRadius: BorderRadius.only(
+                                                        topRight: Radius.circular(20.0),
+                                                        bottomRight: Radius.circular(20.0),
+                                                      ),
+                                                      // border: Border.all(color: Colors.grey, width: 2),
+                                                    ),
+
                                                     child: Column(
                                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                       children: [
-                                                        Expanded(child: box("근무자명",FontWeight.bold)),
-                                                        Expanded(child: box("시급/월급",FontWeight.bold)),
-                                                        Expanded(child: box("근무시간",FontWeight.bold)),
-                                                        Expanded(child: box("주휴수당",FontWeight.bold)),
-                                                        Expanded(child: box("인센티브", FontWeight.bold)),
-                                                        Expanded(child: box("보너스데이 지급액", FontWeight.bold)),
-                                                        Expanded(child: box("총 월급여", FontWeight.bold)),
+                                                        Expanded(child: Center(child : Text("근무자명", ))),
+                                                        Expanded(child: Center(child : Text("시급/월급",))),
+                                                        Expanded(child: Center(child : Text("근무시간",))),
+
+                                                        Expanded(child: Center(child : Text("주휴수당",))),
+
+                                                        Expanded(child: Center(child : Text("인센티브",))),
+
+                                                        Expanded(child: Center(child : Text("보너스데이\n지급액",))),
+
+                                                        Expanded(child: Center(child : Text("총 월급여",))),
+
                                                       ],
                                                     ),
                                                   ),
@@ -222,13 +235,11 @@ class CostScreen extends StatelessWidget {
                                                                   ),
                                                                   Expanded(
                                                                     child:
-                                                                    Container(
-                                                                      color: Colors.green[200],
-                                                                      child: Center(
+                                                                      Center(
                                                                         child: Text('${employeeCost.monthPay}원',
                                                                           style: TextStyle(fontSize: 16),),
                                                                       ),
-                                                                    )
+
                                                                   )
                                                                 ]
                                                             )
@@ -310,19 +321,4 @@ class CostScreen extends StatelessWidget {
   }
 
 
-}
-
-Widget box(String text,FontWeight font ){
-  return Container(
-    height: 40,
-    decoration: BoxDecoration(
-      border: Border.all(
-        width : 1.0,
-        color: Colors.grey,
-      ),
-    ),
-    child : Center(
-      child: Text(text, style: TextStyle(fontSize: 16,fontWeight: font)),
-    ),
-  );
 }

@@ -180,7 +180,6 @@ class ScheduleLocalRepository{
       }
       filteredData = removeOverCostDay(filteredData);
     }else{
-      print("hereeeeeeeeeeeeeeeeeeeee");
       for (var o in filteredData) {
         log("removeUnderCostDay ${o['day']}");
 
@@ -202,7 +201,7 @@ class ScheduleLocalRepository{
   List<Map<String, dynamic>> removeUnderCostDay(List<Map<String, dynamic>> dateList) {
 
 
-    return dateList.where((item) => DateTime.parse(item['day']).day > _costDay!).toList();
+    return dateList.where((item) => int.parse(item['day'].split('-')[2]) > _costDay!).toList();
   }
 
   List<Map<String, dynamic>> removeOverCostDay(List<Map<String, dynamic>> dateList) {
@@ -211,7 +210,7 @@ class ScheduleLocalRepository{
     //   print('removeOverCostDay ${item['day']}');
     // }
     // print(_costDay);
-    return dateList.where((item) => DateTime.parse(item['day']).day <= _costDay!).toList();
+    return dateList.where((item) => int.parse(item['day'].split('-')[2]) <= _costDay!).toList();
   }
 
   Future<List<DateTime>> getDateList() async {

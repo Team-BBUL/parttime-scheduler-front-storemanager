@@ -24,6 +24,7 @@ import 'package:sidam_storemanager/view_model/weekly_schedule_view_model.dart';
 
 import 'data/repository/announcement_repository.dart';
 import 'data/repository/incentive_repository.dart';
+import 'data/repository/schedule_api_respository.dart';
 import 'data/repository/store_repository.dart';
 import 'utils/app_color.dart';
 import 'utils/sp_helper.dart';
@@ -44,7 +45,7 @@ void main() {
               create: (_) => StoreListViewModel(StoreRepositoryImpl(),UserRepositoryImpl()),
             ),
             ChangeNotifierProvider(
-                create: (_) => CostViewModel(FixedScheduleApiRepositoryStub(),IncentiveRepositoryImpl()),
+                create: (_) => CostViewModel(ScheduleApiRepository(),IncentiveRepositoryImpl()),
             ),
             ChangeNotifierProvider(
                 create:(_) => AlarmHttpProvider()

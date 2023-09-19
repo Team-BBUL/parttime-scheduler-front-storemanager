@@ -43,19 +43,20 @@ class IncentiveRepositoryImpl extends IncentiveRepository{
       List<MonthIncentive> monthIncentives = [];
       List<Incentive> incentiveList = [];
       MonthIncentive monthIncentive = MonthIncentive();
-      if(decodedData['data'].isEmpty){
-        return MonthIncentive();
-      }
+
       for (var worker in decodedData['data']) {
-        for (var item in worker['incentives']) {
-          incentiveList.add(Incentive.fromJson(item));
+        if(worker['incentives'].isNotEmpty){
+          for (var item in worker['incentives']) {
+            incentiveList.add(Incentive.fromJson(item));
+          }
+          monthIncentive = MonthIncentive(
+              id: worker['roleId'],
+              alias: worker['alias'],
+              incentives: incentiveList
+          );
         }
-        monthIncentive = MonthIncentive(
-            id: worker['roleId'],
-            alias: worker['alias'],
-            incentives: incentiveList
-        );
       }
+
       monthIncentives.add(monthIncentive);
 
 

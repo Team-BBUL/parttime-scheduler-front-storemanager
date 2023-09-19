@@ -55,8 +55,9 @@ class CostViewModel extends ChangeNotifier{
       await fetchLocalSchedule(_selectedMonth);
 
       // await loadDateList();
-      await getCost();
       await getMonthIncentive();
+      await getCost();
+
     }catch(e){
       log("loadData $e");
     }
@@ -83,6 +84,7 @@ class CostViewModel extends ChangeNotifier{
   }
 
   getCost() async {
+    log("getCost processing");
     await calculateCost();
     await calculateTotalCost();
     prevMonthTotalPay = await _scheduleLocalRepository.getPrevMonthCost(
@@ -91,8 +93,12 @@ class CostViewModel extends ChangeNotifier{
   }
 
   getMonthIncentive() async{
-    monthIncentives = await _incentiveRepository.fetchMonthIncentives(selectedMonth);
-    log("getMonthIncentive success");
+    try {
+      monthIncentives = await _incentiveRepository.fetchMonthIncentives(selectedMonth);
+      log("getMonthIncentive success");
+    }catch(e){
+      log("getMonthIncentive error : $e");
+    }
   }
 
   Future<String> fetchLocalSchedule(DateTime dateTime) async {
@@ -132,10 +138,7 @@ class CostViewModel extends ChangeNotifier{
     int dayHour = 0;
     int nightHour = 0;
      // log("${monthSchedule!.toJson()   }");
-    if(monthSchedule?.timeStamp == null){
 
-      return;
-    }
     for (Date date in monthSchedule!.date!) {
       log("monthSchedule processing");
 
@@ -164,10 +167,12 @@ class CostViewModel extends ChangeNotifier{
               break;
             }
           }
-          for (MonthIncentive monthIncentive in monthIncentives!) {
-            if(monthIncentive.id == worker.id){
-              for (Incentive item in monthIncentive.incentives!) {
-                monthIncentivePay += item.cost!;
+          if(monthIncentives!.isNotEmpty){
+            for (MonthIncentive monthIncentive in monthIncentives!) {
+              if(monthIncentive.id == worker.id){
+                for (Incentive item in monthIncentive.incentives!) {
+                  monthIncentivePay += item.cost!;
+                }
               }
             }
           }
@@ -177,12 +182,14 @@ class CostViewModel extends ChangeNotifier{
             employeesCost!.add(EmployeeCost(worker.id!,worker.alias!, dayHour, 0, worker.cost!,monthPay, bonusDayPay, monthIncentivePay));
           }
         }
+        log('cost result : $monthPay,$bonusDayPay,$monthIncentivePay,$dayHour');
         monthPay = 0;
         bonusDayPay = 0;
         monthIncentivePay = 0;
         dayHour = 0;
       }
     }
+    notifyListeners();
   }
 
   //TODO calculateTotalCost 코드 중복 => CostViewModel
