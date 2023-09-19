@@ -89,15 +89,15 @@ class Schedule {
 
 class Workers {
   int? id;
-  String? name;
+  String? alias;
   String? color;
   int? cost;
 
-  Workers({this.id, this.name, this.color, this.cost});
+  Workers({this.id, this.alias, this.color, this.cost});
 
   Workers.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
+    alias = json['alias'];
     color = json['color'];
     cost = json['cost'];
   }
@@ -105,7 +105,7 @@ class Workers {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['name'] = this.name;
+    data['alias'] = this.alias;
     data['color'] = this.color;
     data['cost'] = this.cost;
     return data;

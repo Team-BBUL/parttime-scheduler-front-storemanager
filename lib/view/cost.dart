@@ -186,7 +186,7 @@ class CostScreen extends StatelessWidget {
                                                                 children : [
                                                                   Expanded(
                                                                       child: Center(
-                                                                        child: Text(employeeCost.name,
+                                                                        child: Text(employeeCost.alias,
                                                                           style: TextStyle(fontSize: 16),),
                                                                       )
                                                                   ),

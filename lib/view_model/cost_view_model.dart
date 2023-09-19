@@ -158,7 +158,7 @@ class CostViewModel extends ChangeNotifier{
           for (EmployeeCost employee in employeesCost!) {
             // log("EmployeeCost processing");
 
-            if(employee.name == worker.name) {
+            if(employee.alias == worker.alias) {
               employee.totalWorkTime += dayHour;
               isNoWorkerInList = true;
               break;
@@ -174,7 +174,7 @@ class CostViewModel extends ChangeNotifier{
           log("EmployeeCost processing");
           monthPay = (dayHour * worker.cost!) + bonusDayPay + monthIncentivePay;
           if(!isNoWorkerInList){
-            employeesCost!.add(EmployeeCost(worker.id!,worker.name!, dayHour, 0, worker.cost!,monthPay, bonusDayPay, monthIncentivePay));
+            employeesCost!.add(EmployeeCost(worker.id!,worker.alias!, dayHour, 0, worker.cost!,monthPay, bonusDayPay, monthIncentivePay));
           }
         }
         monthPay = 0;
