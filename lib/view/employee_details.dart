@@ -6,7 +6,6 @@ import 'package:sidam_storemanager/utils/horizontal_line.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
 
 import '../model/Incentive.dart';
-import '../model/account_role.dart';
 import '../model/anniversary.dart';
 import '../utils/app_color.dart';
 import '../utils/app_input_theme.dart';
@@ -156,7 +155,8 @@ class EmployeeDetailScreen extends StatelessWidget {
                             ),
                     )),
                 ExpansionTile(
-                    title: Row(
+                  textColor: Colors.black,
+                  title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("기본 아이디/ 비밀번호"),
@@ -205,8 +205,6 @@ class EmployeeDetailScreen extends StatelessWidget {
                         )),
                   ],
                 ),
-
-
                 Column(
                   children: [
                     HorizontalLine(label: "추가정보", height: 30),
@@ -404,7 +402,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                                       onPressed: () {
                                         Message().showConfirmDialog(
                                             context: context,
-                                            title: "기념일을 추가하시겠습니까?",
+                                            title: "인센티브를 추가하시겠습니까?",
                                             message: "",
                                             apiCall: () => viewModel.postIncentive(),
                                             popCount: 1);
@@ -427,6 +425,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                                     else
                                       month = yearMonth.substring(5, 7);
                                     return ExpansionTile(
+                                      textColor: Colors.black,
                                       title: Text('${year}년 ${month}월 인센티브'),
                                       children: incentives!.map((Incentive incentive) => ListTile(
                                         title: Row(
