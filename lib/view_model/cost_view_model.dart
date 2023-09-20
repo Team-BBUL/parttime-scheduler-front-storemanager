@@ -30,7 +30,7 @@ class CostViewModel extends ChangeNotifier{
   List<EmployeeCost>? employeesCost;
   String? selectedDate;
   int? dateIndex;
-  int costDay = 8;
+  int costDay = 1;
   int totalWorkTime = 0;
   int pay = 0;
   int totalPay = 0;
