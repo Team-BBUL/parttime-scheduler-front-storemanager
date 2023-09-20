@@ -176,9 +176,10 @@ class CostViewModel extends ChangeNotifier{
               }
             }
           }
-          log("EmployeeCost processing");
-          monthPay = (dayHour * worker.cost!) + bonusDayPay + monthIncentivePay;
+          monthPay += (dayHour * worker.cost!) + bonusDayPay + monthIncentivePay;
+          log("month processing $dayHour ${worker.cost} $monthPay");
           if(!isNoWorkerInList){
+
             employeesCost!.add(EmployeeCost(worker.id!,worker.alias!, dayHour, 0, worker.cost!,monthPay, bonusDayPay, monthIncentivePay));
           }
         }
@@ -188,6 +189,9 @@ class CostViewModel extends ChangeNotifier{
         monthIncentivePay = 0;
         dayHour = 0;
       }
+    }
+    for (EmployeeCost employeeCost in employeesCost!) {
+      employeeCost.monthPay = employeeCost.totalWorkTime * employeeCost.hourlyPay;
     }
     notifyListeners();
   }
