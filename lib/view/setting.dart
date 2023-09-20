@@ -198,8 +198,7 @@ class SettingScreen extends StatelessWidget{
           ),
           TextButton(
             onPressed: () {
-              helper.remove('jwt');
-              helper.remove('isLoggedIn');
+              helper.clear();
               Navigator.pushAndRemoveUntil(context,
                 MaterialPageRoute(
                     builder: (context) => CheckLoginScreen()
