@@ -66,6 +66,9 @@ class CostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var cost = NumberFormat('###,###,###,###,###');
+
     final mainContext = context;
     final viewModel = Provider.of<CostViewModel>(context,listen: false );
     return AppFutureBuilder(
@@ -99,7 +102,7 @@ class CostScreen extends StatelessWidget {
                                                 children:  [
                                                   Expanded(
                                                     child: Center(
-                                                      child: Text('${viewModel.totalPay}원',
+                                                      child: Text('${cost.format(viewModel.totalPay)}원',
                                                           style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),
                                                     ),
                                                   ),
@@ -118,9 +121,9 @@ class CostScreen extends StatelessWidget {
                                                     child: Text(
                                                       "${viewModel.selectedMonth!.subtract(const Duration(days: 30)).month}월 달 보다 "
                                                           "${(viewModel.totalPay - viewModel.prevMonthTotalPay >= 0) ?
-                                                      "${viewModel.totalPay - viewModel.prevMonthTotalPay}원 증가"
+                                                      "${cost.format(viewModel.totalPay - viewModel.prevMonthTotalPay)}원 증가"
                                                           :
-                                                      "${-(viewModel.totalPay - viewModel.prevMonthTotalPay)}원 감소"}"
+                                                      "${cost.format(-(viewModel.totalPay - viewModel.prevMonthTotalPay))}원 감소"}"
                                                     ),
                                                   )
                                                 ],
@@ -195,17 +198,20 @@ class CostScreen extends StatelessWidget {
                                                         EmployeeCost employeeCost = viewModel.getEmployeeCost(index);
                                                         return Card(
                                                             child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                crossAxisAlignment: CrossAxisAlignment.end,
                                                                 children : [
                                                                   Expanded(
                                                                       child: Center(
-                                                                        child: Text(employeeCost.alias,
+                                                                        child: Padding(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                                                                          child: Text(employeeCost.alias,
+                                                                          textAlign: TextAlign.center,
                                                                           style: TextStyle(fontSize: 16),),
-                                                                      )
+                                                                      ))
                                                                   ),
                                                                   Expanded(
                                                                     child: Center(
-                                                                      child: Text('${employeeCost.hourlyPay}원',
+                                                                      child: Text('${cost.format(employeeCost.hourlyPay)}원',
                                                                         style: TextStyle(fontSize: 16),),
                                                                     ),
                                                                   ),
@@ -217,26 +223,26 @@ class CostScreen extends StatelessWidget {
                                                                   ),
                                                                   Expanded(
                                                                     child: Center(
-                                                                      child: Text('${employeeCost.holidayPay}원',
+                                                                      child: Text('${cost.format(employeeCost.holidayPay)}원',
                                                                         style: TextStyle(fontSize: 16),),
                                                                     ),
                                                                   ),
                                                                   Expanded(
                                                                     child: Center(
-                                                                      child: Text('${employeeCost.monthIncentive}원',
+                                                                      child: Text('${cost.format(employeeCost.monthIncentive)}원',
                                                                         style: TextStyle(fontSize: 16),),
                                                                     ),
                                                                   ),
                                                                   Expanded(
                                                                     child: Center(
-                                                                      child: Text('${employeeCost.bonusDayPay}원',
+                                                                      child: Text('${cost.format(employeeCost.bonusDayPay)}원',
                                                                         style: TextStyle(fontSize: 16),),
                                                                     ),
                                                                   ),
                                                                   Expanded(
                                                                     child:
                                                                       Center(
-                                                                        child: Text('${employeeCost.monthPay}원',
+                                                                        child: Text('${cost.format(employeeCost.monthPay)}원',
                                                                           style: TextStyle(fontSize: 16),),
                                                                       ),
 
