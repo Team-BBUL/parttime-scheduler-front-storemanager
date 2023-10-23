@@ -27,6 +27,9 @@ class ScheduleViewModel extends ChangeNotifier {
   Store get store => _store;
 
   bool _monthly = false;
+  void initMonthly() {
+    _monthly = false;
+  }
 
   ScheduleViewModel() {
     _scheduleRepository = ScheduleRepository();
@@ -57,7 +60,7 @@ class ScheduleViewModel extends ChangeNotifier {
 
     try{ // 서버에서 읽어오는 부분에서 오류가 나도 이후 코드를 실행하도록
       if (!_monthly) {
-        _getMonthSchedule(); // 4주차 데이터 가져옴
+        _getMonthSchedule(); // _week로 부터 4주 치 데이터 가져옴
       }
       _scheduleRepository.getWeeklySchedule(DateTime.now()); // 서버에서 데이터 가져옴
 

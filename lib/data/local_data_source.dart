@@ -26,6 +26,7 @@ class LocalDataSource {
     return directory.path;
   }
 
+  // now = 데이터를 가지고 오고 싶은 달
   Future<Map<String, dynamic>> getSchedule(DateTime now) async {
 
     var fileName = DateFormat('yyyyMM').format(now);
@@ -55,7 +56,7 @@ class LocalDataSource {
 
   // asset/json/$fileName이 존재하면 "삭제"하고, 저장
   // 매개변수 Map<String, dynamic> data
-  // fileName '경로/이름.확장자' 만 전달하면 assets/json/경로/이름.확장자로 저장됨
+  // fileName '경로/이름.확장자' 만 전달하면 local_folder/경로/이름.확장자로 저장됨
   Future<void> saveModels(Map<String, dynamic> data, String append, String fileName) async {
 
     final jsonString = jsonEncode(data);
@@ -64,12 +65,12 @@ class LocalDataSource {
 
     try {
       Directory directory = Directory('${await _localPath}/data/$append');
-      if(!directory.existsSync()){
+      if(!directory.existsSync()){ // 경로가 없을 경우
         await directory.create(recursive: true);
       }
 
-      file = File('${await _localPath}/data/$append/$fileName.json');
-      if (file.existsSync()) { // 있으면 삭제
+      file = File('${await _localPath}/data/${append == '' ? '' : '$append/'}$fileName.json');
+      if (file.existsSync()) { // 파일이 있으면 삭제
         await file.delete();
       }
 
@@ -83,7 +84,7 @@ class LocalDataSource {
 
   Future<List<String>> getFileNames(String append) async{
     List<String>? jsonFiles = [];
-    print("test");
+
     try {
       Directory directory = Directory('${await _localPath}/data/$append');
       await directory.list(recursive: true).forEach((file) {
@@ -95,5 +96,18 @@ class LocalDataSource {
       _logger.e('[ 파일명 불러오기 오류] $e');
     }
     return jsonFiles;
+  }
+
+  Future<void> deleteAll() async {
+    
+    try {
+      Directory directory = Directory("$path/data");
+
+      if(directory.existsSync()) { // 존재한다면 삭제
+        directory.delete(recursive: true);
+      }
+    } catch (e) {
+      _logger.e('폴더 삭제 오류 : $e');
+    }
   }
 }

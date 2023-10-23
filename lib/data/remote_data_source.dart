@@ -78,6 +78,7 @@ class Session {
     return response;
   }
 
+  // url = '/api/store/data' 와 같은 형식으로 전달
   Future<http.Response> put(String url, dynamic data) async {
     logger.i('put - $url');
     http.Response response =

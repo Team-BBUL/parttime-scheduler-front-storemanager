@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sidam_storemanager/utils/app_color.dart';
 import 'package:sidam_storemanager/view/announcement_list.dart';
 import 'package:sidam_storemanager/view/setting_page.dart';
 import 'package:sidam_storemanager/view/store_management.dart';
 import 'package:sidam_storemanager/view_model/notice_view_model.dart';
-
-import './widget/schedule_viewer.dart';
-import '../utils/sp_helper.dart';
+import 'package:sidam_storemanager/view/widget/schedule_viewer.dart';
+import 'package:sidam_storemanager/utils/sp_helper.dart';
+import 'package:sidam_storemanager/view_model/schedule_view_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,7 +18,30 @@ class HomeScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeState();
 }
 
-class _HomeState extends State<HomeScreen> {
+class _HomeState extends State<HomeScreen> with WidgetsBindingObserver {
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+
+    if(state == AppLifecycleState.detached) {
+      var provider = Provider.of<ScheduleViewModel>(context, listen: false);
+      provider.initMonthly();
+      print('detached 상태로 변경됨.');
+    }
+    super.didChangeAppLifecycleState(state);
+  }
 
   final SPHelper helper = SPHelper();
   final AppColor color = AppColor();
@@ -40,7 +64,6 @@ class _HomeState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     loadSPProvider();
 
-    int? id = helper.getStoreId();
     final deviceHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -68,6 +91,7 @@ class _HomeState extends State<HomeScreen> {
           ],
         ),
         body: SafeArea(
+          bottom: false,
           child: Column(
               children: [
                 Container(
@@ -107,13 +131,12 @@ class _HomeState extends State<HomeScreen> {
 
   Widget mainTimeTable(double deviceHeight) {
 
-    return SizedBox(
+    return Container(
         width: double.infinity,
-        height: deviceHeight - 250,
+        height: deviceHeight - 270,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             // 여기에 시간표 위젯
             ScheduleViewer(),
           ],

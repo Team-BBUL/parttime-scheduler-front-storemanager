@@ -38,6 +38,7 @@ class ScheduleRepository{
       _logger.w('${getDate.month}월 ${getDate.day}일에 스케줄이 존재하지 않습니다.');
       return ;
     }
+
     /*
     _logger.i('${_dataSource.path}에 json 저장');
 
@@ -45,6 +46,7 @@ class ScheduleRepository{
       "date": saveData.map<Map<String, dynamic>>((value) => value.toJson()).toList()
     }, 'schedules/scheduleDataSaveTest.json'); // -> 정상 동작, 제대로 파일 불러와서 저장됨
     */
+
     // 이미 저장된 파일이 있는 경우 -> 불러와서 합치는 과정을 거치고 저장
     _getSave(saveData, getDate);
   }
@@ -107,6 +109,7 @@ class ScheduleRepository{
 
     List<ScheduleList> result = [];
 
+    // 오류 등으로 'date'가 없는 경우 변환 X
     if (json['date'] == null || json['date'] == 'NON') {
       return [];
     }
@@ -168,7 +171,7 @@ class ScheduleRepository{
       Schedule tmp = Schedule.fromJson(schedule, day);
 
       // day가 시작일자 -1 이후이면 리스트에 추가
-      if (day.isAfter(startDay.subtract(const Duration(days: 1))) ){
+      if (day.isAfter(startDay.subtract(const Duration(days: 1))) ) {
         // && day.isBefore(startDay.subtract(const Duration(days: 7)))){
         scheduleList.add(tmp);
       }

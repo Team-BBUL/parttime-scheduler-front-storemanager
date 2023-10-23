@@ -7,6 +7,7 @@ import 'package:sidam_storemanager/view/account_withdrawal.dart';
 import 'package:sidam_storemanager/view/help.dart';
 import 'package:sidam_storemanager/view/policy_terms.dart';
 
+import '../view_model/delete.dart';
 import '../utils/sp_helper.dart';
 import 'check_login.dart';
 
@@ -167,6 +168,7 @@ class SettingScreen extends StatelessWidget{
                     ),
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8),
@@ -174,18 +176,40 @@ class SettingScreen extends StatelessWidget{
                           padding: const EdgeInsets.all(8),
                           child: ElevatedButton(
                             onPressed: () async {await helper.init(); helper.clear(); },
-                            child: const Text('shared_preferences 초기화 버튼(개발용)', style: TextStyle(fontSize: 18, color: Colors.red)),),
+                            child: const Text('shared_preferences 초기화 버튼', style: TextStyle(fontSize: 18, color: Colors.red)),),
                         ),
                       ),
                     ],
                   )
               ) : const SizedBox(),
+
+              Container(
+                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              // 날짜 선택 팝업
+                            },
+                            child: const Text('서버 데이터 삭제 (전시용)', style: TextStyle(fontSize: 18, color: Colors.red)),),
+                        ),
+                      ),
+                    ],
+                  )
+              )
             ]
         )
     );
   }
 
   Future<void> _showMyDialog(context) async {
+    DeleteViewModel delete = DeleteViewModel();
+
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -198,6 +222,8 @@ class SettingScreen extends StatelessWidget{
           ),
           TextButton(
             onPressed: () {
+              // 데이터 삭제 동작
+              delete.deleteLocalDataAll();
               helper.clear();
               Navigator.pushAndRemoveUntil(context,
                 MaterialPageRoute(

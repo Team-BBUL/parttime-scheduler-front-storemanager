@@ -15,6 +15,7 @@ class TimeTableScreen  extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         title: const Text('주간 시간표'),
         centerTitle: true,
         actions: [

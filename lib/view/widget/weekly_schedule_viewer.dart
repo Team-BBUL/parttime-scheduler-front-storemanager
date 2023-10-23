@@ -17,6 +17,36 @@ class WeeklyScheduleViewer extends StatefulWidget {
 
 class _ScheduleViewState extends State<WeeklyScheduleViewer> {
   AppColor color = AppColor();
+  final _timeScroll = ScrollController();
+  final List<ScrollController> _scrolls =
+      [ ScrollController(), ScrollController(), ScrollController(), ScrollController(), ScrollController(), ScrollController(), ScrollController() ];
+  final _testController = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    scrollSync();
+  }
+
+  void scrollSync() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+
+      _timeScroll.addListener(() {
+        //print(_timeScroll.position.pixels);
+
+        for (int i = 0; i < 7; i++) {
+          if (_scrolls[i].hasClients){
+            _scrolls[i].jumpTo(_timeScroll.position.pixels);
+          }
+        }
+        /*if (_testController.hasClients) {
+          _testController.jumpTo(_timeScroll.position.pixels);
+        }*/
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,24 +60,24 @@ class _ScheduleViewState extends State<WeeklyScheduleViewer> {
       }
       double boxWidth = 1260;
       double blockHeight = 40;
-      double tableHeight = deviceHeight - 300;
+      double tableHeight = deviceHeight - 245;
 
-      return SizedBox(
-          height: deviceHeight - 2,
+      return Container(
+          height: deviceHeight,
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(
+              Container(
                   width: double.infinity,
-                  height: 50,
+                  height: 40,
                   child: Stack(children: [
                     Positioned(
                         top: 0,
                         left: 0,
                         child: SizedBox(
                             width: deviceWidth,
-                            height: 50,
+                            height: 40,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -73,7 +103,7 @@ class _ScheduleViewState extends State<WeeklyScheduleViewer> {
                     ),
 
                     Positioned(
-                      top: 0,
+                      top: -4,
                       right: 5,
                       child: IconButton(
                           onPressed: () {
@@ -86,7 +116,7 @@ class _ScheduleViewState extends State<WeeklyScheduleViewer> {
                     )
                   ])),
               SizedBox(
-                  height: deviceHeight - 200,
+                  height: deviceHeight - 215,
                   width: double.infinity,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -126,11 +156,13 @@ class _ScheduleViewState extends State<WeeklyScheduleViewer> {
   Widget timeBuilder(double blockHeight, double deviceHeight, Store store) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 3),
-      child: SizedBox(
+      child: Container(
+        //color: Colors.green,
         width: 50,
-        height: deviceHeight,
+        height: deviceHeight - 20,
         child: ListView.builder(
-            physics: const ClampingScrollPhysics(),
+          controller: _timeScroll,
+            physics: ClampingScrollPhysics(),
             itemCount: ((store.closed ?? 0) - (store.open ?? 0)) < 0 ? 0
                 : (store.closed ?? 0) - (store.open ?? 0),
             itemBuilder: (context, idx) {
@@ -177,8 +209,10 @@ class _ScheduleViewState extends State<WeeklyScheduleViewer> {
             Padding(padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
               child: SizedBox(
               width: width,
-              height: deviceHeight,
+              height: deviceHeight - 20,
               child: ListView.builder(
+                controller: _scrolls[thisDay.weekday - 1],
+                //controller: _testController,
                   physics: const ClampingScrollPhysics(),
                   itemCount: ((store.closed ?? 0) - (store.open ?? 0)) < 0 ? 0
                       : (store.closed ?? 0) - (store.open ?? 0),

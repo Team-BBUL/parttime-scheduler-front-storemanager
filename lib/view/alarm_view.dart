@@ -21,6 +21,7 @@ class _AlarmState extends State<AlarmView> {
   final _designWidth = 411;
   final _designHeight = 683;
   final _myId = 7;
+  bool _chBt = false;
 
   AppColor color = AppColor();
 
@@ -116,8 +117,7 @@ class _AlarmState extends State<AlarmView> {
                                         color: Colors.grey,
                                       ),
                                     ])),
-                              if (state.alarms.length - 1 == index &&
-                                  state.done) ...[
+                              if (state.alarms.length - 1 == index && state.done) ...[
                                 const SizedBox(
                                   height: 100,
                                   child: Center(
@@ -142,225 +142,212 @@ class _AlarmState extends State<AlarmView> {
   Widget alarmBuilder(Alarm alarm, double width, int idx) {
     AlarmViewModel alarmVM = AlarmViewModel();
 
-    return Container(
-        padding: const EdgeInsets.only(left: 25, right: 25),
-        width: width,
-        child: Column(children: [
-          Row(
-              //mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  // 내용, 날짜를 생성하는 부분
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Consumer<AlarmHttpProvider>(builder: (context, state, child) {
+        return Container(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            width: width,
+            child: Column(children: [
+              Row(
+                //mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(children: [
-                      !alarm.read
-                          ? Row(children: const [
-                              Icon(
-                                Icons.circle,
-                                size: 5,
-                                color: Colors.red,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              )
-                            ])
-                          : const SizedBox(),
-                      SizedBox(
-                        width: 260 * width / _designWidth,
-                        child: alarmTextBuilder(alarm),
-                      )
-                    ]),
-                    Text(
-                      DateFormat('yyyy년 MM월 dd일 HH:mm:ss').format(alarm.date),
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    Column(
+                      // 내용, 날짜를 생성하는 부분
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          !alarm.read
+                              ? Row(children: const [
+                                Icon(Icons.circle, size: 5, color: Colors.red,),
+                                SizedBox(width: 5,)
+                          ])
+                              : const SizedBox(),
+                          SizedBox(
+                            width: width - 120,//280 * width / _designWidth,
+                            child: alarmTextBuilder(alarm),
+                          )
+                        ]),
+                        Text(
+                          DateFormat('yyyy년 MM월 dd일 HH:mm:ss').format(
+                              alarm.date),
+                          style: const TextStyle(
+                              color: Colors.grey, fontSize: 12),
+                        ),
+                      ],
                     ),
+
+                    // 알림의 종류가 교환이고 점주와 근무자가 모두 수락했다면
+                    if ((alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "PASS") ||
+                        (alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "INVALID")
+                    )
+                      Row(children: [
+                        // 알림 승낙
+                        SvgPicture.asset('asset/icons/accept.svg'),
+                        // 알림 삭제 버튼
+                        IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) {
+                                    return deleteCheckPopup(alarm);
+                                  });
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.grey,
+                            ))
+                      ])
+
+                    // 알림의 종류가 교환이고 점주와 근무자 둘 중 하나라도 거절했다면
+                    else
+                      if (alarm.type == "CHANGE" && (alarm.request?.own == "FAIL" || alarm.request?.res == "FAIL"))
+                        Row(children: [
+                          // 알림 거절
+                          SvgPicture.asset('asset/icons/denial.svg'),
+                          // 알림 삭제 버튼
+                          IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return deleteCheckPopup(alarm);
+                                    });
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.grey,
+                              ))
+                        ])
+
+                      // 알림의 종류가 교환이고 아직 확정나지 않은 상태 (둘 모두가 non or 둘 중 하나는 non, 하나는 pass) 여기
+                      else
+                        if (alarm.type == "CHANGE")
+                        // 알림 응답대기
+                          SvgPicture.asset('asset/icons/non.svg')
+
+                        // 알림의 종류가 교환이 아닐 경우
+                        else
+                        // 알림 삭제 버튼
+                          IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return deleteCheckPopup(
+                                          alarm); // popup을 띄워서 확인
+                                    });
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.grey,
+                              ))
+                  ]),
+
+              // 교환 알림일 경우, 수락/거절 버튼을 표시 여기**
+              if (alarm.type == "CHANGE" && alarm.request?.own == "NON") ...[
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  //mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(
+                        height: 30,
+                        width: 100,
+                        child: TextButton(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.green.shade400,
+                                primary: Colors.white,
+                                padding: EdgeInsets.zero),
+                            onPressed: () async {
+                              checkPopup(true, alarm.id).then((value) {
+                                if (_chBt) {
+                                  Future.delayed(const Duration(milliseconds: 100), () {
+                                    state.renewData();
+                                  });
+                                  _chBt = false;
+                                }
+                              });
+                            },
+                            child: const Text(
+                              "수락",
+                              style: TextStyle(fontSize: 11),
+                            ))),
+                    SizedBox(
+                        width: 100,
+                        height: 30,
+                        child: TextButton(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.red.shade400,
+                                primary: Colors.white,
+                                padding: EdgeInsets.zero),
+                            onPressed: () async {
+                              // api 요청 -> 알림 거절
+                              checkPopup(false, alarm.id).then((value) {
+                                if (_chBt) {
+                                  Future.delayed(const Duration(milliseconds: 100), () {
+                                    state.renewData();
+                                  });
+                                  _chBt = false;
+                                }
+                              });
+                            },
+                            child: const Text(
+                              "거절",
+                              style: TextStyle(fontSize: 11),
+                            ))),
                   ],
                 ),
+              ],
 
-                // 알림의 종류가 교환이고 점주와 근무자가 모두 수락했다면
-                if ((alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "PASS") ||
-                    (alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "INVALID")
+              // 가입 알림이고 아직 응답하지 않았을 경우, 수락/거절 버튼을 표시
+              if (alarm.type == "JOIN" && alarm.state == "NON") ...[
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  //mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(
+                        height: 30,
+                        width: 100,
+                        child: TextButton(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.green.shade400,
+                                primary: Colors.white,
+                                padding: EdgeInsets.zero),
+                            onPressed: () async {
+                            },
+                            child: const Text(
+                              "수락",
+                              style: TextStyle(fontSize: 11),
+                            ))),
+                    SizedBox(
+                        width: 100,
+                        height: 30,
+                        child: TextButton(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.red.shade400,
+                                primary: Colors.white,
+                                padding: EdgeInsets.zero),
+                            onPressed: () async {
+                              // api 요청 -> 가입 거절
+                            },
+                            child: const Text(
+                              "거절",
+                              style: TextStyle(fontSize: 11),
+                            ))),
+                  ],
                 )
-                  Row(children: [
-                    // 알림 승낙
-                    SvgPicture.asset('asset/icons/accept.svg'),
-                    // 알림 삭제 버튼
-                    IconButton(
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                                return deleteCheckPopup(alarm);
-                              });
-                        },
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.grey,
-                        ))
-                  ])
-
-                // 알림의 종류가 교환이고 점주와 근무자 둘 중 하나라도 거절했다면
-                else if (alarm.type == "CHANGE" && (alarm.request?.own == "FAIL" || alarm.request?.res == "FAIL"))
-                  Row(children: [
-                    // 알림 거절
-                    SvgPicture.asset('asset/icons/denial.svg'),
-                    // 알림 삭제 버튼
-                    IconButton(
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                                return deleteCheckPopup(alarm);
-                              });
-                        },
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.grey,
-                        ))
-                  ])
-
-                // 알림의 종류가 교환이고 아직 확정나지 않은 상태 (둘 모두가 non or 둘 중 하나는 non, 하나는 pass)
-                else if (alarm.type == "CHANGE")
-                  // 알림 응답대기
-                  SvgPicture.asset('asset/icons/non.svg')
-
-                // 알림의 종류가 교환이 아닐 경우
-                else
-                  // 알림 삭제 버튼
-                  IconButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) {
-                              return deleteCheckPopup(alarm); // popup을 띄워서 확인
-                            });
-                      },
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.grey,
-                      ))
-              ]),
-
-          // 교환 알림일 경우, 수락/거절 버튼을 표시
-          if (alarm.type == "CHANGE" && alarm.request?.own == "NON") ...[
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              //mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                SizedBox(
-                    height: 30,
-                    width: 100,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                            backgroundColor: Colors.green.shade400,
-                            primary: Colors.white,
-                            padding: EdgeInsets.zero),
-                        onPressed: () async {
-                          checkPopup(true, idx, alarm);
-                          setState(() {
-                            alarm.request?.own = 'STANDBY';
-                          });
-                        },
-                        child: const Text(
-                          "수락",
-                          style: TextStyle(fontSize: 11),
-                        ))),
-                SizedBox(
-                    width: 100,
-                    height: 30,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                            backgroundColor: Colors.red.shade400,
-                            primary: Colors.white,
-                            padding: EdgeInsets.zero),
-                        onPressed: () async {
-                          checkPopup(false, idx, alarm);
-                          // api 요청 -> 알림 거절
-                          setState(() {
-                            alarm.request?.own = 'STANDBY';
-                          });
-                        },
-                        child: const Text(
-                          "거절",
-                          style: TextStyle(fontSize: 11),
-                        ))),
-              ],
-            ),
-          ],
-
-          // 가입 알림이고 아직 응답하지 않았을 경우, 수락/거절 버튼을 표시
-          if (alarm.type == "JOIN" && alarm.state == "NON") ...[
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              //mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                SizedBox(
-                    height: 30,
-                    width: 100,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                            backgroundColor: Colors.green.shade400,
-                            primary: Colors.white,
-                            padding: EdgeInsets.zero),
-                        onPressed: () async {
-                          // TODO: 매장 가입 요청 승낙 전송 메소드 넣기
-                          // 그냥 push로 -> 알림 목록 화면으로 돌아오게
-                          Future<bool> check = alarmVM.answerAlarm("change", true, alarm.id);
-                          check.then((value) {
-                            setState(() {
-                              alarm.state = "PASS";
-                            });
-
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (BuildContext builder) => EmployeeDetailScreen())
-                            );
-                          }).catchError((error) {
-                            logger.e(error);
-                          });
-                        },
-                        child: const Text(
-                          "수락",
-                          style: TextStyle(fontSize: 11),
-                        ))),
-                SizedBox(
-                    width: 100,
-                    height: 30,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                            backgroundColor: Colors.red.shade400,
-                            primary: Colors.white,
-                            padding: EdgeInsets.zero),
-                        onPressed: () async {
-                          // TODO: 매장 가입 요청 거절 전송 메소드 넣기
-                          Future<bool> check = alarmVM.answerAlarm("change", false, alarm.id);
-                          check.then((value) {
-                            setState(() {
-                              alarm.state = "FAIL";
-                            });
-                          }).catchError((error) {
-                            logger.e(error);
-                          });
-                          // api 요청 -> 알림 거절
-                        },
-                        child: const Text(
-                          "거절",
-                          style: TextStyle(fontSize: 11),
-                        ))),
-              ],
-            )
-          ]
-        ]));
+              ]
+            ])
+        );
+    });
   }
 
   Widget deleteCheckPopup(Alarm alarm) {
@@ -479,11 +466,12 @@ class _AlarmState extends State<AlarmView> {
   }
 
   // 재확인 체크 팝업을 띄우는 메소드
-  void checkPopup(bool pf, int idx, Alarm alarm) {
+  Future checkPopup(bool pf, int id) {
 
     AlarmViewModel alarmVM = AlarmViewModel();
 
-    showDialog(context: context, builder: (BuildContext context) {
+    return showDialog(context: context, builder: (_) {
+      return Consumer<AlarmHttpProvider>(builder:(context, state, child) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0)),
@@ -496,24 +484,21 @@ class _AlarmState extends State<AlarmView> {
           actions: [
             IconButton(
                 onPressed: () {
+                  _chBt = false;
                   Navigator.of(context).pop();
                 },
                 icon: SvgPicture.asset('asset/icons/x.svg')),
             IconButton(
                 onPressed: () {
-                  Future<bool> check = alarmVM.answerAlarm("change", pf ? true : false, alarm.id);
-                  check.then((value) {
-                    setState(() {
-                      alarm.request?.own = pf ? "PASS" : 'FAIL';
-                    });
-                  }).catchError((error){
-                    logger.e(error);
-                  });
+                  //logger.w('popup! ${state.alarms.length} 개의 알림 조회됨');
+                  alarmVM.answerAlarm('change', true, id);
+                  _chBt = true;
                   Navigator.of(context).pop();
                 },
                 icon: SvgPicture.asset('asset/icons/check.svg')),
           ],
         );
+      });
     });
   }
 }

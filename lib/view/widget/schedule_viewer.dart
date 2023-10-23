@@ -27,8 +27,8 @@ class ScheduleViewState extends State<ScheduleViewer> {
         state.getStore();
       }
 
-      return SizedBox(
-          height: deviceHeight - 250,
+      return Container(
+          height: deviceHeight - 270,
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -76,7 +76,7 @@ class ScheduleViewState extends State<ScheduleViewer> {
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         child: SizedBox(
           width: deviceWidth - 20,
-          height: deviceHeight - 320,
+          height: deviceHeight - 350,
           child: ListView.builder(
             physics: const ClampingScrollPhysics(),
               itemCount:
