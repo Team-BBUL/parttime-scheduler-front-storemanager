@@ -45,16 +45,11 @@ class CostViewModel extends ChangeNotifier{
   }
 
   Future<void> loadData() async {
-    // String yearMonth = DateFormat('yyyyMM').format(_selectedMonth);
     employeesCost = [];
     monthSchedule = null;
     try {
       log("----------------------------------------loadData-----------------------");
-      // await loadDateList();
-      // await fetchRemoteSchedule();
       await fetchLocalSchedule(_selectedMonth);
-
-      // await loadDateList();
       await getMonthIncentive();
       await getCost();
 
@@ -64,28 +59,9 @@ class CostViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  // loadDateList() async{
-  //   dateList = await _scheduleLocalRepository.getDateList();
-  //   if(dateList!.isNotEmpty) {
-  //     dateIndex = dateList!.length - 1;
-  //   }
-  //   log("loadDateList $dateList");
-  //   notifyListeners();
-  // }
-
-  loadSchedule() async{
-    log("----------------------------------------loadSchedule-----------------------");
-
-    // if(dateIndex == dateList!.length){
-    //   await fetchRemoteSchedule();
-    // }else{
-    //   await fetchLocalSchedule(dateList![dateIndex!]);
-    // }
-  }
-
   getCost() async {
     log("getCost processing");
-    await calculateCost();
+    await calculateEachCost();
     await calculateTotalCost();
     prevMonthTotalPay = await _scheduleLocalRepository.getPrevMonthCost(
         selectedMonth, costDay);
@@ -113,7 +89,6 @@ class CostViewModel extends ChangeNotifier{
   }
 
   Future<void> fetchRemoteSchedule() async {
-    log("message");
       thisWeekSchedule =  await _scheduleRemoteRepository.fetchSchedule(
           monthSchedule?.timeStamp! ?? '', _now.year, _now.month, _now.day);
       mergeData();
@@ -127,15 +102,15 @@ class CostViewModel extends ChangeNotifier{
     }
   }
 
-  calculateCost(){
+  calculateEachCost(){
     log("calculateCost processing");
     totalPay = 0;
     employeesCost = [];
 
-    int monthPay = 0;
-    int bonusDayPay = 0;
-    int monthIncentivePay = 0;
-    int dayHour = 0;
+    int monthPay;
+    int bonusDayPay;
+    int monthIncentivePay;
+    int workTime;
     int nightHour = 0;
      // log("${monthSchedule!.toJson()   }");
 
@@ -143,63 +118,75 @@ class CostViewModel extends ChangeNotifier{
       log("monthSchedule processing");
 
       nightHour = 0;
+
       for (Schedule schedule in date.schedule!) {
-        log("Schedule processing");
-
-        for (var workTime in schedule.time!) {
-          log("workTime processing");
-
-          if(workTime == true){
-            dayHour++;
-          }
-        }
-        for (Workers worker in schedule.workers!) {
-          log("worker processing");
-
-          bool isNoWorkerInList = false;
-
-          for (EmployeeCost employee in employeesCost!) {
-            // log("EmployeeCost processing");
-
-            if(employee.alias == worker.alias) {
-              employee.totalWorkTime += dayHour;
-              isNoWorkerInList = true;
-              break;
-            }
-          }
-          if(monthIncentives!.isNotEmpty){
-            for (MonthIncentive monthIncentive in monthIncentives!) {
-              if(monthIncentive.id == worker.id){
-                for (Incentive item in monthIncentive.incentives!) {
-                  monthIncentivePay += item.cost!;
-                }
-              }
-            }
-          }
-          monthPay += (dayHour * worker.cost!) + bonusDayPay + monthIncentivePay;
-          log("month processing $dayHour ${worker.cost} $monthPay");
-          if(!isNoWorkerInList){
-
-            employeesCost!.add(EmployeeCost(worker.id!,worker.alias!, dayHour, 0, worker.cost!,monthPay, bonusDayPay, monthIncentivePay));
-          }
-        }
-        log('cost result : $monthPay,$bonusDayPay,$monthIncentivePay,$dayHour');
         monthPay = 0;
         bonusDayPay = 0;
         monthIncentivePay = 0;
-        dayHour = 0;
+        workTime = 0;
+
+        log("Schedule check processing");
+        workTime = calculateWorkTime(schedule);
+        for (Workers worker in schedule.workers!) {
+          log("worker check processing");
+
+          bool isWorkerInList = checkDuplicateWorker(worker, workTime);
+          if(monthIncentives!.isNotEmpty){
+            monthIncentivePay = calculateMonthIncentivePay(worker);
+          }
+          log("month processing $workTime ${worker.cost} $monthPay");
+          if(!isWorkerInList){
+            employeesCost!.add(EmployeeCost(worker.id!,worker.alias!, workTime, 0, worker.cost!,monthPay, bonusDayPay, monthIncentivePay));
+          }
+        }
       }
-    }
-    for (EmployeeCost employeeCost in employeesCost!) {
-      employeeCost.monthPay = employeeCost.totalWorkTime * employeeCost.hourlyPay;
     }
     notifyListeners();
   }
 
-  //TODO calculateTotalCost 코드 중복 => CostViewModel
+  calculateWorkTime(Schedule schedule) {
+    int workHour = 0;
+    log('workTime processing... schedule time is null? : ${schedule.time != null}');
+    for (var workTime in schedule.time!) {
+
+      if(workTime == true){
+        workHour++;
+      }
+    }
+    return workHour;
+  }
+
+  bool checkDuplicateWorker(Workers worker, int workHour) {
+    bool isWorkerInList = false;
+    for (EmployeeCost employee in employeesCost!) {
+      // log("EmployeeCost processing");
+
+      if(employee.alias == worker.alias) {
+        employee.totalWorkTime += workHour;
+        isWorkerInList = true;
+        break;
+      }
+    }
+    return isWorkerInList;
+  }
+
+  int calculateMonthIncentivePay(Workers worker) {
+    int monthIncentivePay = 0;
+    for (MonthIncentive monthIncentive in monthIncentives!) {
+      if(monthIncentive.id == worker.id){
+        for (Incentive item in monthIncentive.incentives!) {
+          monthIncentivePay += item.cost!;
+        }
+      }
+    }
+    return monthIncentivePay;
+  }
+
+
   calculateTotalCost() {
     if(employeesCost != null) {
       for (EmployeeCost employee in employeesCost!) {
+        employee.monthPay = employee.totalWorkTime * employee.hourlyPay;
         totalPay += employee.totalWorkTime * employee.hourlyPay;
       }
     }
@@ -208,8 +195,6 @@ class CostViewModel extends ChangeNotifier{
   getEmployeeCost(int index){
     return employeesCost![index];
   }
-
-
 
   void setCustomTileExpanded(bool value) {
     customTileExpanded = value;
@@ -228,7 +213,10 @@ class CostViewModel extends ChangeNotifier{
     _selectedMonth = DateTime(_pickerYear, _selectedMonth.month, 1);
     loadData();
     log("serPickerYear $_selectedMonth");
-
     notifyListeners();
   }
+
+
+
+
 }
