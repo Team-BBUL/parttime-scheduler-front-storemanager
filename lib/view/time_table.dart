@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:sidam_storemanager/utils/sp_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:sidam_storemanager/view/widget/weekly_schedule_viewer.dart';
@@ -10,19 +12,37 @@ class TimeTableScreen  extends StatelessWidget{
   TimeTableScreen({super.key});
 
   AppColor color = AppColor();
+  SPHelper sp = SPHelper();
+
+  void initSp() async {
+    sp.init();
+  }
 
   @override
   Widget build(BuildContext context) {
+    initSp();
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0.0,
         title: const Text('주간 시간표'),
         centerTitle: true,
         actions: [
-          TextButton(onPressed: (){
-            launchUrl(
-              Uri.parse('https://naver.com/')
+          TextButton(onPressed: () async {
+            Navigator.push(context,
+                MaterialPageRoute<void>(builder: (BuildContext context) => editSchedule())//scheduleView())
             );
+
+            /*var url = Uri.parse('https://release.d26jxlq0zcsb2a.amplifyapp.com/login');
+            if (await canLaunchUrl(url)) {
+              await launchUrl(
+                url,
+                webViewConfiguration: WebViewConfiguration(headers: {
+                  "jwtToken" : "Bearer ${sp.getJWT()}",
+                  "roleId" : "${sp.getRoleId()}",
+                  "storeId" : "${sp.getStoreId()}"
+                })
+              );
+            }*/
           }, child: Text('수정'))
         ],
       ),
@@ -33,6 +53,9 @@ class TimeTableScreen  extends StatelessWidget{
   }
 
   Widget scheduleView() {
+    var cookieManager = WebViewCookieManager()
+      .setCookie(WebViewCookie(name: "jwtToken", value: sp.getJWT(), domain: "https://release.d26jxlq0zcsb2a.amplifyapp.com/"));
+
     var controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted) // 자바 스크립트 사용 여부
       ..setBackgroundColor(const Color(0x00000000))
@@ -56,18 +79,39 @@ class TimeTableScreen  extends StatelessWidget{
             debugPrint('web error');
           },
           onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
+            if (request.url.startsWith('https://release.d26jxlq0zcsb2a.amplifyapp.com/login')) {
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://flutter.dev')); // 접속할 url 여기에 토큰 추가
+      ..runJavaScript("window.localStorage.setItem('jwtToken','${sp.getJWT()}')")
+      ..runJavaScript("window.localStorage.setItem('roleId','${sp.getRoleId()}')")
+      ..runJavaScript("window.localStorage.setItem('storeId','${sp.getStoreId()}')")
+      ..loadRequest(Uri.parse('https://release.d26jxlq0zcsb2a.amplifyapp.com/login')); // 접속할 url 여기에 토큰 추가
 
     return Scaffold(
         body: WebViewWidget(
           controller: controller,
-        ));
+        )
+    );
+  }
+
+  Widget editSchedule() {
+
+    return Scaffold(
+      body: InAppWebView(
+        initialUrlRequest: URLRequest(url: Uri.parse('https://release.d26jxlq0zcsb2a.amplifyapp.com/login')),
+        onLoadStart: (InAppWebViewController controller, Uri? url) async {
+          debugPrint('${sp.getRoleId()}\n${sp.getJWT()}\n${sp.getStoreId()}');
+          await controller.evaluateJavascript(source: """
+          window.localStorage.setItem('jwtToken','Bearer ${sp.getJWT()}');
+          window.localStorage.setItem('roleId','${sp.getRoleId()}');
+          window.localStorage.setItem('storeId','${sp.getStoreId()}');
+          """);
+        },
+      ),
+    );
   }
 }
