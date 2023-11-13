@@ -200,8 +200,7 @@ class _AlarmState extends State<AlarmView> {
                       ])
 
                     // 알림의 종류가 교환이고 점주와 근무자 둘 중 하나라도 거절했다면
-                    else
-                      if (alarm.type == "CHANGE" && (alarm.request?.own == "FAIL" || alarm.request?.res == "FAIL"))
+                    else if (alarm.type == "CHANGE" && (alarm.request?.own == "FAIL" || alarm.request?.res == "FAIL"))
                         Row(children: [
                           // 알림 거절
                           SvgPicture.asset('asset/icons/denial.svg'),
@@ -222,8 +221,7 @@ class _AlarmState extends State<AlarmView> {
                         ])
 
                       // 알림의 종류가 교환이고 아직 확정나지 않은 상태 (둘 모두가 non or 둘 중 하나는 non, 하나는 pass) 여기
-                      else
-                        if (alarm.type == "CHANGE")
+                      else if (alarm.type == "CHANGE")
                         // 알림 응답대기
                           SvgPicture.asset('asset/icons/non.svg')
 
@@ -491,7 +489,7 @@ class _AlarmState extends State<AlarmView> {
             IconButton(
                 onPressed: () {
                   //logger.w('popup! ${state.alarms.length} 개의 알림 조회됨');
-                  alarmVM.answerAlarm('change', true, id);
+                  alarmVM.answerAlarm('change', pf, id);
                   _chBt = true;
                   Navigator.of(context).pop();
                 },

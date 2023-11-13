@@ -101,16 +101,19 @@ class TimeTableScreen  extends StatelessWidget{
   Widget editSchedule() {
 
     return Scaffold(
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(url: Uri.parse('https://release.d26jxlq0zcsb2a.amplifyapp.com/login')),
-        onLoadStart: (InAppWebViewController controller, Uri? url) async {
-          debugPrint('${sp.getRoleId()}\n${sp.getJWT()}\n${sp.getStoreId()}');
-          await controller.evaluateJavascript(source: """
-          window.localStorage.setItem('jwtToken','Bearer ${sp.getJWT()}');
-          window.localStorage.setItem('roleId','${sp.getRoleId()}');
-          window.localStorage.setItem('storeId','${sp.getStoreId()}');
-          """);
-        },
+      body: SafeArea(
+          minimum: const EdgeInsets.symmetric(vertical: 40, horizontal: 5),
+          child: InAppWebView(
+            initialUrlRequest: URLRequest(url: Uri.parse('https://release.d26jxlq0zcsb2a.amplifyapp.com/login')),
+            onLoadStart: (InAppWebViewController controller, Uri? url) async {
+              debugPrint('${sp.getRoleId()}\n${sp.getJWT()}\n${sp.getStoreId()}');
+              await controller.evaluateJavascript(source: """
+              window.localStorage.setItem('jwtToken','Bearer ${sp.getJWT()}');
+              window.localStorage.setItem('roleId','${sp.getRoleId()}');
+              window.localStorage.setItem('storeId','${sp.getStoreId()}');
+              """);
+              },
+          )
       ),
     );
   }
