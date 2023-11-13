@@ -18,8 +18,7 @@ class ScheduleRepository{
   // 서버에서 데이터를 불러와서 로컬에 저장하는 메소드
   Future<void> getWeeklySchedule(DateTime now) async {
 
-    DateUtility dateUtility = DateUtility();
-    DateTime getDate = dateUtility.findStartDay(now, _helper.getWeekStartDay() ?? 1);
+    DateTime getDate = DateUtility.findStartDay(now, _helper.getWeekStartDay() ?? 1);
 
     _logger.i('${getDate.month}월 ${getDate.day}일 데이터 요청');
 

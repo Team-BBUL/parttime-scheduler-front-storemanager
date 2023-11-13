@@ -15,7 +15,6 @@ class WeeklyScheduleViewModel extends ChangeNotifier{
   late final SPHelper _helper;
   late final ScheduleRepository _scheduleRepository;
   late final StoreRepositoryImpl _storeRepository;
-  late final DateUtility _dateUtility;
   Map<DateTime, List<ViewSchedule>> _weeklySchedule = {}; // 화면에 그릴 주간 모든 근무자 스케줄
   Map<DateTime, List<ViewSchedule>> get weekly => _weeklySchedule;
   late DateTime _now; // 오늘
@@ -31,9 +30,8 @@ class WeeklyScheduleViewModel extends ChangeNotifier{
     _helper = SPHelper();
     _scheduleRepository = ScheduleRepository();
     _storeRepository = StoreRepositoryImpl();
-    _dateUtility = DateUtility();
     _now = DateTime.now();
-    _weekStart = _dateUtility.findStartDay(_now, _helper.getWeekStartDay() ?? 1);
+    _weekStart = DateUtility.findStartDay(_now, _helper.getWeekStartDay() ?? 1);
 
     _init();
     getStore();
@@ -42,7 +40,7 @@ class WeeklyScheduleViewModel extends ChangeNotifier{
 
   Future<void> _init() async {
     await _helper.init();
-    _weekStart = _dateUtility.findStartDay(_now, _helper.getWeekStartDay() ?? 1);
+    _weekStart = DateUtility.findStartDay(_now, _helper.getWeekStartDay() ?? 1);
   }
 
   // 주간 전체 스케줄 가져오는 핵심 메소드

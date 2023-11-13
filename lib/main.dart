@@ -18,6 +18,7 @@ import 'package:sidam_storemanager/view_model/local_login_view_model.dart';
 import 'package:sidam_storemanager/view_model/notice_view_model.dart';
 import 'package:sidam_storemanager/view_model/register_view_model.dart';
 import 'package:sidam_storemanager/view_model/schedule_view_model.dart';
+import 'package:sidam_storemanager/view_model/setting_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_list_view_model.dart';
 import 'package:sidam_storemanager/view_model/store_management_view_model.dart';
 import 'package:sidam_storemanager/view_model/weekly_schedule_view_model.dart';
@@ -64,6 +65,9 @@ void main() {
             ),
             ChangeNotifierProvider(
                 create: (context) => WeeklyScheduleViewModel()
+            ),
+            ChangeNotifierProvider(
+                create: (context) => SettingViewModel()
             ),
       ],
           child: const MyApp()

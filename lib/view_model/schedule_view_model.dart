@@ -15,7 +15,6 @@ class ScheduleViewModel extends ChangeNotifier {
   late final ScheduleRepository _scheduleRepository;
   late final StoreRepositoryImpl _storeRepository;
   late final SPHelper _helper;
-  late final DateUtility _dateUtility;
 
   List<ViewSchedule> _todaySchedule = []; // 오늘 전 근무자의 근무표
   List<ViewSchedule> get today => _todaySchedule;
@@ -34,7 +33,6 @@ class ScheduleViewModel extends ChangeNotifier {
   ScheduleViewModel() {
     _scheduleRepository = ScheduleRepository();
     _storeRepository = StoreRepositoryImpl();
-    _dateUtility = DateUtility();
     _helper = SPHelper();
     _helper.init();
 
@@ -45,7 +43,7 @@ class ScheduleViewModel extends ChangeNotifier {
   void init() async {
     await _helper.init();
     getStore();
-    _week = _dateUtility.findStartDay(DateTime.now(), _helper.getWeekStartDay() ?? 1);
+    _week = DateUtility.findStartDay(DateTime.now(), _helper.getWeekStartDay() ?? 1);
   }
 
   // 새로고침을 누르면 스케줄을 새로 가지고 올 메소드
@@ -76,10 +74,9 @@ class ScheduleViewModel extends ChangeNotifier {
 
   // 이번 주로부터 4주차 이전까지의 데이터를 가지고 오는 메소드
   Future<void> _getMonthSchedule() async {
-    DateUtility dateUtility = DateUtility();
 
     DateTime now = DateTime.now();
-    DateTime start = dateUtility.findStartDay(now, _helper.getWeekStartDay() ?? 1);
+    DateTime start = DateUtility.findStartDay(now, _helper.getWeekStartDay() ?? 1);
     DateTime thisWeek = start;
 
     for (int i = 1; i <= 4; i++) {

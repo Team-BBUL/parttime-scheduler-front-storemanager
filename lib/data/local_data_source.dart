@@ -110,4 +110,17 @@ class LocalDataSource {
       _logger.e('폴더 삭제 오류 : $e');
     }
   }
+
+  Future deleteSchedule() async {
+
+    try {
+      Directory directory = Directory("$path/data/schedules");
+
+      if (directory.existsSync()) {
+        directory.delete(recursive: true);
+      }
+    } catch (e) {
+      _logger.e('폴더 삭제 오류: $e');
+    }
+  }
 }

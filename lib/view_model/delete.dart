@@ -6,4 +6,8 @@ class DeleteViewModel {
   void deleteLocalDataAll() async {
     await _dataSource.deleteAll();
   }
+
+  void deleteLocalSchedule() async {
+    await _dataSource.deleteSchedule();
+  }
 }
